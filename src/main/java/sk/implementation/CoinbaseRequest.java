@@ -1,9 +1,11 @@
 package sk.implementation;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static sk.abstract_interface.Resources.APPLICATION_JSON;
+import static sk.abstract_interface.Resources.COINBASE_ACCOUNTS_URL;
+import static sk.abstract_interface.Resources.COINBASE_ACCOUNT_BY_ID_URL;
+
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -24,7 +26,6 @@ import org.springframework.stereotype.Component;
 import com.google.gson.Gson;
 
 import sk.abstract_interface.ExchangeRequest;
-import sk.abstract_interface.Resources;
 import sk.abstract_interface.URLResolver;
 
 @Component
@@ -42,20 +43,24 @@ public class CoinbaseRequest implements ExchangeRequest {
 	@Autowired
 	private HttpClient client;
 
+	@Autowired
+	private RequestTime requestTime;
+
+	@Autowired
+	private Gson gson;
+
 	private List<Header> defaultHeaders;
 
 	// TODO: centralize the time
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<Map<String, Object>> getAllAccounts() throws Exception {
-		String requestPath = urlResolver.getRequestPath(Resources.COINBASE_ACCOUNTS_URL);
-		long epochSeconds = ZonedDateTime.now(ZoneId.of("UTC")).toEpochSecond();
-		String signature = computeSignature(epochSeconds, HttpMethod.GET, requestPath);
+		String requestPath = urlResolver.resolvePath(COINBASE_ACCOUNTS_URL);
+		long timestamp = requestTime.getEpochSecondsUTC();
+		String signature = computeSignature(timestamp, HttpMethod.GET, requestPath);
 
-		List<Header> headers = addRequestHeaders(epochSeconds, signature);
-		String responseBody = getJson(Resources.COINBASE_ACCOUNTS_URL, headers);
-
-		Gson gson = new Gson();
+		List<Header> headers = addRequestHeaders(timestamp, signature);
+		String responseBody = getJson(COINBASE_ACCOUNTS_URL, headers);
 		List<Map<String, Object>> result = gson.fromJson(responseBody, List.class);
 
 		return result;
@@ -64,27 +69,25 @@ public class CoinbaseRequest implements ExchangeRequest {
 	@Override
 	@SuppressWarnings("unchecked")
 	public double getAccountBalance(String accountId) throws Exception {
-		String url = urlResolver.resolve(Resources.COINBASE_ACCOUNT_BY_ID_URL, accountId);
-		String requestPath = urlResolver.getRequestPath(url);
-		long epochSeconds = ZonedDateTime.now(ZoneId.of("UTC")).toEpochSecond();
-		String signature = computeSignature(epochSeconds, HttpMethod.GET, requestPath);
+		String url = urlResolver.resolveParams(COINBASE_ACCOUNT_BY_ID_URL, accountId);
+		String requestPath = urlResolver.resolvePath(url);
+		long timestamp = requestTime.getEpochSecondsUTC();
+		String signature = computeSignature(timestamp, HttpMethod.GET, requestPath);
 
-		List<Header> headers = addRequestHeaders(epochSeconds, signature);
+		List<Header> headers = addRequestHeaders(timestamp, signature);
 		String responseBody = getJson(url, headers);
-
-		Gson gson = new Gson();
 		Map<String, Object> result = gson.fromJson(responseBody, Map.class);
 
 		return Double.valueOf(String.valueOf(result.get("balance")));
 	}
 
-	private final String computeSignature(long epochSeconds, String httpMethod, String requestPath) {
-		return computeSignature(epochSeconds, httpMethod, requestPath, null);
+	private final String computeSignature(long timestamp, String httpMethod, String requestPath) {
+		return computeSignature(timestamp, httpMethod, requestPath, null);
 	}
 
-	private final String computeSignature(long epochSeconds, String httpMethod, String requestPath, String jsonBody) {
-		String preHash = epochSeconds + httpMethod + requestPath + (jsonBody != null ? jsonBody : "");
-		byte[] decodedSecretKey = encoder.decodeBase64(environment.getProperty("COINBASE-VIEW-API-SECRET").getBytes());
+	private final String computeSignature(long timestamp, String httpMethod, String requestPath, String jsonBody) {
+		String preHash = timestamp + httpMethod + requestPath + (jsonBody != null ? jsonBody : "");
+		byte[] decodedSecretKey = encoder.decodeBase64(environment.getProperty("COINBASE-API-SECRET").getBytes());
 		byte[] signature = encoder.encodeHmacSha256(decodedSecretKey, preHash.getBytes());
 
 		return new String(encoder.encodeBase64(signature));		
@@ -100,8 +103,8 @@ public class CoinbaseRequest implements ExchangeRequest {
 	private final List<Header> getDefaultHeaders() {
 		if (defaultHeaders == null) {
 			defaultHeaders = new ArrayList<Header>(5);
-			defaultHeaders.add(new BasicHeader("cb-access-key", environment.getProperty("COINBASE-VIEW-API-KEY")));
-			defaultHeaders.add(new BasicHeader("cb-access-passphrase", environment.getProperty("COINBASE-VIEW-API-PASSPHRASE")));
+			defaultHeaders.add(new BasicHeader("cb-access-key", environment.getProperty("COINBASE-API-KEY")));
+			defaultHeaders.add(new BasicHeader("cb-access-passphrase", environment.getProperty("COINBASE-API-PASSPHRASE")));
 		}
 		// default headers should contain only static elements without modification
 		return new ArrayList<>(defaultHeaders);
@@ -109,7 +112,7 @@ public class CoinbaseRequest implements ExchangeRequest {
 
 	private String getJson(String url, List<Header> headers) throws ClientProtocolException, IOException {
 		HttpGet request = new HttpGet(url);
-		request.addHeader(HttpHeaders.ACCEPT, Resources.APPLICATION_JSON);
+		request.addHeader(HttpHeaders.ACCEPT, APPLICATION_JSON);
 		headers.forEach(request::addHeader);
 
 		HttpResponse response = client.execute(request);
@@ -117,7 +120,7 @@ public class CoinbaseRequest implements ExchangeRequest {
 
 		// leaves the stream open when done with copying
 //		String jsonBody = StreamUtils.copyToString(body.getContent(), StandardCharsets.UTF_8);
-		return EntityUtils.toString(body, StandardCharsets.UTF_8);
+		return EntityUtils.toString(body, UTF_8);
 	}
 
 }
