@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 /**
- * doplnanie parametrov do query ako su tokeny a pod..
+ * 
  */
 @Component
 public class URLResolver {
@@ -17,7 +17,7 @@ public class URLResolver {
 	 * @param url    - dynamicke casti su zamenene hviezdickou
 	 * @param params - ak je len jeden tak sa dosadi vsade
 	 */
-	public String resolve(String url, Object... params) {
+	public String resolveParams(String url, Object... params) {
 		int paramsLength = params.length;
 		validateParamsSubstitution(url, paramsLength);
 
@@ -36,7 +36,7 @@ public class URLResolver {
 		boolean isAboveOne = paramsLength > 1;
 
 		if (isEmpty || (isAboveOne && paramsLength != getNumberOfChars(url))) {
-			// add message
+			// TODO: use custom exception with message
 			throw new IllegalArgumentException("");
 		}
 	}
@@ -56,10 +56,15 @@ public class URLResolver {
 		return result.toString();
 	}
 
-	public String getRequestPath(String url) {
-		StringBuilder sb = new StringBuilder(url);
-		sb.delete(0, 8); // remove http protocol prefix
-		int pathBeginning = sb.indexOf("/");
-		return sb.substring(pathBeginning);
+	/**
+	 * 
+	 * @param url
+	 * @return
+	 */
+	public String resolvePath(String url) {
+		StringBuilder path = new StringBuilder(url);
+		path.delete(0, 8); // remove http protocol prefix
+		int pathBeginning = path.indexOf("/");
+		return path.substring(pathBeginning);
 	}
 }
