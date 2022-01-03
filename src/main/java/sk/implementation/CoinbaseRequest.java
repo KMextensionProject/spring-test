@@ -51,7 +51,6 @@ public class CoinbaseRequest implements ExchangeRequest {
 
 	private List<Header> defaultHeaders;
 
-	// TODO: centralize the time
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<Map<String, Object>> getAllAccounts() throws Exception {
