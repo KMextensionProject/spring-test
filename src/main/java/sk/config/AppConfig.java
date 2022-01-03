@@ -1,8 +1,14 @@
 package sk.config;
 
+import java.util.Arrays;
+
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.cache.concurrent.ConcurrentMapCache;
+import org.springframework.cache.support.SimpleCacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -19,6 +25,7 @@ import sk.abstract_interface.Currency;
 // TODO: change environment variable names
 
 @Configuration
+@EnableCaching
 @PropertySource("classpath:account_defaults.properties")
 @ComponentScan(basePackages = "sk")
 public class AppConfig {
@@ -36,5 +43,13 @@ public class AppConfig {
 	@Bean
 	public Gson getPrettyPrintingGson() {
 		return new GsonBuilder().setPrettyPrinting().create();
+	}
+
+	@Bean
+	public CacheManager cacheManager() {
+		SimpleCacheManager cacheManager = new SimpleCacheManager();
+		cacheManager.setCaches(Arrays.asList(
+				new ConcurrentMapCache("accounts")));
+		return cacheManager;
 	}
 }
