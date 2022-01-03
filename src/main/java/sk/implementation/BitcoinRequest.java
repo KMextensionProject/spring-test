@@ -1,7 +1,11 @@
 package sk.implementation;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static sk.abstract_interface.Resources.APPLICATION_JSON;
+import static sk.abstract_interface.Resources.BITCOIN_PRICE_BY_DATE_URL;
+import static sk.abstract_interface.Resources.CURRENT_BITCOIN_PRICE_URL;
+
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
@@ -21,7 +25,6 @@ import com.google.gson.Gson;
 
 import sk.abstract_interface.MarketRequest;
 import sk.abstract_interface.PriceType;
-import sk.abstract_interface.Resources;
 import sk.abstract_interface.URLResolver;
 
 @Component
@@ -33,12 +36,14 @@ public final class BitcoinRequest implements MarketRequest {
 	@Autowired
 	private HttpClient client;
 
+	@Autowired
+	private Gson gson;
+
 	@Override
 	@SuppressWarnings("unchecked")
 	public double getCurrentPrice() throws IOException {
-		String jsonBody = getJson(Resources.CURRENT_BITCOIN_PRICE_URL);
+		String jsonBody = getJson(CURRENT_BITCOIN_PRICE_URL);
 
-		Gson gson = new Gson();
 		Map<String, Object> responseMap = gson.fromJson(jsonBody, Map.class);
 		Map<String, Object> dataElement = (Map<String, Object>) responseMap.get("data");
 		String amountString = String.valueOf(dataElement.get("amount"));
@@ -49,10 +54,9 @@ public final class BitcoinRequest implements MarketRequest {
 	@Override
 	@SuppressWarnings("unchecked")
 	public Map<PriceType, Double> getPricesByDate(LocalDate date) throws IOException {
-		String url = urlResolver.resolve(Resources.BITCOIN_PRICE_BY_DATE_URL, date);
+		String url = urlResolver.resolveParams(BITCOIN_PRICE_BY_DATE_URL, date);
 		String jsonBody = getJson(url);
 
-		Gson gson = new Gson();
 		Map<String, Object> topLevelObject = gson.fromJson(jsonBody, Map.class);
 		List<Map<String, Object>> data = (List<Map<String, Object>>) topLevelObject.get("results");
 
@@ -66,16 +70,17 @@ public final class BitcoinRequest implements MarketRequest {
 		return result;
 	}
 
+	// TODO: extract this duplicate method
 	private String getJson(String url) throws ClientProtocolException, IOException {
 		HttpGet request = new HttpGet(url);
-		request.addHeader(HttpHeaders.ACCEPT, Resources.APPLICATION_JSON);
+		request.addHeader(HttpHeaders.ACCEPT, APPLICATION_JSON);
 
 		HttpResponse response = client.execute(request);
 		HttpEntity body = response.getEntity();
 
 		// leaves the stream open when done with copying
 //		String jsonBody = StreamUtils.copyToString(body.getContent(), StandardCharsets.UTF_8);
-		return EntityUtils.toString(body, StandardCharsets.UTF_8);
+		return EntityUtils.toString(body, UTF_8);
 	}
 
 }
