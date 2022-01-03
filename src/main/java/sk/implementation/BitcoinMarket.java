@@ -26,11 +26,12 @@ public class BitcoinMarket extends Market {
 		// ak je dnes pondelok, tak polygon bude tento request zdrziavat! zvolit nedelu - zatvaraciu cenu?
 		Map<PriceType, Double> weekPrice = bitcoinRequest.getPricesByDate(LocalDate.now().with(DayOfWeek.MONDAY));
 //		Map<PriceType, Double> weekPrice = bitcoinRequest.getPricesByDate(LocalDate.now().minusDays(1L));
-
 		this.weekOpeningPrice = weekPrice.get(PriceType.OPENING);
-		
+		this.weekClosingPrice = weekPrice.get(PriceType.CLOSING);
+
 		Map<PriceType, Double> monthPrice = bitcoinRequest.getPricesByDate(LocalDate.now().withDayOfMonth(1));
 		this.monthOpeningPrice = monthPrice.get(PriceType.OPENING);
+		this.monthClosingPrice = monthPrice.get(PriceType.CLOSING);
 		// ...
 	}
 

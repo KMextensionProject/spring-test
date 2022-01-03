@@ -32,7 +32,8 @@ public class CoinbaseAccount extends ExchangeAccount {
 		balance = accountRequest.getAccountBalance(accountId);
 	}
 
-	// cache account ids
+	// TODO: cache account ids
+	// TODO: use optional with assignment and validate content / use custom exception
 	@PostConstruct
 	private void initAccountId() throws Exception {
 		List<Map<String, Object>> accounts = accountRequest.getAllAccounts();
