@@ -34,7 +34,7 @@ public class AccountCache {
 		if (accountId.isEmpty()) {
 			throw new MissingAccount("accountNotFound", currency);
 		}
-		
+
 		return accountId.get();
 	}
 
