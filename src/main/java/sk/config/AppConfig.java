@@ -17,6 +17,7 @@ import org.springframework.context.annotation.PropertySource;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import sk.abstract_interface.CacheNames;
 import sk.abstract_interface.Currency;
 
 // TODO: add custom exceptions
@@ -49,7 +50,7 @@ public class AppConfig {
 	public CacheManager cacheManager() {
 		SimpleCacheManager cacheManager = new SimpleCacheManager();
 		cacheManager.setCaches(Arrays.asList(
-				new ConcurrentMapCache("accounts")));
+				new ConcurrentMapCache(CacheNames.ACCOUNTS_CACHE)));
 		return cacheManager;
 	}
 }
