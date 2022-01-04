@@ -8,7 +8,6 @@ import javax.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import sk.abstract_interface.AccountCache;
 import sk.abstract_interface.Currency;
 import sk.abstract_interface.ExchangeAccount;
 
@@ -17,9 +16,6 @@ public class CoinbaseAccount extends ExchangeAccount {
 
 	@Autowired
 	private CoinbaseRequest accountRequest;
-
-	@Autowired
-	private AccountCache accountCache;
 
 	@Override
 	public void placeSellOrder(Currency currency, double amount) {
@@ -38,10 +34,9 @@ public class CoinbaseAccount extends ExchangeAccount {
 
 	// TODO: cache account ids
 	// TODO: use optional with assignment and validate content / use custom exception
-	// TODO: cached method is called multiple times when called from different locations
 	@PostConstruct
 	private void initAccountId() throws Exception {
-		List<Map<String, Object>> accounts = accountCache.getAllAccounts();
+		List<Map<String, Object>> accounts = accountRequest.getAllAccounts();
 		this.accountId = accounts.stream()
 			.filter(this::containsCurrency)
 			.map(this::getID)
