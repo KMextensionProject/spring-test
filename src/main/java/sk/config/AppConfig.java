@@ -13,6 +13,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -21,12 +22,12 @@ import sk.abstract_interface.CacheNames;
 import sk.abstract_interface.Currency;
 
 // TODO: add custom exceptions
-// TODO: add message resolver for exceptions
 // TODO: add logging mechanism
-// TODO: change environment variable names
+// TODO: cache message resolver
 
 @Configuration
 @EnableCaching
+@EnableScheduling
 @PropertySource("classpath:account_defaults.properties")
 @ComponentScan(basePackages = "sk")
 public class AppConfig {
@@ -50,7 +51,9 @@ public class AppConfig {
 	public CacheManager cacheManager() {
 		SimpleCacheManager cacheManager = new SimpleCacheManager();
 		cacheManager.setCaches(Arrays.asList(
-				new ConcurrentMapCache(CacheNames.ACCOUNTS_CACHE)));
+				new ConcurrentMapCache(CacheNames.ACCOUNTS_CACHE),
+				new ConcurrentMapCache(CacheNames.ACCOUNT_ID_CACHE),
+				new ConcurrentMapCache(CacheNames.MESSAGES_CACHE)));
 		return cacheManager;
 	}
 }
