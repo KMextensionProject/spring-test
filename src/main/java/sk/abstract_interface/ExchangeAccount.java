@@ -9,12 +9,14 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 public abstract class ExchangeAccount implements Refreshable {
 
-	protected String accountId; // main account id
+	protected String accountId;
 
 	@Autowired
 	protected Currency currency;
 
-	protected double balance; // main currency
+	protected double balance;
+
+	protected double bestOrderBuyRate;
 
 	public abstract void placeBuyOrder(Currency currency, double amount);
 
@@ -30,5 +32,9 @@ public abstract class ExchangeAccount implements Refreshable {
 
 	public double getBalance() {
 		return this.balance;
+	}
+
+	public double getBestOrderBuyRate() {
+		return this.bestOrderBuyRate;
 	}
 }
