@@ -4,6 +4,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static sk.abstract_interface.Resources.APPLICATION_JSON;
 import static sk.abstract_interface.Resources.COINBASE_ACCOUNTS_URL;
 import static sk.abstract_interface.Resources.COINBASE_ACCOUNT_BY_ID_URL;
+import static sk.abstract_interface.Resources.COINBASE_ORDER_FILLS;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -63,6 +64,20 @@ public class CoinbaseRequest implements ExchangeRequest {
 		List<Map<String, Object>> result = gson.fromJson(responseBody, List.class);
 
 		return result;
+	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<Map<String, Object>> getAllOrderFills() throws Exception {
+		String requestPath = urlResolver.resolvePath(COINBASE_ORDER_FILLS);
+		long timestamp = requestTime.getEpochSecondsUTC();
+		String signature = computeSignature(timestamp, HttpMethod.GET, requestPath);
+
+		List<Header> headers = addRequestHeaders(timestamp, signature);
+		String responseBody = getJson(COINBASE_ORDER_FILLS, headers);
+		List<Map<String, Object>> fills = gson.fromJson(responseBody, List.class);
+
+		return fills;
 	}
 
 	@Override
