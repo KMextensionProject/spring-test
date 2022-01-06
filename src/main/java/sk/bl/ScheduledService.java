@@ -25,7 +25,7 @@ public class ScheduledService {
 	@Autowired
 	private ExchangeRequest exchangeRequest;
 
-	@Scheduled(initialDelay = 10_000, fixedRate = 360_000)
+	@Scheduled(initialDelayString = "${scheduler.initial_task_delay}", fixedRateString = "${scheduler.fixed_task_rate}")
 	public void action() throws Exception {
 		System.out.println("scheduled task");
 
