@@ -44,6 +44,7 @@ public class Main {
 		System.out.println("Coinbase account id: " + bitcoinAccountId);
 		System.out.println("Coinbase currency: " + Currency.BITCOIN);
 		System.out.println("Coinbase account balance: " + request.getAccountBalance(bitcoinAccountId) + Currency.BITCOIN.getAcronym());
+		System.out.println("The best filled buy order rate: " + exchange.getBestOrderBuyRate() + exchange.getCurrency());
 		System.out.println();
 
 		// close it!
