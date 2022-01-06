@@ -11,5 +11,8 @@ public interface ExchangeRequest {
 
 	public List<Map<String, Object>> getAllAccounts() throws Exception;
 
+	public List<Map<String, Object>> getAllOrderFills() throws Exception;
+
 	public double getAccountBalance(String accountId) throws Exception;
+
 }
