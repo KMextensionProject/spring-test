@@ -55,11 +55,7 @@ public class CoinbaseRequest implements ExchangeRequest {
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<Map<String, Object>> getAllAccounts() throws Exception {
-		String requestPath = urlResolver.resolvePath(COINBASE_ACCOUNTS_URL);
-		long timestamp = requestTime.getEpochSecondsUTC();
-		String signature = computeSignature(timestamp, HttpMethod.GET, requestPath);
-
-		List<Header> headers = addRequestHeaders(timestamp, signature);
+		List<Header> headers = computeRequestHeaders(COINBASE_ACCOUNTS_URL, HttpMethod.GET);
 		String responseBody = getJson(COINBASE_ACCOUNTS_URL, headers);
 		List<Map<String, Object>> result = gson.fromJson(responseBody, List.class);
 
@@ -69,11 +65,7 @@ public class CoinbaseRequest implements ExchangeRequest {
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<Map<String, Object>> getAllOrderFills() throws Exception {
-		String requestPath = urlResolver.resolvePath(COINBASE_ORDER_FILLS);
-		long timestamp = requestTime.getEpochSecondsUTC();
-		String signature = computeSignature(timestamp, HttpMethod.GET, requestPath);
-
-		List<Header> headers = addRequestHeaders(timestamp, signature);
+		List<Header> headers = computeRequestHeaders(COINBASE_ORDER_FILLS, HttpMethod.GET);
 		String responseBody = getJson(COINBASE_ORDER_FILLS, headers);
 		List<Map<String, Object>> fills = gson.fromJson(responseBody, List.class);
 
@@ -84,15 +76,23 @@ public class CoinbaseRequest implements ExchangeRequest {
 	@SuppressWarnings("unchecked")
 	public double getAccountBalance(String accountId) throws Exception {
 		String url = urlResolver.resolveParams(COINBASE_ACCOUNT_BY_ID_URL, accountId);
-		String requestPath = urlResolver.resolvePath(url);
-		long timestamp = requestTime.getEpochSecondsUTC();
-		String signature = computeSignature(timestamp, HttpMethod.GET, requestPath);
-
-		List<Header> headers = addRequestHeaders(timestamp, signature);
+		List<Header> headers = computeRequestHeaders(url, HttpMethod.GET);
 		String responseBody = getJson(url, headers);
 		Map<String, Object> result = gson.fromJson(responseBody, Map.class);
 
 		return Double.valueOf(String.valueOf(result.get("balance")));
+	}
+
+	/**
+	 * Tato metoda vytvori podpis z URL adresy a aktualneho casu v sekundach UTC.
+	 * Nasledne prida tento podpis s casom do zoznamu hlaviciek HTTP poziadavky.
+	 */
+	private List<Header> computeRequestHeaders(String url, String httpMethod) {
+		String requestPath = urlResolver.resolvePath(url);
+		long timestamp = requestTime.getEpochSecondsUTC();
+		String signature = computeSignature(timestamp, httpMethod, requestPath);
+
+		return addRequestHeaders(timestamp, signature);
 	}
 
 	private final String computeSignature(long timestamp, String httpMethod, String requestPath) {
