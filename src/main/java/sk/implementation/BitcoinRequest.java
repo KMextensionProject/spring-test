@@ -19,10 +19,12 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.util.EntityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.google.gson.Gson;
 
+import sk.abstract_interface.Currency;
 import sk.abstract_interface.MarketRequest;
 import sk.abstract_interface.PriceType;
 import sk.abstract_interface.URLResolver;
@@ -34,15 +36,22 @@ public final class BitcoinRequest implements MarketRequest {
 	private URLResolver urlResolver;
 
 	@Autowired
+	private Currency accountCurrency;
+
+	@Autowired
 	private HttpClient client;
 
 	@Autowired
 	private Gson gson;
 
+	@Value("${polygon.api_key}")
+	private String polygonApiKey;
+
 	@Override
 	@SuppressWarnings("unchecked")
 	public double getCurrentPrice() throws IOException {
-		String jsonBody = getJson(CURRENT_BITCOIN_PRICE_URL);
+		String url = urlResolver.resolveParams(CURRENT_BITCOIN_PRICE_URL, accountCurrency.getAcronym());
+		String jsonBody = getJson(url);
 
 		Map<String, Object> responseMap = gson.fromJson(jsonBody, Map.class);
 		Map<String, Object> dataElement = (Map<String, Object>) responseMap.get("data");
@@ -54,7 +63,7 @@ public final class BitcoinRequest implements MarketRequest {
 	@Override
 	@SuppressWarnings("unchecked")
 	public Map<PriceType, Double> getPricesByDate(LocalDate date) throws IOException {
-		String url = urlResolver.resolveParams(BITCOIN_PRICE_BY_DATE_URL, date);
+		String url = urlResolver.resolveParams(BITCOIN_PRICE_BY_DATE_URL, accountCurrency.getAcronym(), date, date, polygonApiKey);
 		String jsonBody = getJson(url);
 
 		Map<String, Object> topLevelObject = gson.fromJson(jsonBody, Map.class);

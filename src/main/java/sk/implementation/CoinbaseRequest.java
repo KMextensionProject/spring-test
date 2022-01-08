@@ -26,6 +26,7 @@ import org.springframework.stereotype.Component;
 
 import com.google.gson.Gson;
 
+import sk.abstract_interface.Currency;
 import sk.abstract_interface.ExchangeRequest;
 import sk.abstract_interface.URLResolver;
 
@@ -40,6 +41,9 @@ public class CoinbaseRequest implements ExchangeRequest {
 
 	@Autowired
 	private URLResolver urlResolver;
+
+	@Autowired
+	private Currency accountCurrency;
 
 	@Autowired
 	private HttpClient client;
@@ -65,8 +69,9 @@ public class CoinbaseRequest implements ExchangeRequest {
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<Map<String, Object>> getAllOrderFills() throws Exception {
-		List<Header> headers = computeRequestHeaders(COINBASE_ORDER_FILLS, HttpMethod.GET);
-		String responseBody = getJson(COINBASE_ORDER_FILLS, headers);
+		String url = urlResolver.resolveParams(COINBASE_ORDER_FILLS, accountCurrency.getAcronym());
+		List<Header> headers = computeRequestHeaders(url, HttpMethod.GET);
+		String responseBody = getJson(url, headers);
 		List<Map<String, Object>> fills = gson.fromJson(responseBody, List.class);
 
 		return fills;
