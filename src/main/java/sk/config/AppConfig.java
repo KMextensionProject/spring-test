@@ -22,7 +22,6 @@ import sk.abstract_interface.CacheNames;
 import sk.abstract_interface.Currency;
 
 // TODO: add custom exceptions
-// TODO: add logging mechanism
 // TODO: cache message resolver
 
 @Configuration
@@ -38,7 +37,7 @@ public class AppConfig {
 	}
 
 	@Bean
-	public Currency loadDefaultAccountCurrency(@Value("${currency}") String currency) {
+	public Currency loadDefaultAccountCurrency(@Value("${account.currency}") String currency) {
 		return Currency.valueOf(currency);
 	}
 
