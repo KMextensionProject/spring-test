@@ -9,12 +9,12 @@ import org.springframework.stereotype.Component;
 @Component
 public class URLResolver {
 
-	@Value("*")
+	@Value("$")
 	private String substitutionMark;
 
 	/**
 	 * 
-	 * @param url    - dynamicke casti su zamenene hviezdickou
+	 * @param url    - dynamicke casti su zamenene dolarom
 	 * @param params - ak je len jeden tak sa dosadi vsade
 	 */
 	public String resolveParams(String url, Object... params) {
