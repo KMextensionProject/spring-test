@@ -22,7 +22,7 @@ public class Resources {
 
 	public static final String APPLICATION_JSON = "application/json";
 
-	public static final String MESSAGES_MAP = "/messages.properties";
+	public static final String MESSAGES_MAP = "messages.properties";
 
 	private Resources() { }
 

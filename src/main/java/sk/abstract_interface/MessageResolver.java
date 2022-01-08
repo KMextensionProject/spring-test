@@ -1,6 +1,5 @@
 package sk.abstract_interface;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
 
@@ -11,7 +10,7 @@ public final class MessageResolver {
 
 	static {
 		try {
-			properties.load(new FileInputStream(Resources.MESSAGES_MAP));
+			properties.load(MessageResolver.class.getClassLoader().getResourceAsStream(Resources.MESSAGES_MAP));
 		} catch (IOException readingFailure) {
 			readingFailure.printStackTrace();
 		}
