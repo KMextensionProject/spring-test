@@ -21,6 +21,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.util.EntityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
@@ -43,7 +44,12 @@ public class CoinbaseRequest implements ExchangeRequest {
 	private URLResolver urlResolver;
 
 	@Autowired
+	@Qualifier("accountCurrency")
 	private Currency accountCurrency;
+
+	@Autowired
+	@Qualifier("tradingCurrency")
+	private Currency tradingCurrency;
 
 	@Autowired
 	private HttpClient client;
@@ -69,7 +75,7 @@ public class CoinbaseRequest implements ExchangeRequest {
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<Map<String, Object>> getAllOrderFills() throws Exception {
-		String url = urlResolver.resolveParams(COINBASE_ORDER_FILLS, accountCurrency.getAcronym());
+		String url = urlResolver.resolveParams(COINBASE_ORDER_FILLS, tradingCurrency.getAcronym(), accountCurrency.getAcronym());
 		List<Header> headers = computeRequestHeaders(url, HttpMethod.GET);
 		String responseBody = getJson(url, headers);
 		List<Map<String, Object>> fills = gson.fromJson(responseBody, List.class);
@@ -141,5 +147,4 @@ public class CoinbaseRequest implements ExchangeRequest {
 //		String jsonBody = StreamUtils.copyToString(body.getContent(), StandardCharsets.UTF_8);
 		return EntityUtils.toString(body, UTF_8);
 	}
-
 }

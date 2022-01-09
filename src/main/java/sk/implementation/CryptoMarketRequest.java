@@ -19,6 +19,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.util.EntityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -30,13 +31,18 @@ import sk.abstract_interface.PriceType;
 import sk.abstract_interface.URLResolver;
 
 @Component
-public final class BitcoinRequest implements MarketRequest {
+public final class CryptoMarketRequest implements MarketRequest {
 
 	@Autowired
 	private URLResolver urlResolver;
 
 	@Autowired
+	@Qualifier("accountCurrency")
 	private Currency accountCurrency;
+
+	@Autowired
+	@Qualifier("tradingCurrency")
+	private Currency tradingCurrency;
 
 	@Autowired
 	private HttpClient client;
@@ -63,7 +69,11 @@ public final class BitcoinRequest implements MarketRequest {
 	@Override
 	@SuppressWarnings("unchecked")
 	public Map<PriceType, Double> getPricesByDate(LocalDate date) throws IOException {
-		String url = urlResolver.resolveParams(BITCOIN_PRICE_BY_DATE_URL, accountCurrency.getAcronym(), date, date, polygonApiKey);
+		// TODO: pick better names
+		String tcAcronym = tradingCurrency.getAcronym();
+		String acAcronym = accountCurrency.getAcronym();
+
+		String url = urlResolver.resolveParams(BITCOIN_PRICE_BY_DATE_URL, tcAcronym, acAcronym, date, date, polygonApiKey);
 		String jsonBody = getJson(url);
 
 		Map<String, Object> topLevelObject = gson.fromJson(jsonBody, Map.class);
