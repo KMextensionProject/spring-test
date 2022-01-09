@@ -26,11 +26,13 @@ public class Main {
 		ExchangeAccount exchange = context.getBean(CoinbaseAccount.class);
 		exchange.updateState();
 
-		System.out.println("Current bitcoin price: " + market.getCurrentPrice() + exchange.getAccountCurrency().getAcronym());
-		System.out.println("Bitcoin first day of week opening price: " + market.getWeekOpeningPrice() + getAccountCurrencyAcronym(exchange));
-		System.out.println("Bitcoin first day of week closing price: " + market.getWeekClosingPrice() + getAccountCurrencyAcronym(exchange));
-		System.out.println("Bitcoin first day of month opening price: " + market.getMonthOpeningPrice() + getAccountCurrencyAcronym(exchange));
-		System.out.println("Bitcoin first day of month closing price: " + market.getMonthClosingPrice() + getAccountCurrencyAcronym(exchange));
+		String tradingCurrencyName = exchange.getTradingCurrency().getName();
+
+		System.out.println("current " + tradingCurrencyName + " price: " + market.getCurrentPrice() + exchange.getAccountCurrency().getAcronym());
+		System.out.println(tradingCurrencyName + " first day of week opening price: " + market.getWeekOpeningPrice() + getAccountCurrencyAcronym(exchange));
+		System.out.println(tradingCurrencyName + " first day of week closing price: " + market.getWeekClosingPrice() + getAccountCurrencyAcronym(exchange));
+		System.out.println(tradingCurrencyName + " first day of month opening price: " + market.getMonthOpeningPrice() + getAccountCurrencyAcronym(exchange));
+		System.out.println(tradingCurrencyName + " first day of month closing price: " + market.getMonthClosingPrice() + getAccountCurrencyAcronym(exchange));
 		System.out.println();
 
 		System.out.println("Coinbase account id: " + exchange.getAccountId());
