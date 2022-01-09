@@ -36,8 +36,15 @@ public class AppConfig {
 		return HttpClientBuilder.create().build();
 	}
 
-	@Bean
+	@Bean(name = {"accountCurrency"})
 	public Currency loadDefaultAccountCurrency(@Value("${account.currency}") String currency) {
+		System.out.println("injecting account.currency");
+		return Currency.valueOf(currency);
+	}
+
+	@Bean(name = {"tradingCurrency"})
+	public Currency loadTradingCurrency(@Value("${trading.currency}") String currency) {
+		System.out.println("injecting trading.currency");
 		return Currency.valueOf(currency);
 	}
 

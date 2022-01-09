@@ -1,6 +1,7 @@
 package sk.abstract_interface;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 /**
  * dopisat podla coinbase api
@@ -12,7 +13,12 @@ public abstract class ExchangeAccount implements Refreshable {
 	protected String accountId;
 
 	@Autowired
-	protected Currency currency;
+	@Qualifier("accountCurrency")
+	protected Currency accountCurrency;
+
+	@Autowired
+	@Qualifier("tradingCurrency")
+	protected Currency tradingCurrency;
 
 	protected double balance;
 
@@ -26,8 +32,12 @@ public abstract class ExchangeAccount implements Refreshable {
 		return this.accountId;
 	}
 
-	public Currency getCurrency() {
-		return this.currency;
+	public Currency getAccountCurrency() {
+		return this.accountCurrency;
+	}
+
+	public Currency getTradingCurrency() {
+		return this.tradingCurrency;
 	}
 
 	public double getBalance() {

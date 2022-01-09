@@ -45,7 +45,7 @@ public class CoinbaseAccount extends ExchangeAccount {
 
 	@PostConstruct
 	private void initAccountState() throws Exception {
-		accountId = accountCache.getAccountIdByCurrency(currency);
+		accountId = accountCache.getAccountIdByCurrency(accountCurrency);
 		bestOrderBuyRate = computeThisYearBestOrderBuyRate();
 	}
 
