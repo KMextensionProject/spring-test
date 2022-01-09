@@ -2,8 +2,8 @@ package sk.implementation;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static sk.abstract_interface.Resources.APPLICATION_JSON;
-import static sk.abstract_interface.Resources.BITCOIN_PRICE_BY_DATE_URL;
-import static sk.abstract_interface.Resources.CURRENT_BITCOIN_PRICE_URL;
+import static sk.abstract_interface.Resources.CRYPTO_PRICE_BY_DATE_URL;
+import static sk.abstract_interface.Resources.CURRENT_CRYPTO_PRICE_URL;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -56,14 +56,17 @@ public final class CryptoMarketRequest implements MarketRequest {
 	@Override
 	@SuppressWarnings("unchecked")
 	public double getCurrentPrice() throws IOException {
-		String url = urlResolver.resolveParams(CURRENT_BITCOIN_PRICE_URL, accountCurrency.getAcronym());
+		String url = urlResolver.resolveParams(CURRENT_CRYPTO_PRICE_URL, tradingCurrency.getName());
 		String jsonBody = getJson(url);
 
 		Map<String, Object> responseMap = gson.fromJson(jsonBody, Map.class);
-		Map<String, Object> dataElement = (Map<String, Object>) responseMap.get("data");
-		String amountString = String.valueOf(dataElement.get("amount"));
+		Map<String, Object> marketData = (Map<String, Object>) responseMap.get("market_data");
+		Map<String, Object> currentPrices = (Map<String, Object>) marketData.get("current_price");
 
-		return Double.valueOf(amountString).doubleValue();
+		String currencyAcronym = getPolygonSupportedCurrencyAcronym().toLowerCase();
+		String currentPrice = currentPrices.get(currencyAcronym).toString();
+
+		return Double.valueOf(currentPrice);
 	}
 
 	@Override
@@ -71,9 +74,10 @@ public final class CryptoMarketRequest implements MarketRequest {
 	public Map<PriceType, Double> getPricesByDate(LocalDate date) throws IOException {
 		// TODO: pick better names
 		String tcAcronym = tradingCurrency.getAcronym();
-		String acAcronym = accountCurrency.getAcronym();
+//		String acAcronym = accountCurrency.getAcronym();
+		String acAcronym = getPolygonSupportedCurrencyAcronym();
 
-		String url = urlResolver.resolveParams(BITCOIN_PRICE_BY_DATE_URL, tcAcronym, acAcronym, date, date, polygonApiKey);
+		String url = urlResolver.resolveParams(CRYPTO_PRICE_BY_DATE_URL, tcAcronym, acAcronym, date, date, polygonApiKey);
 		String jsonBody = getJson(url);
 
 		Map<String, Object> topLevelObject = gson.fromJson(jsonBody, Map.class);
@@ -102,4 +106,19 @@ public final class CryptoMarketRequest implements MarketRequest {
 		return EntityUtils.toString(body, UTF_8);
 	}
 
+	// TODO: find better API than tradingview/polygon to remove this method
+	/**
+	 * Temporarily tightly coupled due to inability of polygon api to
+	 * provide any other crypto market prices in EUR except Bitcoin.
+	 * 
+	 * In such case, all needs to be set to dollar in order to compute
+	 * the correct market price percentage..
+	 */
+	private String getPolygonSupportedCurrencyAcronym() {
+		if (tradingCurrency.equals(Currency.BITCOIN)) {
+			return accountCurrency.getAcronym();
+		} else {
+			return Currency.DOLLAR.getAcronym();
+		}
+	}
 }
