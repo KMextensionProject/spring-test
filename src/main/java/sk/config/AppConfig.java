@@ -38,13 +38,11 @@ public class AppConfig {
 
 	@Bean(name = {"accountCurrency"})
 	public Currency loadDefaultAccountCurrency(@Value("${account.currency}") String currency) {
-		System.out.println("injecting account.currency");
 		return Currency.valueOf(currency);
 	}
 
 	@Bean(name = {"tradingCurrency"})
 	public Currency loadTradingCurrency(@Value("${trading.currency}") String currency) {
-		System.out.println("injecting trading.currency");
 		return Currency.valueOf(currency);
 	}
 
