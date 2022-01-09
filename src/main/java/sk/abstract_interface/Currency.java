@@ -18,4 +18,11 @@ public enum Currency {
 	public String getAcronym() {
 		return this.acronym;
 	}
+
+	/**
+	 * @return the lowercase enum name
+	 */
+	public String getName() {
+		return this.toString().toLowerCase();
+	}
 }
