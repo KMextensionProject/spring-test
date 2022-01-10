@@ -5,7 +5,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import sk.abstract_interface.AccountCache;
-import sk.abstract_interface.Currency;
 import sk.abstract_interface.ExchangeAccount;
 import sk.abstract_interface.ExchangeRequest;
 import sk.abstract_interface.Market;
@@ -26,36 +25,19 @@ public class ScheduledService {
 	private ExchangeRequest exchangeRequest;
 
 	@Scheduled(initialDelayString = "${scheduler.initial_task_delay}", fixedRateString = "${scheduler.fixed_task_rate}")
-	public void action() throws Exception {
-		System.out.println("scheduled task");
-
-		// update account's state = balance and so on
+	public void scheduledAction() throws Exception {
 		account.updateState();
 
 		if (account.getBalance() > 1) {
-			// get live market data
 			market.updateState();
 
-			// calculate percentage from these..
-			market.getCurrentPrice();
+			if (market.isSuitableForBuyOrder()) {
+				account.placeBuyOrder(account.getTradingCurrency(), account.getBalance());
+				String tradingAccountId = accountCache.getAccountIdByCurrency(account.getTradingCurrency());
 
-			market.getWeekOpeningPrice();
-			market.getMonthOpeningPrice();
-			market.getYearOpeningPrice();
-			market.getAllTimeHigh();
-
-			// if we can pass one of the conditions..
-			account.placeBuyOrder(Currency.BITCOIN, account.getBalance());
-
-			// get account id from cache
-			String btcAccountId = accountCache.getAccountIdByCurrency(Currency.BITCOIN);
-
-			// get current account balance by id
-			double btcAccountBalance = exchangeRequest.getAccountBalance(btcAccountId);
-			System.out.println(btcAccountBalance);
-
-			// TODO: add to account or somewhere the best buy of this year... it could be also retrieved by request..
-			// that means.. also implement year border
+				// then retrieve the trading account state
+				exchangeRequest.getAccountBalance(tradingAccountId);
+			}
 		}
 	}
 }
