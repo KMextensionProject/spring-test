@@ -39,4 +39,7 @@ public abstract class Market implements Refreshable {
 		return allTimeHigh;
 	}
 
+	public abstract boolean isSuitableForBuyOrder();
+
+	public abstract boolean isSuitableForSellOrder();
 }
