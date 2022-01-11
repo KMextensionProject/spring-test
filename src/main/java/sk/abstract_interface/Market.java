@@ -3,36 +3,35 @@ package sk.abstract_interface;
 public abstract class Market implements Refreshable {
 
 	protected double currentPrice;
-
-	protected double weekOpeningPrice;
-	protected double weekClosingPrice;
-	protected double monthOpeningPrice;
-	protected double monthClosingPrice;
-	protected double yearOpeningPrice;
+	protected double firstDayOfWeekOpeningPrice;
+	protected double firstDayOfWeekClosingPrice;
+	protected double firstDayOfMonthOpeningPrice;
+	protected double firstDayOfMonthClosingPrice;
+	protected double firstDayOfYearOpeningPrice;
 	protected double allTimeHigh;
 
 	public double getCurrentPrice() {
 		return currentPrice;
 	}
 
-	public double getWeekOpeningPrice() {
-		return weekOpeningPrice;
+	public double getFirstDayOfWeekOpeningPrice() {
+		return firstDayOfWeekOpeningPrice;
 	}
 
-	public double getWeekClosingPrice() {
-		return weekClosingPrice;
+	public double getFirstDayOfWeekClosingPrice() {
+		return firstDayOfWeekClosingPrice;
 	}
 
-	public double getMonthOpeningPrice() {
-		return monthOpeningPrice;
+	public double getFirstDayOfMonthOpeningPrice() {
+		return firstDayOfMonthOpeningPrice;
 	}
 
-	public double getMonthClosingPrice() {
-		return monthClosingPrice;
+	public double getFirstDayOfMonthClosingPrice() {
+		return firstDayOfMonthClosingPrice;
 	}
 
-	public double getYearOpeningPrice() {
-		return yearOpeningPrice;
+	public double getFirstDayOfYearOpeningPrice() {
+		return firstDayOfYearOpeningPrice;
 	}
 
 	public double getAllTimeHigh() {
