@@ -4,7 +4,6 @@ import static sk.abstract_interface.PriceType.CLOSING;
 import static sk.abstract_interface.PriceType.OPENING;
 
 import java.io.IOException;
-import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
@@ -60,16 +59,20 @@ public class CryptoMarket extends Market {
 	}
 
 	private LocalDate getFirstDayAdjusted(DateUnit dateUnit) {
-		LocalDate date = requestTime.getFirstDayOf(dateUnit);
+		LocalDate today = requestTime.getLocalDateUTC();
+		LocalDate resultDate = requestTime.getFirstDayOf(dateUnit);
+
+		// polygon cannot give opening and closing prices for current date,
+		// so that's when a day adjustment must take place.
 		switch (dateUnit) {
 		case WEEK:
-			return (DayOfWeek.MONDAY.equals(date.getDayOfWeek())) ? subtractOneDay(date) : date;
+			return (today.getDayOfWeek().equals(resultDate.getDayOfWeek())) ? subtractOneDay(resultDate) : resultDate;
 		case MONTH:
-			return (1 == date.getDayOfMonth()) ? subtractOneDay(date) : date;
+			return (today.getDayOfMonth() == resultDate.getDayOfMonth()) ? subtractOneDay(resultDate) : resultDate;
 		case YEAR:
-			return (1 == date.getDayOfYear()) ? subtractOneDay(date) : date;
+			return (today.getDayOfYear() == resultDate.getDayOfYear()) ? subtractOneDay(resultDate) : resultDate;
 		default:
-			return date;
+			return resultDate;
 		}
 	}
 
