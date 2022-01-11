@@ -27,6 +27,7 @@ import sk.abstract_interface.Currency;
 @ComponentScan(basePackages = "sk")
 public class AppConfig {
 
+	// TODO: specify default values and proper validation
 	@Bean(name = {"accountCurrency"})
 	public Currency loadDefaultAccountCurrency(@Value("${account.currency}") String currency) {
 		return Currency.valueOf(currency.toUpperCase());
