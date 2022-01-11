@@ -6,8 +6,18 @@ public enum Currency {
 	DOLLAR("USD"),
 
 	BITCOIN("BTC"),
+	POLKADOT("DOT"),
 	ETHEREUM("ETH"),
-	POLKADOT("DOT");
+	LITECOIN("LTC"),
+	CARDANO("ADA"),
+	EOS("EOS"),
+	XRP("XRP") {
+		@Override
+		public String getName() {
+			return "ripple";
+		}
+	},
+	DOGECOIN("DOGE");
 
 	private final String acronym;
 
