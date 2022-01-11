@@ -44,6 +44,12 @@ public abstract class ExchangeAccount implements Refreshable {
 		return this.balance;
 	}
 
+	public void updateBestOrderBuyRate(final double newRate) {
+		if (newRate < this.bestOrderBuyRate) {
+			this.bestOrderBuyRate = newRate;
+		}
+	}
+
 	public double getBestOrderBuyRate() {
 		return this.bestOrderBuyRate;
 	}
