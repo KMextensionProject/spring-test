@@ -14,6 +14,10 @@ public class RequestTime {
 		return ZonedDateTime.now(ZoneId.of("UTC")).toEpochSecond();
 	}
 
+	public LocalDate getLocalDateUTC() {
+		return LocalDate.now(ZoneId.of("UTC"));
+	}
+
 	public LocalDate getFirstDayOf(RequestTime.DateUnit dateUnit) {
 		LocalDate requestedDate = LocalDate.now(ZoneId.of("UTC"));
 		switch (dateUnit) {
