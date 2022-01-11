@@ -7,6 +7,7 @@ import sk.abstract_interface.AccountCache;
 import sk.abstract_interface.ExchangeAccount;
 import sk.abstract_interface.ExchangeRequest;
 import sk.abstract_interface.Market;
+import sk.bl.MarketPredicate;
 import sk.implementation.CoinbaseAccount;
 import sk.implementation.CoinbaseRequest;
 import sk.implementation.CryptoMarket;
@@ -26,13 +27,16 @@ public class Main {
 		ExchangeAccount exchange = context.getBean(CoinbaseAccount.class);
 		exchange.updateState();
 
+		MarketPredicate marketPredicate = context.getBean(MarketPredicate.class);
+
 		String tradingCurrencyName = exchange.getTradingCurrency().getName();
 
 		System.out.println("current " + tradingCurrencyName + " price: " + market.getCurrentPrice() + exchange.getAccountCurrency().getAcronym());
-		System.out.println(tradingCurrencyName + " first day of week opening price: " + market.getWeekOpeningPrice() + getAccountCurrencyAcronym(exchange));
-		System.out.println(tradingCurrencyName + " first day of week closing price: " + market.getWeekClosingPrice() + getAccountCurrencyAcronym(exchange));
-		System.out.println(tradingCurrencyName + " first day of month opening price: " + market.getMonthOpeningPrice() + getAccountCurrencyAcronym(exchange));
-		System.out.println(tradingCurrencyName + " first day of month closing price: " + market.getMonthClosingPrice() + getAccountCurrencyAcronym(exchange));
+		System.out.println(tradingCurrencyName + " first day of week opening price: " + market.getFirstDayOfWeekOpeningPrice() + getAccountCurrencyAcronym(exchange));
+		System.out.println(tradingCurrencyName + " first day of week closing price: " + market.getFirstDayOfWeekClosingPrice() + getAccountCurrencyAcronym(exchange));
+		System.out.println(tradingCurrencyName + " first day of month opening price: " + market.getFirstDayOfMonthOpeningPrice() + getAccountCurrencyAcronym(exchange));
+		System.out.println(tradingCurrencyName + " first day of month closing price: " + market.getFirstDayOfMonthClosingPrice() + getAccountCurrencyAcronym(exchange));
+		System.out.println(tradingCurrencyName + " first day of year opening price: " + market.getFirstDayOfYearOpeningPrice() + getAccountCurrencyAcronym(exchange));
 		System.out.println();
 
 		System.out.println("Coinbase account id: " + exchange.getAccountId());
@@ -47,6 +51,8 @@ public class Main {
 		System.out.println("The best filled buy order rate: " + exchange.getBestOrderBuyRate() + getAccountCurrencyAcronym(exchange));
 		System.out.println();
 
+		System.out.println("Is market state suitable for buy request: " + market.isSuitableForBuyOrder());
+		System.out.println(marketPredicate);
 		// close it!
 		((AnnotationConfigApplicationContext)context).close();
 	}
