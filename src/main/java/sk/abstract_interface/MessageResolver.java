@@ -3,7 +3,6 @@ package sk.abstract_interface;
 import java.io.IOException;
 import java.util.Properties;
 
-// TODO: fix this
 public final class MessageResolver {
 
 	private static Properties properties = new Properties();
