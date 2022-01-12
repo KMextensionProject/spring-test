@@ -4,6 +4,7 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 
 import org.springframework.stereotype.Component;
 
@@ -29,6 +30,28 @@ public class RequestDateTime {
 			return requestedDate.withDayOfYear(1);
 		}
 		return requestedDate;
+	}
+
+	public LocalDate getFirstDayAdjusted(DateUnit dateUnit) {
+		LocalDate today = getLocalDateUTC();
+		LocalDate resultDate = getFirstDayOf(dateUnit);
+
+		// polygon cannot give opening and closing prices for current date,
+		// so that's when a day adjustment must take place.
+		switch (dateUnit) {
+		case WEEK:
+			return (today.getDayOfWeek().equals(resultDate.getDayOfWeek())) ? subtractOneDay(resultDate) : resultDate;
+		case MONTH:
+			return (today.getDayOfMonth() == resultDate.getDayOfMonth()) ? subtractOneDay(resultDate) : resultDate;
+		case YEAR:
+			return (today.getDayOfYear() == resultDate.getDayOfYear()) ? subtractOneDay(resultDate) : resultDate;
+		default:
+			return resultDate;
+		}
+	}
+
+	private LocalDate subtractOneDay(LocalDate date) {
+		return date.minus(1L, ChronoUnit.DAYS);
 	}
 
 	public static enum DateUnit {
