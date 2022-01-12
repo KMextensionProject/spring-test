@@ -1,19 +1,25 @@
 package sk.bl;
 
+import static sk.abstract_interface.MessageResolver.resolveMessage;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
 import javax.annotation.PostConstruct;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import sk.abstract_interface.Market;
+import sk.exceptions.UnsupportedConfiguration;
 import sk.implementation.RequestDateTime.DateUnit;
 
 @Component
 public class MarketPredicate {
+
+	private static final Logger logger = Logger.getLogger(MarketPredicate.class);
 
 	@Value("-${buy_predicate.week:0}")
 	private int week;
@@ -28,7 +34,8 @@ public class MarketPredicate {
 
 	public void validateBuyPredicateSetting() {
 		if ((week + month + year) == 0) {
-			throw new IllegalStateException("no predicates specified");
+			logger.error(resolveMessage("unspecifiedPredicates"));
+			throw new UnsupportedConfiguration("Unspecified predicates.");
 		}
 	}
 
@@ -38,12 +45,15 @@ public class MarketPredicate {
 		Predicate<Market> yearPredicate = m -> false;
 
 		if (week != 0) {
+			logger.info(resolveMessage("predicate", "week", week));
 			weekPredicate = m -> getPercentageDifference(m.getCurrentPrice(), m.getFirstDayOfWeekOpeningPrice()) < week;
 		}
 		if (month != 0) {
+			logger.info(resolveMessage("predicate", "month", month));
 			monthPredicate = m -> getPercentageDifference(m.getCurrentPrice(), m.getFirstDayOfMonthOpeningPrice()) < month;
 		}
 		if (year != 0) {
+			logger.info(resolveMessage("predicate", "year", year));
 			yearPredicate = m -> getPercentageDifference(m.getCurrentPrice(), m.getFirstDayOfYearOpeningPrice()) < year;
 		}
 
