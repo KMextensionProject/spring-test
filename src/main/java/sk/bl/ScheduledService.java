@@ -24,6 +24,7 @@ public class ScheduledService {
 	@Autowired
 	private ExchangeRequest exchangeRequest;
 
+	// TODO: validate the user input
 	@Scheduled(initialDelayString = "${scheduler.initial_task_delay}", fixedRateString = "${scheduler.fixed_task_rate}")
 	public void scheduledAction() throws Exception {
 		account.updateState();
