@@ -1,5 +1,8 @@
 package sk.abstract_interface;
 
+import static sk.abstract_interface.MessageResolver.resolveMessage;
+
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -9,6 +12,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
  *
  */
 public abstract class ExchangeAccount implements Refreshable {
+
+	private static final Logger logger = Logger.getLogger(ExchangeAccount.class);
 
 	protected String accountId;
 
@@ -46,6 +51,7 @@ public abstract class ExchangeAccount implements Refreshable {
 
 	public void updateBestOrderBuyRate(final double newRate) {
 		if (newRate < this.bestOrderBuyRate) {
+			logger.info(resolveMessage("newBestBuyRate", newRate, accountCurrency.getAcronym(), tradingCurrency.getAcronym()));
 			this.bestOrderBuyRate = newRate;
 		}
 	}

@@ -1,5 +1,7 @@
 package sk.implementation;
 
+import static sk.abstract_interface.MessageResolver.resolveMessage;
+
 import java.time.Year;
 import java.time.ZonedDateTime;
 import java.util.Comparator;
@@ -47,6 +49,7 @@ public class CoinbaseAccount extends ExchangeAccount {
 	private void initAccountState() throws Exception {
 		accountId = accountCache.getAccountIdByCurrency(accountCurrency);
 		bestOrderBuyRate = computeThisYearBestOrderBuyRate();
+		logger.info(resolveMessage("initialBestBuyRate", bestOrderBuyRate, accountCurrency.getAcronym(), tradingCurrency.getAcronym()));
 	}
 
 	private double computeThisYearBestOrderBuyRate() throws Exception {
