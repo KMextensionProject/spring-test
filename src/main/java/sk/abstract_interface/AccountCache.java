@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -13,6 +14,8 @@ import sk.exceptions.MissingAccount;
 
 @Component
 public class AccountCache {
+
+	private static final Logger logger = Logger.getLogger(AccountCache.class);
 
 	@Autowired
 	private ExchangeRequest exchangeRequest;
@@ -32,7 +35,9 @@ public class AccountCache {
 			.findAny();
 
 		if (accountId.isEmpty()) {
-			throw new MissingAccount("accountNotFound", currency);
+			String logMessage = MessageResolver.resolveMessage("accountNotFound", currency);
+			logger.error(logMessage);
+			throw new MissingAccount(logMessage);
 		}
 
 		return accountId.get();

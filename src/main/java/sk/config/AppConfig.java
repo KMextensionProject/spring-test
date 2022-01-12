@@ -1,7 +1,10 @@
 package sk.config;
 
+import static sk.abstract_interface.MessageResolver.resolveMessage;
+
 import java.util.Arrays;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
@@ -27,15 +30,38 @@ import sk.abstract_interface.Currency;
 @ComponentScan(basePackages = "sk")
 public class AppConfig {
 
-	// TODO: specify default values and proper validation
+	private static final Logger logger = Logger.getLogger(AppConfig.class);
+
 	@Bean(name = {"accountCurrency"})
-	public Currency loadDefaultAccountCurrency(@Value("${account.currency}") String currency) {
-		return Currency.valueOf(currency.toUpperCase());
+	public Currency loadDefaultAccountCurrency(@Value("${account.currency:null}") String accountCurrency) {
+		Currency currency = null;
+		try {
+			currency = Currency.valueOf(accountCurrency.toUpperCase());
+			logger.info(resolveMessage("accountCurrencySet", currency));
+		} catch (Exception error) {
+			logCurrencyFault("emptyAccountCurrency", accountCurrency);
+		}
+		return currency;
 	}
 
 	@Bean(name = {"tradingCurrency"})
-	public Currency loadTradingCurrency(@Value("${trading.currency}") String currency) {
-		return Currency.valueOf(currency.toUpperCase());
+	public Currency loadTradingCurrency(@Value("${trading.currency:null}") String tradingCurrency) {
+		Currency currency = null;
+		try {
+			currency = Currency.valueOf(tradingCurrency.toUpperCase());
+			logger.info(resolveMessage("tradingCurrencySet", tradingCurrency));
+		} catch (Exception error) {
+			logCurrencyFault("emptyTradingCurrency", tradingCurrency);
+		}
+		return currency;
+	}
+
+	private void logCurrencyFault(String messageCode, String currency) {
+		if (currency.equals("null")) {
+			logger.error(resolveMessage(messageCode));
+		} else {
+			logger.error(resolveMessage("notSupportedCurrency", currency));
+		}
 	}
 
 	@Bean
