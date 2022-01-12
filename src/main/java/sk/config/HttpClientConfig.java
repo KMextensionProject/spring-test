@@ -5,6 +5,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.conn.routing.HttpRoute;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+import org.apache.log4j.Logger;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -13,9 +14,12 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableScheduling
 public class HttpClientConfig {
 
+	private static final Logger logger = Logger.getLogger(HttpClientConfig.class);
+
 	/*
 	 * TODO: extract the literal values to a separate enum
 	 * TODO: pick the most suitable connection limits
+	 * TODO: log those information at debug level
 	 */
 	@Bean
 	public PoolingHttpClientConnectionManager getPoolingHttpConnectionManager() {
