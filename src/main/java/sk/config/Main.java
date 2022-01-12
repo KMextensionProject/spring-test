@@ -7,7 +7,6 @@ import sk.abstract_interface.AccountCache;
 import sk.abstract_interface.ExchangeAccount;
 import sk.abstract_interface.ExchangeRequest;
 import sk.abstract_interface.Market;
-import sk.bl.MarketPredicate;
 import sk.implementation.CoinbaseAccount;
 import sk.implementation.CoinbaseRequest;
 import sk.implementation.CryptoMarket;
@@ -26,8 +25,6 @@ public class Main {
 
 		ExchangeAccount exchange = context.getBean(CoinbaseAccount.class);
 		exchange.updateState();
-
-		MarketPredicate marketPredicate = context.getBean(MarketPredicate.class);
 
 		String tradingCurrencyName = exchange.getTradingCurrency().getName();
 
@@ -52,7 +49,6 @@ public class Main {
 		System.out.println();
 
 		System.out.println("Is market state suitable for buy request: " + market.isSuitableForBuyOrder());
-		System.out.println(marketPredicate);
 		// close it!
 		((AnnotationConfigApplicationContext)context).close();
 	}
