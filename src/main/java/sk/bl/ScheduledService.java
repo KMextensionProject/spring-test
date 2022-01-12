@@ -9,7 +9,7 @@ import sk.abstract_interface.ExchangeAccount;
 import sk.abstract_interface.ExchangeRequest;
 import sk.abstract_interface.Market;
 
-@Component
+@Component // TODO: make this a service when the project type changes to webapp
 public class ScheduledService {
 
 	@Autowired
