@@ -49,7 +49,10 @@ public class CoinbaseAccount extends ExchangeAccount {
 	private void initAccountState() throws Exception {
 		accountId = accountCache.getAccountIdByCurrency(accountCurrency);
 		bestOrderBuyRate = computeThisYearBestOrderBuyRate();
-		logger.info(resolveMessage("initialBestBuyRate", bestOrderBuyRate, accountCurrency.getAcronym(), tradingCurrency.getAcronym()));
+		if (logger.isDebugEnabled()) {
+			logger.debug(resolveMessage("initialBestBuyRate", bestOrderBuyRate, 
+					accountCurrency.getAcronym(), tradingCurrency.getAcronym()));
+		}
 	}
 
 	private double computeThisYearBestOrderBuyRate() throws Exception {
