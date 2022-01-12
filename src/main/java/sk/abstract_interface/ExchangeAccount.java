@@ -7,9 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 /**
- * dopisat podla coinbase api
- * @author martom
- *
+ * 
  */
 public abstract class ExchangeAccount implements Refreshable {
 
@@ -51,7 +49,10 @@ public abstract class ExchangeAccount implements Refreshable {
 
 	public void updateBestOrderBuyRate(final double newRate) {
 		if (newRate < this.bestOrderBuyRate) {
-			logger.info(resolveMessage("newBestBuyRate", newRate, accountCurrency.getAcronym(), tradingCurrency.getAcronym()));
+			if (logger.isDebugEnabled()) {
+				logger.debug(resolveMessage("newBestBuyRate", newRate,
+						accountCurrency.getAcronym(), tradingCurrency.getAcronym()));
+			}
 			this.bestOrderBuyRate = newRate;
 		}
 	}
