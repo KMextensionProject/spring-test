@@ -55,7 +55,7 @@ public class CoinbaseRequest implements ExchangeRequest {
 	private HttpClient client;
 
 	@Autowired
-	private RequestTime requestTime;
+	private RequestDateTime requestTime;
 
 	@Autowired
 	private Gson gson;

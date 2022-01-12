@@ -8,7 +8,7 @@ import java.time.ZonedDateTime;
 import org.springframework.stereotype.Component;
 
 @Component
-public class RequestTime {
+public class RequestDateTime {
 
 	public long getEpochSecondsUTC() {
 		return ZonedDateTime.now(ZoneId.of("UTC")).toEpochSecond();
@@ -18,7 +18,7 @@ public class RequestTime {
 		return LocalDate.now(ZoneId.of("UTC"));
 	}
 
-	public LocalDate getFirstDayOf(RequestTime.DateUnit dateUnit) {
+	public LocalDate getFirstDayOf(DateUnit dateUnit) {
 		LocalDate requestedDate = LocalDate.now(ZoneId.of("UTC"));
 		switch (dateUnit) {
 		case WEEK:

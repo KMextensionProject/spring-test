@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 import sk.abstract_interface.Market;
 import sk.abstract_interface.PriceType;
 import sk.bl.MarketPredicate;
-import sk.implementation.RequestTime.DateUnit;
+import sk.implementation.RequestDateTime.DateUnit;
 
 @Component
 public class CryptoMarket extends Market {
@@ -27,7 +27,7 @@ public class CryptoMarket extends Market {
 	private MarketPredicate marketPredicate;
 
 	@Autowired
-	private RequestTime requestTime;
+	private RequestDateTime requestTime;
 
 	@Override
 	public void updateState() throws Exception {

@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import sk.abstract_interface.Market;
-import sk.implementation.RequestTime.DateUnit;
+import sk.implementation.RequestDateTime.DateUnit;
 
 @Component
 public class MarketPredicate {
