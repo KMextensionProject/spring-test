@@ -1,15 +1,20 @@
 package sk.implementation;
 
+import static sk.abstract_interface.MessageResolver.resolveMessage;
+
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 
+import org.apache.log4j.Logger;
 import org.springframework.stereotype.Component;
 
 @Component
 public class RequestDateTime {
+
+	private static final Logger logger = Logger.getLogger(RequestDateTime.class);
 
 	public long getEpochSecondsUTC() {
 		return ZonedDateTime.now(ZoneId.of("UTC")).toEpochSecond();
@@ -51,6 +56,9 @@ public class RequestDateTime {
 	}
 
 	private LocalDate subtractOneDay(LocalDate date) {
+		if (logger.isDebugEnabled()) {
+			logger.debug(resolveMessage("dateAdjusting", date));
+		}
 		return date.minus(1L, ChronoUnit.DAYS);
 	}
 
