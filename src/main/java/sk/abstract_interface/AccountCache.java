@@ -53,11 +53,11 @@ public class AccountCache {
 
 	@CacheEvict(value = CacheNames.ACCOUNTS_CACHE, allEntries = true, beforeInvocation = true)
 	public void dropAccountCache() {
-		// log
+		logger.info("ACCOUNTS_CACHE has been dropped");
 	}
 
 	@CacheEvict(value = CacheNames.ACCOUNT_ID_CACHE, allEntries = true, beforeInvocation = true)
 	public void dropAccountIDCache() {
-		// log
+		logger.info("ACCOUNT_ID_CACHE has been dropped");
 	}
 }
