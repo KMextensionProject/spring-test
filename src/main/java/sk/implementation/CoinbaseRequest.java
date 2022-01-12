@@ -1,25 +1,15 @@
 package sk.implementation;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static sk.abstract_interface.Resources.APPLICATION_JSON;
 import static sk.abstract_interface.Resources.COINBASE_ACCOUNTS_URL;
 import static sk.abstract_interface.Resources.COINBASE_ACCOUNT_BY_ID_URL;
 import static sk.abstract_interface.Resources.COINBASE_ORDER_FILLS;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.http.Header;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpHeaders;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
 import org.apache.http.message.BasicHeader;
-import org.apache.http.util.EntityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.env.Environment;
@@ -28,11 +18,12 @@ import org.springframework.stereotype.Component;
 import com.google.gson.Gson;
 
 import sk.abstract_interface.Currency;
+import sk.abstract_interface.DefaultHttpRequest;
 import sk.abstract_interface.ExchangeRequest;
 import sk.abstract_interface.URLResolver;
 
 @Component
-public class CoinbaseRequest implements ExchangeRequest {
+public class CoinbaseRequest extends DefaultHttpRequest implements ExchangeRequest {
 
 	@Autowired
 	private Environment environment;
@@ -50,9 +41,6 @@ public class CoinbaseRequest implements ExchangeRequest {
 	@Autowired
 	@Qualifier("tradingCurrency")
 	private Currency tradingCurrency;
-
-	@Autowired
-	private HttpClient client;
 
 	@Autowired
 	private RequestDateTime requestTime;
@@ -135,16 +123,4 @@ public class CoinbaseRequest implements ExchangeRequest {
 		return new ArrayList<>(defaultHeaders);
 	}
 
-	private String getJson(String url, List<Header> headers) throws ClientProtocolException, IOException {
-		HttpGet request = new HttpGet(url);
-		request.addHeader(HttpHeaders.ACCEPT, APPLICATION_JSON);
-		headers.forEach(request::addHeader);
-
-		HttpResponse response = client.execute(request);
-		HttpEntity body = response.getEntity();
-
-		// leaves the stream open when done with copying
-//		String jsonBody = StreamUtils.copyToString(body.getContent(), StandardCharsets.UTF_8);
-		return EntityUtils.toString(body, UTF_8);
-	}
 }
