@@ -20,7 +20,7 @@ import sk.golddigger.utils.MessageResolver;
  * metadata and all account identifiers based on its currency.
  * These are needed in order to perform quick account data lookup that are required
  * by exchange APIs.
- * <p> Internally, every map is created with initial capacity of 256 elements. </p>
+ * <p> Internally, every map is created with the initial capacity of 256 elements. </p>
  * 
  * @author mkrajcovic
  */

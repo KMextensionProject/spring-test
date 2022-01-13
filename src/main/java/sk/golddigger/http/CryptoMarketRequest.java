@@ -77,8 +77,8 @@ public final class CryptoMarketRequest extends DefaultHttpRequest implements Mar
 	}
 
 	/**
-	 * Retrieves the opening, closing, highest, lowest and other prices of the
-	 * configured trading currency for the specified date.
+	 * Retrieves the opening, closing, highest, lowest prices of the configured 
+	 * trading currency for the specified date.
 	 * <p>This method will not return any results if called with the current date,
 	 * by polygon API documentation, it will block until the values are present.
 	 * Logically all the data can not be present yet, and so the getCurrentPrice()
