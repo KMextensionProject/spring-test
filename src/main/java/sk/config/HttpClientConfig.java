@@ -1,5 +1,7 @@
 package sk.config;
 
+import static sk.abstract_interface.MessageResolver.resolveMessage;
+
 import org.apache.http.HttpHost;
 import org.apache.http.client.HttpClient;
 import org.apache.http.conn.routing.HttpRoute;
@@ -16,21 +18,12 @@ public class HttpClientConfig {
 
 	private static final Logger logger = Logger.getLogger(HttpClientConfig.class);
 
-	/*
-	 * TODO: extract the literal values to a separate enum
-	 * TODO: pick the most suitable connection limits
-	 * TODO: log those information at debug level
-	 */
-	@Bean
-	public PoolingHttpClientConnectionManager getPoolingHttpConnectionManager() {
-		PoolingHttpClientConnectionManager poolingHttpConnectionManager = new PoolingHttpClientConnectionManager();
-		poolingHttpConnectionManager.setMaxTotal(20);
-		poolingHttpConnectionManager.setDefaultMaxPerRoute(3);
+	private static final String LOCALHOST_URL = "http://localhost";
+	private static final int LOCALHOST_PORT = 8080;
 
-		HttpHost localhost = new HttpHost("http://localhost", 8080);
-		poolingHttpConnectionManager.setMaxPerRoute(new HttpRoute(localhost), 30);
-		return poolingHttpConnectionManager;
-	}
+	private static final int MAX_LOCALHOST_CONNECTIONS = 3;
+	private static final int MAX_ROUTE_CONNECTIONS = 3;
+	private static final int MAX_TOTAL_CONNECTIONS = 10;
 
 	@Bean
 	public HttpClient getHttpClient() {
@@ -39,4 +32,25 @@ public class HttpClientConfig {
 				.build();
 	}
 
+	@Bean
+	public PoolingHttpClientConnectionManager getPoolingHttpConnectionManager() {
+		PoolingHttpClientConnectionManager poolingHttpConnectionManager = new PoolingHttpClientConnectionManager();
+		poolingHttpConnectionManager.setMaxTotal(MAX_TOTAL_CONNECTIONS);
+		poolingHttpConnectionManager.setDefaultMaxPerRoute(MAX_ROUTE_CONNECTIONS);
+
+		HttpHost localhost = new HttpHost(LOCALHOST_URL, LOCALHOST_PORT);
+		poolingHttpConnectionManager.setMaxPerRoute(new HttpRoute(localhost), MAX_LOCALHOST_CONNECTIONS);
+
+		logConnectionPool();
+		return poolingHttpConnectionManager;
+	}
+
+	private void logConnectionPool() {
+		if (logger.isDebugEnabled()) {
+			logger.debug(resolveMessage("httpConnectionPool",
+					MAX_LOCALHOST_CONNECTIONS,
+					MAX_TOTAL_CONNECTIONS,
+					MAX_ROUTE_CONNECTIONS));
+		}
+	}
 }
