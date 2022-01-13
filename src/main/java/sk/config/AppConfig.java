@@ -21,9 +21,6 @@ import com.google.gson.GsonBuilder;
 import sk.abstract_interface.CacheNames;
 import sk.abstract_interface.Currency;
 
-// TODO: add custom exceptions
-// TODO: cache message resolver
-
 @Configuration
 @EnableCaching
 @PropertySource("classpath:account_defaults.properties")
@@ -74,8 +71,8 @@ public class AppConfig {
 		SimpleCacheManager cacheManager = new SimpleCacheManager();
 		cacheManager.setCaches(Arrays.asList(
 				new ConcurrentMapCache(CacheNames.ACCOUNTS_CACHE),
-				new ConcurrentMapCache(CacheNames.ACCOUNT_ID_CACHE),
-				new ConcurrentMapCache(CacheNames.MESSAGES_CACHE)));
+				new ConcurrentMapCache(CacheNames.ACCOUNT_ID_CACHE)));
+
 		return cacheManager;
 	}
 }
