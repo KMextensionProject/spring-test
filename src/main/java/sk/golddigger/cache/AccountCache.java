@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 import sk.golddigger.core.ExchangeRequest;
 import sk.golddigger.enums.Currency;
 import sk.golddigger.exceptions.MissingAccount;
-import sk.golddigger.utills.MessageResolver;
+import sk.golddigger.utils.MessageResolver;
 
 @Component
 public class AccountCache {

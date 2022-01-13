@@ -2,7 +2,7 @@ package sk.golddigger.http;
 
 import static sk.golddigger.enums.Resources.CRYPTO_PRICE_BY_DATE_URL;
 import static sk.golddigger.enums.Resources.CURRENT_CRYPTO_PRICE_URL;
-import static sk.golddigger.utills.MessageResolver.resolveMessage;
+import static sk.golddigger.utils.MessageResolver.resolveMessage;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -24,7 +24,7 @@ import sk.golddigger.core.MarketRequest;
 import sk.golddigger.enums.Currency;
 import sk.golddigger.enums.PriceType;
 import sk.golddigger.exceptions.UnsupportedConfiguration;
-import sk.golddigger.utills.URLResolver;
+import sk.golddigger.utils.URLResolver;
 
 @Component
 public final class CryptoMarketRequest extends DefaultHttpRequest implements MarketRequest {

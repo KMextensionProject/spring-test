@@ -20,8 +20,8 @@ import com.google.gson.Gson;
 import sk.golddigger.core.ExchangeRequest;
 import sk.golddigger.core.RequestDateTime;
 import sk.golddigger.enums.Currency;
-import sk.golddigger.utills.EncoderUtils;
-import sk.golddigger.utills.URLResolver;
+import sk.golddigger.utils.EncoderUtils;
+import sk.golddigger.utils.URLResolver;
 
 @Component
 public class CoinbaseRequest extends DefaultHttpRequest implements ExchangeRequest {

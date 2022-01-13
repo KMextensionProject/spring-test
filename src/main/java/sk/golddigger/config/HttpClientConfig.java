@@ -1,6 +1,6 @@
 package sk.golddigger.config;
 
-import static sk.golddigger.utills.MessageResolver.resolveMessage;
+import static sk.golddigger.utils.MessageResolver.resolveMessage;
 
 import org.apache.http.HttpHost;
 import org.apache.http.client.HttpClient;

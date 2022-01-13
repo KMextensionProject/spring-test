@@ -1,6 +1,6 @@
 package sk.golddigger.core;
 
-import static sk.golddigger.utills.MessageResolver.resolveMessage;
+import static sk.golddigger.utils.MessageResolver.resolveMessage;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;

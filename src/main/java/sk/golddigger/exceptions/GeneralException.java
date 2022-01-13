@@ -1,6 +1,6 @@
 package sk.golddigger.exceptions;
 
-import sk.golddigger.utills.MessageResolver;
+import sk.golddigger.utils.MessageResolver;
 
 public class GeneralException extends RuntimeException {
 

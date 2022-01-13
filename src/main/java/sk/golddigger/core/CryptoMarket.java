@@ -2,7 +2,7 @@ package sk.golddigger.core;
 
 import static sk.golddigger.enums.PriceType.CLOSING;
 import static sk.golddigger.enums.PriceType.OPENING;
-import static sk.golddigger.utills.MessageResolver.resolveMessage;
+import static sk.golddigger.utils.MessageResolver.resolveMessage;
 
 import java.io.IOException;
 import java.util.List;

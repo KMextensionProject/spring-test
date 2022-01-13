@@ -1,4 +1,4 @@
-package sk.golddigger.utills;
+package sk.golddigger.utils;
 
 import java.util.Base64;
 

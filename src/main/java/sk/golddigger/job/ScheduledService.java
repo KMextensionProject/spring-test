@@ -1,6 +1,6 @@
 package sk.golddigger.job;
 
-import static sk.golddigger.utills.MessageResolver.resolveMessage;
+import static sk.golddigger.utils.MessageResolver.resolveMessage;
 
 import javax.annotation.PostConstruct;
 
