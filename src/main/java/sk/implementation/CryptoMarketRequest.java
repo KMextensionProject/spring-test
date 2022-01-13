@@ -1,5 +1,6 @@
 package sk.implementation;
 
+import static sk.abstract_interface.MessageResolver.resolveMessage;
 import static sk.abstract_interface.Resources.CRYPTO_PRICE_BY_DATE_URL;
 import static sk.abstract_interface.Resources.CURRENT_CRYPTO_PRICE_URL;
 
@@ -9,6 +10,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.PostConstruct;
+
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,9 +25,12 @@ import sk.abstract_interface.DefaultHttpRequest;
 import sk.abstract_interface.MarketRequest;
 import sk.abstract_interface.PriceType;
 import sk.abstract_interface.URLResolver;
+import sk.exceptions.UnsupportedConfiguration;
 
 @Component
 public final class CryptoMarketRequest extends DefaultHttpRequest implements MarketRequest {
+
+	private static final Logger logger = Logger.getLogger(CryptoMarketRequest.class);
 
 	@Autowired
 	private URLResolver urlResolver;
@@ -39,7 +46,7 @@ public final class CryptoMarketRequest extends DefaultHttpRequest implements Mar
 	@Autowired
 	private Gson gson;
 
-	@Value("${polygon.api_key}")
+	@Value("${polygon.api_key:null}")
 	private String polygonApiKey;
 
 	@Override
@@ -95,6 +102,17 @@ public final class CryptoMarketRequest extends DefaultHttpRequest implements Mar
 			return accountCurrency.getAcronym();
 		} else {
 			return Currency.DOLLAR.getAcronym();
+		}
+	}
+
+	// This validates polygon api key only whether it is present, 
+	// and not whether it is a valid api key !
+	@PostConstruct
+	private void validatePolygonApiKeyPresence() {
+		if (polygonApiKey.equals("null")) {
+			String missingPolygonApiKey = resolveMessage("missingPolygonApiKey");
+			logger.error(missingPolygonApiKey);
+			throw new UnsupportedConfiguration(missingPolygonApiKey);
 		}
 	}
 }
