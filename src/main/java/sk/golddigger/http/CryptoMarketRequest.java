@@ -26,6 +26,15 @@ import sk.golddigger.enums.PriceType;
 import sk.golddigger.exceptions.UnsupportedConfiguration;
 import sk.golddigger.utils.URLResolver;
 
+/**
+ * This class should be able to provide methods to specific market data related to
+ * configured trading currency.
+ * <p>Internally it uses coingecko and polygon REST API to retrieve crypto market prices. This requires
+ * the polygon API key to be specified inside this application's configuration properties file.
+ * One should be cautious about limits of the default token which allows 5 HTTP requests per minute.</p>
+ * 
+ * @author mkrajcovic
+ */
 @Component
 public final class CryptoMarketRequest extends DefaultHttpRequest implements MarketRequest {
 
@@ -48,6 +57,9 @@ public final class CryptoMarketRequest extends DefaultHttpRequest implements Mar
 	@Value("${polygon.api_key:null}")
 	private String polygonApiKey;
 
+	/**
+	 * Retrieves the current market price of the configured trading currency.
+	 */
 	@Override
 	@SuppressWarnings("unchecked")
 	public double getCurrentPrice() throws IOException {
@@ -64,6 +76,14 @@ public final class CryptoMarketRequest extends DefaultHttpRequest implements Mar
 		return Double.valueOf(currentPrice);
 	}
 
+	/**
+	 * Retrieves the opening, closing, highest, lowest and other prices of the
+	 * configured trading currency for the specified date.
+	 * <p>This method will not return any results if called with the current date,
+	 * by polygon API documentation, it will block until the values are present.
+	 * Logically all the data can not be present yet, and so the getCurrentPrice()
+	 * should be used instead.</p>
+	 */
 	@Override
 	@SuppressWarnings("unchecked")
 	public Map<PriceType, Double> getPricesByDate(LocalDate date) throws IOException {
