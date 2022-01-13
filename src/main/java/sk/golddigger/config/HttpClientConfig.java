@@ -12,6 +12,14 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
+/**
+ * This configuration class provides the HttpClient bean for executing HTTP
+ * requests. It is managed by the custom PoolingHttpClientConnectionManager
+ * that has preset certain parallel/concurrent connection boundaries.
+ * These connection limits should be reviewed.
+ * 
+ * @author mkrajcovic
+ */
 @Configuration
 @EnableScheduling
 public class HttpClientConfig {

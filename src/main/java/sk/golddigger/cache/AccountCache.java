@@ -15,6 +15,15 @@ import sk.golddigger.enums.Currency;
 import sk.golddigger.exceptions.MissingAccount;
 import sk.golddigger.utils.MessageResolver;
 
+/**
+ * This class represents a basic map based cache for storing all available account
+ * metadata and all account identifiers based on its currency.
+ * These are needed in order to perform quick account data lookup that are required
+ * by exchange APIs.
+ * <p> Internally, every map is created with initial capacity of 256 elements. </p>
+ * 
+ * @author mkrajcovic
+ */
 @Component
 public class AccountCache {
 
