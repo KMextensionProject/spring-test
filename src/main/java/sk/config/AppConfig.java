@@ -54,7 +54,7 @@ public class AppConfig {
 	}
 
 	private void logCurrencyFault(String messageCode, String currency) {
-		if (currency.equals("null")) {
+		if (currency.equals("null") || currency.isEmpty()) {
 			logger.error(resolveMessage(messageCode));
 		} else {
 			logger.error(resolveMessage("notSupportedCurrency", currency));

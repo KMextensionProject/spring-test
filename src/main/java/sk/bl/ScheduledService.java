@@ -70,7 +70,9 @@ public class ScheduledService {
 	}
 
 	private void validateTimingPresence() {
-		if (initDelay.equals("null") || fixedRate.equals("null")) {
+		if ((initDelay.equals("null") || initDelay.isEmpty()) 
+				|| (fixedRate.equals("null") || fixedRate.isEmpty())) {
+
 			String schedulerTimeAbsence = resolveMessage("schedulerTimeAbsence");
 			logger.error(schedulerTimeAbsence);
 			throw new UnsupportedConfiguration(schedulerTimeAbsence);
