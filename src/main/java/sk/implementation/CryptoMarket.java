@@ -1,5 +1,6 @@
 package sk.implementation;
 
+import static sk.abstract_interface.MessageResolver.resolveMessage;
 import static sk.abstract_interface.PriceType.CLOSING;
 import static sk.abstract_interface.PriceType.OPENING;
 
@@ -7,6 +8,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -17,6 +19,8 @@ import sk.implementation.RequestDateTime.DateUnit;
 
 @Component
 public class CryptoMarket extends Market {
+
+	private static final Logger logger = Logger.getLogger(CryptoMarket.class);
 
 	@Autowired
 	private CryptoMarketRequest cryptoMarketRequest;
@@ -59,7 +63,11 @@ public class CryptoMarket extends Market {
 	@Override
 	public boolean isSuitableForBuyOrder() {
 		marketPredicate.validateBuyPredicateSetting();
-		return marketPredicate.constructBuyPredicate().test(this);
+		boolean suitableForBuyOrder = marketPredicate.constructBuyPredicate().test(this);
+		if (logger.isDebugEnabled()) {
+			logger.debug(resolveMessage("predicateResult", suitableForBuyOrder));
+		}
+		return suitableForBuyOrder;
 	}
 
 	@Override
