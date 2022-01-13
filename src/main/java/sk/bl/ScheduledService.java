@@ -1,6 +1,13 @@
 package sk.bl;
 
+import static sk.abstract_interface.MessageResolver.resolveMessage;
+
+import javax.annotation.PostConstruct;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -8,9 +15,22 @@ import sk.abstract_interface.AccountCache;
 import sk.abstract_interface.ExchangeAccount;
 import sk.abstract_interface.ExchangeRequest;
 import sk.abstract_interface.Market;
+import sk.exceptions.UnsupportedConfiguration;
 
 @Component // TODO: make this a service when the project type changes to webapp
 public class ScheduledService {
+
+	private static final Logger logger = Logger.getLogger(ScheduledService.class);
+
+/* THERSE TWO PROPERTIES ARE NEEDED FOR PURPOSE OF USER INPUT VALIDATION.
+ * BECAUSE @Scheduled VALUES NEED TO BE CONSTANT EXPRESSION, THEY NEED
+ * TO BE EXPRESSED AT COMPILE TIME OR INJECTED DIRECTLY AS BELOW.
+ */
+	@Value("${scheduler.initial_task_delay:null}")
+	private String initDelay;
+
+	@Value("${scheduler.fixed_task_rate:null}")
+	private String fixedRate;
 
 	@Autowired
 	private Market market;
@@ -39,6 +59,29 @@ public class ScheduledService {
 				// then retrieve the trading account state
 				exchangeRequest.getAccountBalance(tradingAccountId);
 			}
+		}
+	}
+
+	@PostConstruct
+	private void validateSchedulerTimingConfiguration() {
+		validateTimingPresence();
+		validateTimingContent();
+		logger.info(resolveMessage("schedulerInit", initDelay, fixedRate));
+	}
+
+	private void validateTimingPresence() {
+		if (initDelay.equals("null") || fixedRate.equals("null")) {
+			String schedulerTimeAbsence = resolveMessage("schedulerTimeAbsence");
+			logger.error(schedulerTimeAbsence);
+			throw new UnsupportedConfiguration(schedulerTimeAbsence);
+		}
+	}
+
+	private void validateTimingContent() {
+		if (!(StringUtils.isNumeric(initDelay) && StringUtils.isNumeric(fixedRate))) {
+			String schedulerTimeError = resolveMessage("schedulerTimeError");
+			logger.error(schedulerTimeError);
+			throw new UnsupportedConfiguration(schedulerTimeError);
 		}
 	}
 }
