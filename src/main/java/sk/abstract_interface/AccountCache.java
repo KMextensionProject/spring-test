@@ -34,7 +34,7 @@ public class AccountCache {
 			.map(account -> getAccountId(account))
 			.findAny();
 
-		if (accountId.isEmpty()) {
+		if (!accountId.isPresent()) {
 			String logMessage = MessageResolver.resolveMessage("accountNotFound", currency);
 			logger.error(logMessage);
 			throw new MissingAccount(logMessage);
