@@ -44,16 +44,14 @@ public class MarketPredicate {
 		Predicate<Market> monthPredicate = m -> false;
 		Predicate<Market> yearPredicate = m -> false;
 
+		// TODO: zalogovat vypocitane hodnoty
 		if (week != 0) {
-			logger.info(resolveMessage("predicate", "week", week));
 			weekPredicate = m -> getPercentageDifference(m.getCurrentPrice(), m.getFirstDayOfWeekOpeningPrice()) < week;
 		}
 		if (month != 0) {
-			logger.info(resolveMessage("predicate", "month", month));
 			monthPredicate = m -> getPercentageDifference(m.getCurrentPrice(), m.getFirstDayOfMonthOpeningPrice()) < month;
 		}
 		if (year != 0) {
-			logger.info(resolveMessage("predicate", "year", year));
 			yearPredicate = m -> getPercentageDifference(m.getCurrentPrice(), m.getFirstDayOfYearOpeningPrice()) < year;
 		}
 
@@ -90,11 +88,17 @@ public class MarketPredicate {
 	@PostConstruct
 	private void initDateUnitList() {
 		registeredDateUnits = new ArrayList<>(3);
-		if (week != 0)
+		if (week != 0) {
 			registeredDateUnits.add(DateUnit.WEEK);
-		if (month != 0)
+			logger.info(resolveMessage("predicate", "week", week));
+		}
+		if (month != 0) {
 			registeredDateUnits.add(DateUnit.MONTH);
-		if (year != 0)
+			logger.info(resolveMessage("predicate", "month", month));
+		}
+		if (year != 0) {
 			registeredDateUnits.add(DateUnit.YEAR);
+			logger.info(resolveMessage("predicate", "year", year));
+		}
 	}
 }
