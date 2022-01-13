@@ -61,7 +61,7 @@ public class CoinbaseAccount extends ExchangeAccount {
 		List<Map<String, Object>> fills = accountRequest.getAllOrderFills();
 
 		if (logger.isDebugEnabled()) {
-			logger.debug(fills);
+			logger.debug(resolveMessage("accountFills", accountCurrency.getName(), fills));
 		}
 
 		if (!fills.isEmpty()) {
