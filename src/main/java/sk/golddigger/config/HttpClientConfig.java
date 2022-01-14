@@ -10,7 +10,6 @@ import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.log4j.Logger;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.scheduling.annotation.EnableScheduling;
 
 /**
  * This configuration class provides the HttpClient bean for executing HTTP
