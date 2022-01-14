@@ -27,11 +27,11 @@ import sk.golddigger.exceptions.UnsupportedConfiguration;
 import sk.golddigger.utils.URLResolver;
 
 /**
- * This class should be able to provide methods to specific market data related to
- * configured trading currency.
+ * This class should be able to provide methods to specific market data 
+ * related to the configured trading currency.
  * <p>Internally it uses coingecko and polygon REST API to retrieve crypto market prices. This requires
  * the polygon API key to be specified inside this application's configuration properties file.
- * One should be cautious about limits of the default token which allows 5 HTTP requests per minute.</p>
+ * One should be aware of limits that come with the default token allowing max 5 HTTP requests per minute.</p>
  * 
  * @author mkrajcovic
  */
@@ -110,10 +110,10 @@ public final class CryptoMarketRequest extends DefaultHttpRequest implements Mar
 
 	// TODO: find better API than tradingview/polygon to remove this method
 	/**
-	 * Temporarily tightly coupled due to inability of polygon api to
+	 * Temporarily tightly coupled due to inability of polygon API to
 	 * provide any other crypto market prices in EUR except Bitcoin.
 	 * 
-	 * In such case, all needs to be set to USD in order to compute
+	 * In such case, all need to be set to USD in order to compute
 	 * the correct market price percentage..
 	 */
 	private String getPolygonSupportedCurrencyAcronym() {

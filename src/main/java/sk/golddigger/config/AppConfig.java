@@ -23,9 +23,10 @@ import sk.golddigger.enums.Currency;
 
 /**
  * This is the base configuration class.
- * Usually provides beans based on user input via account settings properties file and does
- * validation on them. This is the case if such beans are required among multiple components.
- * If there is no such property that is required by multiple component classes, the component
+ * Usually provides beans that are required among multiple component classes.
+ * If the bean injection depends on the user input, mostly via account settings
+ * properties file, then it also does the validation on them. If there is no
+ * such property that is required by multiple components, than the component
  * class itself is responsible for its property injection and validation.
  * 
  * @author mkrajcovic
