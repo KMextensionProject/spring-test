@@ -12,6 +12,13 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.SchedulingConfigurer;
 import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 
+/**
+ * This configuration class enables task scheduling managed by custom
+ * {@link ScheduledExecutorService} with pool size defined by the
+ * {@code THREAD_POOL_SIZE} property.
+ * 
+ * @author mkrajcovic
+ */
 @Configuration
 @EnableScheduling
 public class TaskSchedulerConfig implements SchedulingConfigurer {
