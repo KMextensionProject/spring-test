@@ -25,7 +25,7 @@ public class TaskSchedulerConfig implements SchedulingConfigurer {
 
 	private static final Logger logger = Logger.getLogger(TaskSchedulerConfig.class);
 
-	private static final int THREAD_POOL_SIZE = 2;
+	private static final int THREAD_POOL_SIZE = 1;
 
 	@Override
 	public void configureTasks(ScheduledTaskRegistrar taskRegistrar) {
