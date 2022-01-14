@@ -38,7 +38,7 @@ public class CryptoMarket extends Market {
 
 	// TODO: find a better way to express this
 	private void updateOpeningAndClosingPrices() throws IOException {
-		List<DateUnit> registeredDateUnits = marketPredicate.getRegisteredDateUnits();
+		List<DateUnit> registeredDateUnits = marketPredicate.getPredicatedDateUnits();
 
 		if (registeredDateUnits.contains(DateUnit.WEEK)) {
 			Map<PriceType, Double> weekPrice = cryptoMarketRequest.getPricesByDate(requestTime.getFirstDayAdjusted(DateUnit.WEEK));
@@ -61,8 +61,7 @@ public class CryptoMarket extends Market {
 
 	@Override
 	public boolean isSuitableForBuyOrder() {
-		marketPredicate.validateBuyPredicateSetting();
-		boolean suitableForBuyOrder = marketPredicate.constructBuyPredicate().test(this);
+		boolean suitableForBuyOrder = marketPredicate.constructPredicate().test(this);
 		if (logger.isDebugEnabled()) {
 			logger.debug(resolveMessage("predicateResult", suitableForBuyOrder));
 		}
