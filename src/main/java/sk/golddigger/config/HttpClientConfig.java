@@ -21,7 +21,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
  * @author mkrajcovic
  */
 @Configuration
-@EnableScheduling
 public class HttpClientConfig {
 
 	private static final Logger logger = Logger.getLogger(HttpClientConfig.class);
