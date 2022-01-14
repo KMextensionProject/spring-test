@@ -66,7 +66,7 @@ public class ScheduledService {
 	private void validateSchedulerTimingConfiguration() {
 		validateTimingPresence();
 		validateTimingContent();
-		logger.info(resolveMessage("schedulerInit", initDelay, fixedRate));
+		logger.info(resolveMessage("scheduledTaskInit", initDelay, fixedRate));
 	}
 
 	private void validateTimingPresence() {
