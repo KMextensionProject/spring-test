@@ -7,6 +7,12 @@ import javax.crypto.spec.SecretKeySpec;
 
 import org.springframework.stereotype.Component;
 
+/**
+ * This class should provide encoding and hashing algorithms that may be
+ * required mainly by the Exchange API/platform or for whatever other needs.
+ * 
+ * @author mkrajcovic
+ */
 @Component
 public class EncoderUtils {
 
