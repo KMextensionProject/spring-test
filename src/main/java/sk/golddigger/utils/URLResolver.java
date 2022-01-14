@@ -4,7 +4,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 /**
+ * This components's main capability is to replaced the marked content of the
+ * URL by desired value.
  * 
+ * @see {@link sk.golddigger.enums.Resources} how the substitution marks are applied.
  */
 @Component
 public class URLResolver {
@@ -13,11 +16,26 @@ public class URLResolver {
 	private String substitutionMark;
 
 	/**
+	 * This method performs the dynamic URL part substitution.</br>
+	 * In order to make this functionality work, all parts of the original
+	 * URL that should be dynamically substituted <b>must</b> replace the
+	 * dynamic part with {@code substitutionMark} property defined by this
+	 * class.
 	 * 
-	 * @param url    - dynamicke casti su zamenene dolarom
-	 * @param params - ak je len jeden tak sa dosadi vsade
+	 * <pre class="code">
+	 * String url = "https://www.$.sk/$/info; // $ is the substitutionMark
+	 * String resolvedUrl = resolveParams(url, "golddigger", "page");
+	 * // returns https://www.golddigger.sk/page/info
+	 * </pre>
+	 * 
+	 * @param url - string with substitutionMarks
+	 * @param params - parameters to fill url substitutionMarks
 	 */
 	public String resolveParams(String url, Object... params) {
+		if (params == null) {
+			return url;
+		}
+
 		int paramsLength = params.length;
 		validateParamsSubstitution(url, paramsLength);
 
@@ -57,11 +75,16 @@ public class URLResolver {
 	}
 
 	/**
-	 * 
-	 * @param url
-	 * @return
+	 * This method extracts the http/s protocol
+	 * and gives back only the URL path.
+	 * @param url - url string
+	 * @return full URL path
 	 */
 	public String resolvePath(String url) {
+		if (url == null) {
+			return "";
+		}
+
 		StringBuilder path = new StringBuilder(url);
 		path.delete(0, 8); // remove http protocol prefix
 		int pathBeginning = path.indexOf("/");
