@@ -23,10 +23,10 @@ public class Main {
 		ExchangeRequest request = context.getBean(CoinbaseRequest.class);
 
 		Market market = context.getBean(CryptoMarket.class);
-//		market.updateState();
+		market.updateState();
 
 		ExchangeAccount exchange = context.getBean(CoinbaseAccount.class);
-//		exchange.updateState();
+		exchange.updateState();
 
 		MarketPredicate buyPredicate = context.getBean(BuyPredicate.class);
 
@@ -52,9 +52,7 @@ public class Main {
 		System.out.println("The best filled buy order rate: " + exchange.getBestOrderBuyRate() + getAccountCurrencyAcronym(exchange));
 		System.out.println();
 
-		System.out.println("Is market state suitable for buy request: " + buyPredicate.testMarket());
-		
-		sleep(15);
+		System.out.println("Is market state suitable for buy request: " + buyPredicate.testMarket(market));
 		
 		// close it!
 		((AnnotationConfigApplicationContext)context).close();

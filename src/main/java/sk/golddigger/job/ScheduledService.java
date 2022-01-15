@@ -16,7 +16,6 @@ import sk.golddigger.core.ExchangeAccount;
 import sk.golddigger.core.ExchangeRequest;
 import sk.golddigger.core.Market;
 import sk.golddigger.core.MarketPredicate;
-import sk.golddigger.enums.Currency;
 import sk.golddigger.exceptions.UnsupportedConfiguration;
 
 @Component // TODO: make this a service when the project type changes to webapp
@@ -38,7 +37,7 @@ public class ScheduledService {
 	private Market market;
 
 	@Autowired
-	private MarketPredicate marketPredicate;
+	private MarketPredicate buyPredicate;
 
 	@Autowired
 	private ExchangeAccount account;
@@ -52,25 +51,16 @@ public class ScheduledService {
 	// TODO: validate the user input
 	@Scheduled(initialDelayString = "${scheduler.initial_task_delay}", fixedRateString = "${scheduler.fixed_task_rate}")
 	public void scheduledAction() throws Exception {
-
 		account.updateState();
-
+		
 		if (account.getBalance() > 1) {
-
 			market.updateState();
 
-			// come up with better name
-			if (marketPredicate.testMarket()) {
-
-				// i can buy whatever and not what i have configured? check it out.. i think only balance is enough
+			boolean isSuitableForBuyOrder = buyPredicate.testMarket(market);
+			if (isSuitableForBuyOrder) {
 				account.placeBuyOrder(account.getBalance());
-				
 				String tradingAccountId = accountCache.getAccountIdByCurrency(account.getTradingCurrency());
-				double balance = exchangeRequest.getAccountBalance(tradingAccountId);
-				logger.info("my " + account.getTradingCurrency().getName() + " account has " + balance + account.getTradingCurrency().getAcronym());
-				
-				balance = exchangeRequest.getAccountBalance(account.getAccountId());
-				logger.info("my " + account.getAccountCurrency().getName() + " account has " + balance + account.getAccountCurrency().getAcronym());
+				exchangeRequest.getAccountBalance(tradingAccountId);
 			}
 		}
 	}
