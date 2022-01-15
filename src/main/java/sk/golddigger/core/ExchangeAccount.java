@@ -11,7 +11,7 @@ import sk.golddigger.enums.Currency;
 /**
  * 
  */
-public abstract class ExchangeAccount implements Refreshable {
+public abstract class ExchangeAccount implements Updatable {
 
 	private static final Logger logger = Logger.getLogger(ExchangeAccount.class);
 

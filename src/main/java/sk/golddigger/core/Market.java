@@ -1,6 +1,6 @@
 package sk.golddigger.core;
 
-public abstract class Market implements Refreshable {
+public abstract class Market implements Updatable {
 
 	protected double currentPrice;
 	protected double firstDayOfWeekOpeningPrice;
