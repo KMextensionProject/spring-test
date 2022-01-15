@@ -99,11 +99,11 @@ public class BuyPredicate extends MarketPredicate {
 	}
 
 	/**
-	 * performs and() on the underlying predicate
+	 * performs or() on the underlying predicate
 	 */
 	@Override
 	public void addPredicate(Predicate<Market> additionalPredicate) {
-		this.predicate.and(additionalPredicate);
+		this.predicate.or(additionalPredicate);
 	}
 
 	@Override
