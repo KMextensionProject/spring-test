@@ -43,7 +43,7 @@ public class AccountCache {
 
 		Optional<String> accountId = accounts.stream()
 			.filter(account -> hasRequiredCurrency(account, currency))
-			.map(account -> getAccountId(account))
+			.map(this::getAccountId)
 			.findAny();
 
 		if (!accountId.isPresent()) {
