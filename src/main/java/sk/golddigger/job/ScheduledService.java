@@ -53,7 +53,12 @@ public class ScheduledService {
 	public void scheduledAction() throws Exception {
 		account.updateState();
 		
+		System.out.println(buyPredicate.getClass());
+		
 		if (account.getBalance() > 1) {
+			
+			System.out.println(market.getClass());
+			
 			market.updateState();
 
 			boolean isSuitableForBuyOrder = buyPredicate.testMarket(market);
