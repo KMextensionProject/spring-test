@@ -1,6 +1,12 @@
 package sk.golddigger.http;
 
+import static sk.golddigger.utils.MessageResolver.resolveMessage;
+
 public class HttpMethod {
+
+	private HttpMethod() {
+		throw new IllegalStateException(resolveMessage("factoryClassInstantiationError", HttpMethod.class));
+	}
 
 	public static final String GET = "GET";
 	public static final String PUT = "PUT";

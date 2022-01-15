@@ -1,5 +1,7 @@
 package sk.golddigger.enums;
 
+import static sk.golddigger.utils.MessageResolver.resolveMessage;
+
 /**
  * zoznam url alebo lokacii sablon, ci inych zdrojov
  *
@@ -27,7 +29,8 @@ public class Resources {
 
 	public static final String MESSAGES_MAP = "messages.properties";
 
-	private Resources() { }
+	private Resources() {
+		throw new IllegalStateException(resolveMessage("factoryClassInstantiationError", Resources.class));
+	}
 
-	
 }

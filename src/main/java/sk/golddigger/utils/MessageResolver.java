@@ -30,6 +30,10 @@ public final class MessageResolver {
 		}
 	}
 
+	private MessageResolver() {
+		throw new IllegalStateException(resolveMessage("factoryClassInstantiationError", MessageResolver.class));
+	}
+
 	/**
 	 * Performs message lookup based on the specified key.
 	 * If it finds the message value, it then tries to fill in the
