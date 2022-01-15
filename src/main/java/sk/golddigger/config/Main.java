@@ -1,5 +1,6 @@
 package sk.golddigger.config;
 
+import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
@@ -14,6 +15,8 @@ import sk.golddigger.core.MarketPredicate;
 import sk.golddigger.http.CoinbaseRequest;
 
 public class Main {
+
+	private static final Logger logger = Logger.getLogger(Main.class);
 
 	public static void main(String[] args) throws Exception {	
 
@@ -32,27 +35,27 @@ public class Main {
 
 		String tradingCurrencyName = exchange.getTradingCurrency().getName();
 
-		System.out.println("current " + tradingCurrencyName + " price: " + market.getCurrentPrice() + exchange.getAccountCurrency().getAcronym());
-		System.out.println(tradingCurrencyName + " first day of week opening price: " + market.getFirstDayOfWeekOpeningPrice() + getAccountCurrencyAcronym(exchange));
-		System.out.println(tradingCurrencyName + " first day of week closing price: " + market.getFirstDayOfWeekClosingPrice() + getAccountCurrencyAcronym(exchange));
-		System.out.println(tradingCurrencyName + " first day of month opening price: " + market.getFirstDayOfMonthOpeningPrice() + getAccountCurrencyAcronym(exchange));
-		System.out.println(tradingCurrencyName + " first day of month closing price: " + market.getFirstDayOfMonthClosingPrice() + getAccountCurrencyAcronym(exchange));
-		System.out.println(tradingCurrencyName + " first day of year opening price: " + market.getFirstDayOfYearOpeningPrice() + getAccountCurrencyAcronym(exchange));
-		System.out.println();
+		logger.info("current " + tradingCurrencyName + " price: " + market.getCurrentPrice() + exchange.getAccountCurrency().getAcronym());
+		logger.info(tradingCurrencyName + " first day of week opening price: " + market.getFirstDayOfWeekOpeningPrice() + getAccountCurrencyAcronym(exchange));
+		logger.info(tradingCurrencyName + " first day of week closing price: " + market.getFirstDayOfWeekClosingPrice() + getAccountCurrencyAcronym(exchange));
+		logger.info(tradingCurrencyName + " first day of month opening price: " + market.getFirstDayOfMonthOpeningPrice() + getAccountCurrencyAcronym(exchange));
+		logger.info(tradingCurrencyName + " first day of month closing price: " + market.getFirstDayOfMonthClosingPrice() + getAccountCurrencyAcronym(exchange));
+		logger.info(tradingCurrencyName + " first day of year opening price: " + market.getFirstDayOfYearOpeningPrice() + getAccountCurrencyAcronym(exchange));
+		logger.info("-");
 
-		System.out.println("Coinbase account id: " + exchange.getAccountId());
-		System.out.println("Coinbase currency: " + exchange.getAccountCurrency());
-		System.out.println("Coinbase account balance: " + exchange.getBalance() + getAccountCurrencyAcronym(exchange));
-		System.out.println();
+		logger.info("Coinbase account id: " + exchange.getAccountId());
+		logger.info("Coinbase currency: " + exchange.getAccountCurrency());
+		logger.info("Coinbase account balance: " + exchange.getBalance() + getAccountCurrencyAcronym(exchange));
+		logger.info("-");
 
 		String tradingAccountId = accountCache.getAccountIdByCurrency(exchange.getTradingCurrency());
-		System.out.println("Trading account id: " + tradingAccountId);
-		System.out.println("Trading currency: " + exchange.getTradingCurrency());
-		System.out.println("Trading account balance: " + request.getAccountBalance(tradingAccountId) + getTradingCurrencyAcronym(exchange));
-		System.out.println("The best filled buy order rate: " + exchange.getBestOrderBuyRate() + getAccountCurrencyAcronym(exchange));
-		System.out.println();
+		logger.info("Trading account id: " + tradingAccountId);
+		logger.info("Trading currency: " + exchange.getTradingCurrency());
+		logger.info("Trading account balance: " + request.getAccountBalance(tradingAccountId) + getTradingCurrencyAcronym(exchange));
+		logger.info("The best filled buy order rate: " + exchange.getBestOrderBuyRate() + getAccountCurrencyAcronym(exchange));
+		logger.info("-");
 
-		System.out.println("Is market state suitable for buy request: " + buyPredicate.testMarket(market));
+		logger.info("Is market state suitable for buy request: " + buyPredicate.testMarket(market));
 		
 		// close it!
 		((AnnotationConfigApplicationContext)context).close();
@@ -66,11 +69,4 @@ public class Main {
 		return account.getAccountCurrency().getAcronym();
 	}
 
-	public static void sleep(int seconds) {
-		try {
-			Thread.sleep(seconds * 1000);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
 }
