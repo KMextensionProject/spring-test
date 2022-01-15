@@ -16,7 +16,7 @@ import sk.golddigger.exceptions.UnsupportedConfiguration;
 @Component
 public class BuyPredicate extends MarketPredicate {
 
-	private static final Logger logger = Logger.getLogger(MarketPredicate.class);
+	private static final Logger logger = Logger.getLogger(BuyPredicate.class);
 
 	private Predicate<Market> predicate;
 	private List<DateUnit> registeredDateUnits;
