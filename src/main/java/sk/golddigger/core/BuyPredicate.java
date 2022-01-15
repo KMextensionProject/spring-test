@@ -43,21 +43,22 @@ public class BuyPredicate extends MarketPredicate {
 	}
 
 	private void initDateUnitList() {
+		final String predicateMessageCode = "predicate";
 		registeredDateUnits = new ArrayList<>(3);
 		if (week != 0) {
 			registeredDateUnits.add(DateUnit.WEEK);
-			logger.info(resolveMessage("predicate", "week", week));
+			logger.info(resolveMessage(predicateMessageCode, "week", week));
 		}
 		if (month != 0) {
 			registeredDateUnits.add(DateUnit.MONTH);
-			logger.info(resolveMessage("predicate", "month", month));
+			logger.info(resolveMessage(predicateMessageCode, "month", month));
 		}
 		if (year != 0) {
 			registeredDateUnits.add(DateUnit.YEAR);
-			logger.info(resolveMessage("predicate", "year", year));
+			logger.info(resolveMessage(predicateMessageCode, "year", year));
 		}
 	}
-	
+
 	@Override
 	public boolean testMarket(Market market) {
 		return this.predicate.test(market);
