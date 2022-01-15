@@ -4,11 +4,13 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import sk.golddigger.cache.AccountCache;
+import sk.golddigger.core.BuyPredicate;
 import sk.golddigger.core.CoinbaseAccount;
 import sk.golddigger.core.CryptoMarket;
 import sk.golddigger.core.ExchangeAccount;
 import sk.golddigger.core.ExchangeRequest;
 import sk.golddigger.core.Market;
+import sk.golddigger.core.MarketPredicate;
 import sk.golddigger.http.CoinbaseRequest;
 
 public class Main {
@@ -21,10 +23,12 @@ public class Main {
 		ExchangeRequest request = context.getBean(CoinbaseRequest.class);
 
 		Market market = context.getBean(CryptoMarket.class);
-		market.updateState();
+//		market.updateState();
 
 		ExchangeAccount exchange = context.getBean(CoinbaseAccount.class);
-		exchange.updateState();
+//		exchange.updateState();
+
+		MarketPredicate buyPredicate = context.getBean(BuyPredicate.class);
 
 		String tradingCurrencyName = exchange.getTradingCurrency().getName();
 
@@ -48,7 +52,10 @@ public class Main {
 		System.out.println("The best filled buy order rate: " + exchange.getBestOrderBuyRate() + getAccountCurrencyAcronym(exchange));
 		System.out.println();
 
-		System.out.println("Is market state suitable for buy request: " + market.isSuitableForBuyOrder());
+		System.out.println("Is market state suitable for buy request: " + buyPredicate.testMarket());
+		
+		sleep(15);
+		
 		// close it!
 		((AnnotationConfigApplicationContext)context).close();
 	}

@@ -18,6 +18,7 @@ public class BuyPredicate extends MarketPredicate {
 
 	private static final Logger logger = Logger.getLogger(MarketPredicate.class);
 
+	private Predicate<Market> predicate;
 	private List<DateUnit> registeredDateUnits;
 
 	public BuyPredicate(
@@ -30,6 +31,8 @@ public class BuyPredicate extends MarketPredicate {
 
 		validateBuyPredicateSetting();
 		initDateUnitList();
+
+		this.predicate = constructPredicate();
 	}
 
 	private void validateBuyPredicateSetting() {
@@ -54,25 +57,10 @@ public class BuyPredicate extends MarketPredicate {
 			logger.info(resolveMessage("predicate", "year", year));
 		}
 	}
-
+	
 	@Override
-	public Predicate<Market> constructPredicate() {
-		Predicate<Market> weekPredicate = m -> false;
-		Predicate<Market> monthPredicate = m -> false;
-		Predicate<Market> yearPredicate = m -> false;
-
-		// TODO: zalogovat vypocitane hodnoty
-		if (week != 0) {
-			weekPredicate = m -> getPercentageDifference(m.getCurrentPrice(), m.getFirstDayOfWeekOpeningPrice()) < week;
-		}
-		if (month != 0) {
-			monthPredicate = m -> getPercentageDifference(m.getCurrentPrice(), m.getFirstDayOfMonthOpeningPrice()) < month;
-		}
-		if (year != 0) {
-			yearPredicate = m -> getPercentageDifference(m.getCurrentPrice(), m.getFirstDayOfYearOpeningPrice()) < year;
-		}
-
-		return weekPredicate.or(monthPredicate).or(yearPredicate);
+	public boolean testMarket() {
+		return this.predicate.test(market);
 	}
 
 	private int getPercentageDifference(double current, double opening) {
@@ -91,4 +79,35 @@ public class BuyPredicate extends MarketPredicate {
 			+ "year predicate: " + year + "%\n";
 	}
 
+	private Predicate<Market> constructPredicate() {
+		Predicate<Market> weekPredicate = m -> false;
+		Predicate<Market> monthPredicate = m -> false;
+		Predicate<Market> yearPredicate = m -> false;
+
+		// TODO: zalogovat vypocitane hodnoty
+		if (week != 0) {
+			weekPredicate = m -> getPercentageDifference(m.getCurrentPrice(), m.getFirstDayOfWeekOpeningPrice()) < week;
+		}
+		if (month != 0) {
+			monthPredicate = m -> getPercentageDifference(m.getCurrentPrice(), m.getFirstDayOfMonthOpeningPrice()) < month;
+		}
+		if (year != 0) {
+			yearPredicate = m -> getPercentageDifference(m.getCurrentPrice(), m.getFirstDayOfYearOpeningPrice()) < year;
+		}
+
+		return weekPredicate.or(monthPredicate).or(yearPredicate);
+	}
+
+	/**
+	 * performs and() on the underlying predicate
+	 */
+	@Override
+	public void addPredicate(Predicate<Market> additionalPredicate) {
+		this.predicate.and(additionalPredicate);
+	}
+
+	@Override
+	public Predicate<Market> getUnderlyingPredicate() {
+		return this.predicate;
+	}
 }

@@ -16,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import sk.golddigger.cache.AccountCache;
-import sk.golddigger.enums.Currency;
 import sk.golddigger.http.CoinbaseRequest;
 
 @Component
@@ -31,13 +30,14 @@ public class CoinbaseAccount extends ExchangeAccount {
 	private AccountCache accountCache;
 
 	@Override
-	public void placeSellOrder(Currency currency, double amount) {
+	public void placeSellOrder(double amount) {
 		throw new IllegalStateException();
 	}
 
 	@Override
-	public void placeBuyOrder(Currency currency, double amount) {
-		// TODO Auto-generated method stub
+	public void placeBuyOrder(double amount) {
+//		this.tradingCurrency; // this is the currency configured by user and this will be bought
+		logger.info("placing buy order for " + this.tradingCurrency.getName() + " in amount of " + amount + this.accountCurrency.getAcronym());
 	}
 
 	@Override
@@ -90,4 +90,5 @@ public class CoinbaseAccount extends ExchangeAccount {
 	private boolean hasBeenFilledInYear(Map<String, Object> fill, int year) {
 		return ZonedDateTime.parse(String.valueOf(fill.get("created_at"))).getYear() == year;
 	}
+
 }

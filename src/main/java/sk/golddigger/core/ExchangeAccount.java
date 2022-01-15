@@ -29,9 +29,9 @@ public abstract class ExchangeAccount implements Refreshable {
 
 	protected double bestOrderBuyRate;
 
-	public abstract void placeBuyOrder(Currency currency, double amount);
+	public abstract void placeBuyOrder(double accountCurrencyAmount);
 
-	public abstract void placeSellOrder(Currency currency, double amount);
+	public abstract void placeSellOrder(double accountCurrencyAmount);
 
 	public String getAccountId() {
 		return this.accountId;
