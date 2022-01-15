@@ -6,7 +6,6 @@ import static sk.golddigger.enums.PriceType.OPENING;
 import java.io.IOException;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -16,8 +15,6 @@ import sk.golddigger.http.CryptoMarketRequest;
 
 @Component
 public class CryptoMarket extends Market {
-
-	private static final Logger logger = Logger.getLogger(CryptoMarket.class);
 
 	@Autowired
 	private CryptoMarketRequest cryptoMarketRequest;
