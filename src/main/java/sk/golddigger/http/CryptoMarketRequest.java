@@ -6,7 +6,7 @@ import static sk.golddigger.utils.MessageResolver.resolveMessage;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
@@ -98,7 +98,7 @@ public final class CryptoMarketRequest extends DefaultHttpRequest implements Mar
 		Map<String, Object> topLevelObject = gson.fromJson(jsonBody, Map.class);
 		List<Map<String, Object>> data = (List<Map<String, Object>>) topLevelObject.get("results");
 
-		Map<PriceType, Double> result = new HashMap<>();
+		Map<PriceType, Double> result = new EnumMap<>(PriceType.class);
 
 		for (PriceType type : PriceType.values()) {
 			String price = String.valueOf(data.get(0).get(type.getMark()));
