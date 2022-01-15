@@ -62,7 +62,7 @@ public class RequestDateTime {
 		return date.minus(1L, ChronoUnit.DAYS);
 	}
 
-	public static enum DateUnit {
+	public enum DateUnit {
 		WEEK,
 		MONTH,
 		YEAR
