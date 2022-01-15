@@ -3,8 +3,6 @@ package sk.golddigger.core;
 import java.util.List;
 import java.util.function.Predicate;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 import sk.golddigger.core.RequestDateTime.DateUnit;
 
 public abstract class MarketPredicate {
@@ -12,9 +10,6 @@ public abstract class MarketPredicate {
 	protected int week;
 	protected int month;
 	protected int year;
-
-	@Autowired
-	protected Market market;
 
 	public int getWeekPredicatePercentage() {
 		return this.week;
@@ -32,7 +27,7 @@ public abstract class MarketPredicate {
 
 	public abstract Predicate<Market> getUnderlyingPredicate();
 
-	public abstract boolean testMarket();
+	public abstract boolean testMarket(Market market);
 
 	public abstract List<DateUnit> getPredicatedDateUnits();
 

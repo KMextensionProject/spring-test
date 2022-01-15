@@ -59,7 +59,7 @@ public class BuyPredicate extends MarketPredicate {
 	}
 	
 	@Override
-	public boolean testMarket() {
+	public boolean testMarket(Market market) {
 		return this.predicate.test(market);
 	}
 
