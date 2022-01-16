@@ -18,7 +18,7 @@ import sk.golddigger.core.Market;
 import sk.golddigger.core.MarketPredicate;
 import sk.golddigger.exceptions.UnsupportedConfiguration;
 
-@Component // TODO: make this a service when the project type changes to webapp
+@Component
 public class ScheduledService {
 
 	private static final Logger logger = Logger.getLogger(ScheduledService.class);
@@ -50,9 +50,9 @@ public class ScheduledService {
 
 	// TODO: validate the user input
 	@Scheduled(initialDelayString = "${scheduler.initial_task_delay}", fixedRateString = "${scheduler.fixed_task_rate}")
-	public void scheduledAction() throws Exception {
+	public void scheduledAction() {
 		account.updateState();
-		
+
 		if (account.getBalance() > 1) {
 			market.updateState();
 
