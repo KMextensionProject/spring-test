@@ -28,9 +28,16 @@ public class CryptoMarket extends Market {
 	@Override
 	public void updateState() {
 		this.currentPrice = cryptoMarketRequest.getCurrentPrice();
+		updateAllTimeHigh();
 		updateOpeningAndClosingPrices();
 
 		logMarketPrices();
+	}
+
+	private void updateAllTimeHigh() {
+		if (this.currentPrice > this.allTimeHigh) {
+			this.allTimeHigh = cryptoMarketRequest.getAllTimeHigh();
+		}
 	}
 
 	private void updateOpeningAndClosingPrices() {
