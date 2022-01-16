@@ -64,6 +64,7 @@ public final class CryptoMarketRequest extends DefaultHttpRequest implements Mar
 	public double getCurrentPrice() {
 		String url = urlResolver.resolveParams(CURRENT_CRYPTO_PRICE_URL, tradingCurrency.getName());
 		String jsonBody = getJson(url, null);
+		logPayload(jsonBody);
 
 		Map<String, Object> responseMap = gson.fromJson(jsonBody, Map.class);
 		Map<String, Object> marketData = (Map<String, Object>) responseMap.get("market_data");
@@ -91,6 +92,7 @@ public final class CryptoMarketRequest extends DefaultHttpRequest implements Mar
 
 		String url = urlResolver.resolveParams(CRYPTO_PRICE_BY_DATE_URL, tcAcronym, acAcronym, date, date, polygonApiKey);
 		String jsonBody = getJson(url, null);
+		logPayload(jsonBody);
 
 		Map<String, Object> topLevelObject = gson.fromJson(jsonBody, Map.class);
 		List<Map<String, Object>> data = (List<Map<String, Object>>) topLevelObject.get("results");

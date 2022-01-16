@@ -13,7 +13,9 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.util.EntityUtils;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import sk.golddigger.exceptions.ApplicationFailure;
@@ -24,6 +26,8 @@ import sk.golddigger.exceptions.ApplicationFailure;
  * @author mkrajcovic
  */
 public abstract class DefaultHttpRequest {
+
+	private static final Logger logger = Logger.getLogger(DefaultHttpRequest.class);
 
 	private HttpClient client;
 
@@ -48,16 +52,25 @@ public abstract class DefaultHttpRequest {
 			headers.forEach(request::addHeader);
 		}
 
-		String json;
+		return getJson(request);
+	}
+
+	private String getJson(HttpRequestBase request) {
 		try {
 			HttpResponse response = client.execute(request);
 			HttpEntity body = response.getEntity();
 
 			// copyToString() of StreamUtils leaves the stream open when done with copying
-			json = EntityUtils.toString(body, UTF_8);
+			return EntityUtils.toString(body, UTF_8);
 		} catch (IOException error) {
+			logger.error("Error: ", error);
 			throw new ApplicationFailure("httpRequestError", error);
 		}
-		return json;
+	}
+
+	protected void logPayload(String payload) {
+		if (logger.isDebugEnabled()) {
+			logger.debug(payload);
+		}
 	}
 }

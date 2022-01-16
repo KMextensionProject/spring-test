@@ -63,6 +63,7 @@ public class CoinbaseRequest extends DefaultHttpRequest implements ExchangeReque
 	public List<Map<String, Object>> getAllAccounts() {
 		List<Header> headers = computeRequestHeaders(COINBASE_ACCOUNTS_URL, HttpMethod.GET);
 		String responseBody = getJson(COINBASE_ACCOUNTS_URL, headers);
+		logPayload(responseBody);
 
 		return gson.fromJson(responseBody, List.class);
 	}
@@ -73,6 +74,7 @@ public class CoinbaseRequest extends DefaultHttpRequest implements ExchangeReque
 		String url = urlResolver.resolveParams(COINBASE_ORDER_FILLS, tradingCurrency.getAcronym(), accountCurrency.getAcronym());
 		List<Header> headers = computeRequestHeaders(url, HttpMethod.GET);
 		String responseBody = getJson(url, headers);
+		logPayload(responseBody);
 
 		return gson.fromJson(responseBody, List.class);
 	}
@@ -84,6 +86,7 @@ public class CoinbaseRequest extends DefaultHttpRequest implements ExchangeReque
 		List<Header> headers = computeRequestHeaders(url, HttpMethod.GET);
 		String responseBody = getJson(url, headers);
 		Map<String, Object> result = gson.fromJson(responseBody, Map.class);
+		logPayload(responseBody);
 
 		return Double.valueOf(String.valueOf(result.get("balance")));
 	}
