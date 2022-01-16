@@ -41,7 +41,7 @@ public class CoinbaseAccount extends ExchangeAccount {
 	}
 
 	@Override
-	public void updateState() throws Exception {
+	public void updateState() {
 		balance = accountRequest.getAccountBalance(accountId);
 	}
 
@@ -49,6 +49,7 @@ public class CoinbaseAccount extends ExchangeAccount {
 	private void initAccountState() throws Exception {
 		accountId = accountCache.getAccountIdByCurrency(accountCurrency);
 		bestOrderBuyRate = computeThisYearBestOrderBuyRate();
+
 		if (logger.isDebugEnabled()) {
 			logger.debug(resolveMessage("initialBestBuyRate", bestOrderBuyRate, 
 					accountCurrency.getAcronym(), tradingCurrency.getAcronym()));
@@ -61,7 +62,7 @@ public class CoinbaseAccount extends ExchangeAccount {
 		List<Map<String, Object>> fills = accountRequest.getAllOrderFills();
 
 		if (logger.isDebugEnabled()) {
-			logger.debug(resolveMessage("accountFills", accountCurrency.getName(), fills));
+			logger.debug(resolveMessage("accountFillsPayload", accountCurrency.getName(), fills));
 		}
 
 		if (!fills.isEmpty()) {
