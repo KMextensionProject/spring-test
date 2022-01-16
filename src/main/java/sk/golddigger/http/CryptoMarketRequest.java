@@ -87,9 +87,7 @@ public final class CryptoMarketRequest extends DefaultHttpRequest implements Mar
 	@Override
 	@SuppressWarnings("unchecked")
 	public Map<PriceType, Double> getPricesByDate(LocalDate date) throws IOException {
-		// TODO: pick better names
 		String tcAcronym = tradingCurrency.getAcronym();
-//		String acAcronym = accountCurrency.getAcronym();
 		String acAcronym = getPolygonSupportedCurrencyAcronym();
 
 		String url = urlResolver.resolveParams(CRYPTO_PRICE_BY_DATE_URL, tcAcronym, acAcronym, date, date, polygonApiKey);
