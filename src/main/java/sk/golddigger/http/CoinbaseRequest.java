@@ -59,9 +59,8 @@ public class CoinbaseRequest extends DefaultHttpRequest implements ExchangeReque
 	public List<Map<String, Object>> getAllAccounts() throws Exception {
 		List<Header> headers = computeRequestHeaders(COINBASE_ACCOUNTS_URL, HttpMethod.GET);
 		String responseBody = getJson(COINBASE_ACCOUNTS_URL, headers);
-		List<Map<String, Object>> result = gson.fromJson(responseBody, List.class);
 
-		return result;
+		return gson.fromJson(responseBody, List.class);
 	}
 
 	@Override
@@ -70,9 +69,8 @@ public class CoinbaseRequest extends DefaultHttpRequest implements ExchangeReque
 		String url = urlResolver.resolveParams(COINBASE_ORDER_FILLS, tradingCurrency.getAcronym(), accountCurrency.getAcronym());
 		List<Header> headers = computeRequestHeaders(url, HttpMethod.GET);
 		String responseBody = getJson(url, headers);
-		List<Map<String, Object>> fills = gson.fromJson(responseBody, List.class);
 
-		return fills;
+		return gson.fromJson(responseBody, List.class);
 	}
 
 	@Override
@@ -119,7 +117,7 @@ public class CoinbaseRequest extends DefaultHttpRequest implements ExchangeReque
 
 	private final List<Header> getDefaultHeaders() {
 		if (defaultHeaders == null) {
-			defaultHeaders = new ArrayList<Header>(5);
+			defaultHeaders = new ArrayList<>(5);
 			defaultHeaders.add(new BasicHeader("cb-access-key", environment.getProperty("COINBASE-API-KEY")));
 			defaultHeaders.add(new BasicHeader("cb-access-passphrase", environment.getProperty("COINBASE-API-PASSPHRASE")));
 		}
