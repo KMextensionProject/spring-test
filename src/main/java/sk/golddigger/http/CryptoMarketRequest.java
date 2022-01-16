@@ -4,7 +4,6 @@ import static sk.golddigger.enums.Resources.CRYPTO_PRICE_BY_DATE_URL;
 import static sk.golddigger.enums.Resources.CURRENT_CRYPTO_PRICE_URL;
 import static sk.golddigger.utils.MessageResolver.resolveMessage;
 
-import java.io.IOException;
 import java.time.LocalDate;
 import java.util.EnumMap;
 import java.util.List;
@@ -131,5 +130,6 @@ public final class CryptoMarketRequest extends DefaultHttpRequest implements Mar
 			logger.error(missingPolygonApiKey);
 			throw new UnsupportedConfiguration(missingPolygonApiKey);
 		}
+		logger.info(resolveMessage("polygonApiKeyValidation"));
 	}
 }
