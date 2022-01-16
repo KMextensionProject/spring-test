@@ -3,6 +3,7 @@ package sk.golddigger.http;
 import static sk.golddigger.enums.Resources.COINBASE_ACCOUNTS_URL;
 import static sk.golddigger.enums.Resources.COINBASE_ACCOUNT_BY_ID_URL;
 import static sk.golddigger.enums.Resources.COINBASE_ORDER_FILLS;
+import static sk.golddigger.utils.MessageResolver.resolveMessage;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -135,5 +136,6 @@ public class CoinbaseRequest extends DefaultHttpRequest implements ExchangeReque
 				|| environment.getProperty("COINBASE-API-PASSPHRASE") == null) {
 			throw new UnsupportedConfiguration("missingCoinbaseKeys");
 		}
+		logger.info(resolveMessage("coinbaseKeysValidation"));
 	}
 }
