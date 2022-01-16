@@ -108,10 +108,10 @@ public class CoinbaseRequest extends DefaultHttpRequest implements ExchangeReque
 	}
 
 	private final List<Header> addRequestHeaders(long timestamp, String signature) {
-		List<Header> defaultHeaders = getDefaultHeaders();
-		defaultHeaders.add(new BasicHeader("cb-access-sign", signature));
-		defaultHeaders.add(new BasicHeader("cb-access-timestamp", String.valueOf(timestamp)));
-		return defaultHeaders;
+		List<Header> headers = getDefaultHeaders();
+		headers.add(new BasicHeader("cb-access-sign", signature));
+		headers.add(new BasicHeader("cb-access-timestamp", String.valueOf(timestamp)));
+		return headers;
 	}
 
 	private final List<Header> getDefaultHeaders() {
