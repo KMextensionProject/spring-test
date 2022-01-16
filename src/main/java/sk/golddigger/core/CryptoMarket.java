@@ -2,10 +2,11 @@ package sk.golddigger.core;
 
 import static sk.golddigger.enums.PriceType.CLOSING;
 import static sk.golddigger.enums.PriceType.OPENING;
+import static sk.golddigger.utils.MessageResolver.resolveMessage;
 
-import java.io.IOException;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -16,6 +17,8 @@ import sk.golddigger.http.CryptoMarketRequest;
 @Component
 public class CryptoMarket extends Market {
 
+	private static final Logger logger = Logger.getLogger(CryptoMarket.class);
+
 	@Autowired
 	private CryptoMarketRequest cryptoMarketRequest;
 
@@ -23,13 +26,14 @@ public class CryptoMarket extends Market {
 	private RequestDateTime requestTime;
 
 	@Override
-	public void updateState() throws Exception {
+	public void updateState() {
 		this.currentPrice = cryptoMarketRequest.getCurrentPrice();
 		updateOpeningAndClosingPrices();
+
+		logMarketPrices();
 	}
 
-	// TODO: find a better way to express this
-	private void updateOpeningAndClosingPrices() throws IOException {
+	private void updateOpeningAndClosingPrices() {
 
 		Map<PriceType, Double> weekPrice = cryptoMarketRequest.getPricesByDate(requestTime.getFirstDayAdjusted(DateUnit.WEEK));
 		this.firstDayOfWeekOpeningPrice = weekPrice.get(OPENING);
@@ -44,4 +48,11 @@ public class CryptoMarket extends Market {
 		this.firstDayOfYearOpeningPrice = yearPrice.get(CLOSING);
 	}
 
+	private void logMarketPrices() {
+		if (logger.isDebugEnabled()) {
+			logger.debug(resolveMessage("weekPrices", firstDayOfWeekOpeningPrice, firstDayOfWeekClosingPrice));
+			logger.debug(resolveMessage("monthPrices", firstDayOfMonthOpeningPrice, firstDayOfMonthClosingPrice));
+			logger.debug(resolveMessage("yearPrices", firstDayOfYearOpeningPrice));
+		}
+	}
 }
