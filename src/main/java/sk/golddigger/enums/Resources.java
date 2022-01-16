@@ -7,7 +7,6 @@ import static sk.golddigger.utils.MessageResolver.resolveMessage;
  */
 public class Resources {
 
-//	nahrada za "https://api.coinbase.com/v2/prices/spot?currency=$";
 	public static final String CURRENT_CRYPTO_PRICE_URL = "https://api.coingecko.com/api/v3/coins/$?localization=false&tickers=false&market_data=true&community_data=false&developer_data=false&sparkline=false";
 
 	public static final String CRYPTO_PRICE_BY_DATE_URL = "https://api.polygon.io/v2/aggs/ticker/X:$$/range/1/day/$/$?adjusted=true&sort=asc&limit=120&apiKey=$";
