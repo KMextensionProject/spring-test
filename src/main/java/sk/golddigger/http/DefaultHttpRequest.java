@@ -38,7 +38,7 @@ public abstract class DefaultHttpRequest {
 	 * @throws ClientProtocolException in case of an HTTP protocol error
 	 * @throws IOException if there is some problem with reading InputStream from response
 	 */
-	protected String getJson(String url, List<Header> headers) throws ClientProtocolException, IOException {
+	protected String getJson(String url, List<Header> headers) throws IOException {
 		HttpGet request = new HttpGet(url);
 		request.addHeader(HttpHeaders.ACCEPT, APPLICATION_JSON);
 
@@ -49,8 +49,7 @@ public abstract class DefaultHttpRequest {
 		HttpResponse response = client.execute(request);
 		HttpEntity body = response.getEntity();
 
-		// leaves the stream open when done with copying
-//		String jsonBody = StreamUtils.copyToString(body.getContent(), StandardCharsets.UTF_8);
+		// copyToString() of StreamUtils leaves the stream open when done with copying
 		return EntityUtils.toString(body, UTF_8);
 	}
 
