@@ -102,7 +102,7 @@ public class CoinbaseRequest extends DefaultHttpRequest implements ExchangeReque
 
 	private final String computeSignature(long timestamp, String httpMethod, String requestPath, String jsonBody) {
 		String preHash = timestamp + httpMethod + requestPath + (jsonBody != null ? jsonBody : "");
-		byte[] decodedSecretKey = encoder.decodeBase64(environment.getProperty("COINBASE-API-SECRET").getBytes());
+		byte[] decodedSecretKey = encoder.decodeBase64(environment.getProperty("COINBASE-API-SECRET").getBytes()); // NO-SONAR (validation in @PostConstruct)
 		byte[] signature = encoder.encodeHmacSha256(decodedSecretKey, preHash.getBytes());
 
 		return new String(encoder.encodeBase64(signature));		
