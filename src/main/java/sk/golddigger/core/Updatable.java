@@ -1,11 +1,13 @@
 package sk.golddigger.core;
 
 /**
- * schopnost triedy aktualizovat ich stav v tomto api
- *
+ * Defines the contract for state update capability in this API.
  */
 public interface Updatable {
 
-	public void updateState() throws Exception;
+	/**
+	 * Updates the internal state of an implementor class.
+	 */
+	public void updateState();
 
 }
