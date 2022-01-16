@@ -6,6 +6,7 @@ import java.util.Properties;
 import org.apache.log4j.Logger;
 
 import sk.golddigger.enums.Resources;
+import sk.golddigger.exceptions.ApplicationFailure;
 
 /**
  * This class enables to have user friendly messages apart from the code and thus 
@@ -16,7 +17,7 @@ import sk.golddigger.enums.Resources;
  * @author mkrajcovic
  */
 public final class MessageResolver {
-	
+
 	private static final Logger logger = Logger.getLogger(MessageResolver.class);
 
 	private static Properties properties = new Properties();
@@ -26,7 +27,9 @@ public final class MessageResolver {
 			properties.load(MessageResolver.class.getClassLoader().getResourceAsStream(Resources.MESSAGES_MAP));
 			logger.info(resolveMessage("messageResolver"));
 		} catch (IOException readingFailure) {
-			readingFailure.printStackTrace();
+			String loadError = resolveMessage("messageResolverLoadError", readingFailure);
+			logger.error(loadError);
+			throw new ApplicationFailure(loadError);
 		}
 	}
 
