@@ -62,18 +62,33 @@ public final class CryptoMarketRequest extends DefaultHttpRequest implements Mar
 	@Override
 	@SuppressWarnings("unchecked")
 	public double getCurrentPrice() {
-		String url = urlResolver.resolveParams(CURRENT_CRYPTO_PRICE_URL, tradingCurrency.getName());
-		String jsonBody = getJson(url, null);
-		logPayload(jsonBody);
-
-		Map<String, Object> responseMap = gson.fromJson(jsonBody, Map.class);
-		Map<String, Object> marketData = (Map<String, Object>) responseMap.get("market_data");
+		Map<String, Object> marketData = getGeckoMarketData();
 		Map<String, Object> currentPrices = (Map<String, Object>) marketData.get("current_price");
 
 		String currencyAcronym = getPolygonSupportedCurrencyAcronym().toLowerCase();
 		String currentPrice = currentPrices.get(currencyAcronym).toString();
 
 		return Double.valueOf(currentPrice);
+	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public double getAllTimeHigh() {
+		String currency = accountCurrency.getAcronym().toLowerCase();
+		Map<String, Object> marketData = getGeckoMarketData();
+		Map<String, Object> ath = (Map<String, Object>) marketData.get("ath");
+
+		return Double.valueOf(ath.get(currency).toString());
+	}
+
+	@SuppressWarnings("unchecked")
+	private Map<String, Object> getGeckoMarketData() {
+		String url = urlResolver.resolveParams(CURRENT_CRYPTO_PRICE_URL, tradingCurrency.getName());
+		String jsonBody = getJson(url, null);
+		logPayload(jsonBody);
+
+		Map<String, Object> responseMap = gson.fromJson(jsonBody, Map.class);
+		return (Map<String, Object>) responseMap.get("market_data");
 	}
 
 	/**

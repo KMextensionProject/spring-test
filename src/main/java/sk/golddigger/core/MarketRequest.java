@@ -13,6 +13,8 @@ public interface MarketRequest {
 
 	public double getCurrentPrice();
 
+	public double getAllTimeHigh();
+
 	// come up with a better name
 	public Map<PriceType, Double> getPricesByDate(LocalDate date);
 
