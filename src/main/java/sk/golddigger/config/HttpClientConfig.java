@@ -52,11 +52,9 @@ public class HttpClientConfig {
 	}
 
 	private void logConnectionPool() {
-		if (logger.isDebugEnabled()) {
-			logger.debug(resolveMessage("httpConnectionPool",
-					MAX_LOCALHOST_CONNECTIONS,
-					MAX_TOTAL_CONNECTIONS,
-					MAX_ROUTE_CONNECTIONS));
-		}
+		logger.info(resolveMessage("httpConnectionPool",
+				MAX_LOCALHOST_CONNECTIONS,
+				MAX_TOTAL_CONNECTIONS,
+				MAX_ROUTE_CONNECTIONS));
 	}
 }
