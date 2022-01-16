@@ -1,7 +1,12 @@
 package sk.golddigger.utils;
 
+import static sk.golddigger.utils.MessageResolver.resolveMessage;
+
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
+import sk.golddigger.exceptions.ApplicationFailure;
 
 /**
  * This components's main capability is to replaced the marked content of the
@@ -11,6 +16,8 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class URLResolver {
+
+	private static final Logger logger = Logger.getLogger(URLResolver.class);
 
 	@Value("$")
 	private String substitutionMark;
@@ -54,8 +61,9 @@ public class URLResolver {
 		boolean isAboveOne = paramsLength > 1;
 
 		if (isEmpty || (isAboveOne && paramsLength != getNumberOfChars(url))) {
-			// TODO: use custom exception with message
-			throw new IllegalArgumentException("");
+			String validationMessage = resolveMessage("urlParamsSubstitutionInconsistency");
+			logger.error(validationMessage);
+			throw new ApplicationFailure(validationMessage);
 		}
 	}
 

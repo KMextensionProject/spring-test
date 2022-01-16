@@ -85,7 +85,6 @@ public class BuyPredicate extends MarketPredicate {
 		Predicate<Market> monthPredicate = m -> false;
 		Predicate<Market> yearPredicate = m -> false;
 
-		// TODO: zalogovat vypocitane hodnoty
 		if (week != 0) {
 			weekPredicate = m -> getPercentageDifference(m.getCurrentPrice(), m.getFirstDayOfWeekOpeningPrice()) < week;
 		}
