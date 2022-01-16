@@ -62,7 +62,7 @@ public final class CryptoMarketRequest extends DefaultHttpRequest implements Mar
 	 */
 	@Override
 	@SuppressWarnings("unchecked")
-	public double getCurrentPrice() throws IOException {
+	public double getCurrentPrice() {
 		String url = urlResolver.resolveParams(CURRENT_CRYPTO_PRICE_URL, tradingCurrency.getName());
 		String jsonBody = getJson(url, null);
 
@@ -86,7 +86,7 @@ public final class CryptoMarketRequest extends DefaultHttpRequest implements Mar
 	 */
 	@Override
 	@SuppressWarnings("unchecked")
-	public Map<PriceType, Double> getPricesByDate(LocalDate date) throws IOException {
+	public Map<PriceType, Double> getPricesByDate(LocalDate date) {
 		String tcAcronym = tradingCurrency.getAcronym();
 		String acAcronym = getPolygonSupportedCurrencyAcronym();
 

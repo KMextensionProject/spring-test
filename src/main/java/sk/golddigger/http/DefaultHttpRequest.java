@@ -15,6 +15,8 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.util.EntityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import sk.golddigger.exceptions.ApplicationFailure;
 /**
  * This is the top level HTTP request class providing fundamental and
  * conventional HTTP request methods not specific to any business model.
@@ -38,7 +40,7 @@ public abstract class DefaultHttpRequest {
 	 * @throws ClientProtocolException in case of an HTTP protocol error
 	 * @throws IOException if there is some problem with reading InputStream from response
 	 */
-	protected String getJson(String url, List<Header> headers) throws IOException {
+	protected String getJson(String url, List<Header> headers) {
 		HttpGet request = new HttpGet(url);
 		request.addHeader(HttpHeaders.ACCEPT, APPLICATION_JSON);
 
@@ -46,11 +48,16 @@ public abstract class DefaultHttpRequest {
 			headers.forEach(request::addHeader);
 		}
 
-		HttpResponse response = client.execute(request);
-		HttpEntity body = response.getEntity();
+		String json;
+		try {
+			HttpResponse response = client.execute(request);
+			HttpEntity body = response.getEntity();
 
-		// copyToString() of StreamUtils leaves the stream open when done with copying
-		return EntityUtils.toString(body, UTF_8);
+			// copyToString() of StreamUtils leaves the stream open when done with copying
+			json = EntityUtils.toString(body, UTF_8);
+		} catch (IOException error) {
+			throw new ApplicationFailure("httpRequestError", error);
+		}
+		return json;
 	}
-
 }

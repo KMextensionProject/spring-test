@@ -12,6 +12,7 @@ import javax.annotation.PostConstruct;
 
 import org.apache.http.Header;
 import org.apache.http.message.BasicHeader;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.env.Environment;
@@ -28,6 +29,8 @@ import sk.golddigger.utils.URLResolver;
 
 @Component
 public class CoinbaseRequest extends DefaultHttpRequest implements ExchangeRequest {
+
+	private static final Logger logger = Logger.getLogger(CoinbaseRequest.class);
 
 	@Autowired
 	private Environment environment;
@@ -56,7 +59,7 @@ public class CoinbaseRequest extends DefaultHttpRequest implements ExchangeReque
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<Map<String, Object>> getAllAccounts() throws Exception {
+	public List<Map<String, Object>> getAllAccounts() {
 		List<Header> headers = computeRequestHeaders(COINBASE_ACCOUNTS_URL, HttpMethod.GET);
 		String responseBody = getJson(COINBASE_ACCOUNTS_URL, headers);
 
@@ -65,7 +68,7 @@ public class CoinbaseRequest extends DefaultHttpRequest implements ExchangeReque
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<Map<String, Object>> getAllOrderFills() throws Exception {
+	public List<Map<String, Object>> getAllOrderFills() {
 		String url = urlResolver.resolveParams(COINBASE_ORDER_FILLS, tradingCurrency.getAcronym(), accountCurrency.getAcronym());
 		List<Header> headers = computeRequestHeaders(url, HttpMethod.GET);
 		String responseBody = getJson(url, headers);
@@ -75,7 +78,7 @@ public class CoinbaseRequest extends DefaultHttpRequest implements ExchangeReque
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public double getAccountBalance(String accountId) throws Exception {
+	public double getAccountBalance(String accountId) {
 		String url = urlResolver.resolveParams(COINBASE_ACCOUNT_BY_ID_URL, accountId);
 		List<Header> headers = computeRequestHeaders(url, HttpMethod.GET);
 		String responseBody = getJson(url, headers);
@@ -133,5 +136,4 @@ public class CoinbaseRequest extends DefaultHttpRequest implements ExchangeReque
 			throw new UnsupportedConfiguration("missingCoinbaseKeys");
 		}
 	}
-
 }
