@@ -33,12 +33,12 @@ public class AccountCache {
 	private ExchangeRequest exchangeRequest;
 
 	@Cacheable(value = CacheNames.ACCOUNTS_CACHE, sync = true)
-	public List<Map<String, Object>> getAllAccounts() throws Exception {
+	public List<Map<String, Object>> getAllAccounts() {
 		return exchangeRequest.getAllAccounts();
 	}
 
 	@Cacheable(value = CacheNames.ACCOUNT_ID_CACHE, sync = true)
-	public String getAccountIdByCurrency(Currency currency) throws Exception {
+	public String getAccountIdByCurrency(Currency currency) {
 		List<Map<String, Object>> accounts = getAllAccounts();
 
 		Optional<String> accountId = accounts.stream()

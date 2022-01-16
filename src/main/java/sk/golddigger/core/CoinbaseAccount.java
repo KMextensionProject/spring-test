@@ -46,7 +46,7 @@ public class CoinbaseAccount extends ExchangeAccount {
 	}
 
 	@PostConstruct
-	private void initAccountState() throws Exception {
+	private void initAccountState() {
 		accountId = accountCache.getAccountIdByCurrency(accountCurrency);
 		bestOrderBuyRate = computeThisYearBestOrderBuyRate();
 
@@ -56,7 +56,7 @@ public class CoinbaseAccount extends ExchangeAccount {
 		}
 	}
 
-	private double computeThisYearBestOrderBuyRate() throws Exception {
+	private double computeThisYearBestOrderBuyRate() {
 		double price = 0;
 		int year = Year.now().getValue();
 		List<Map<String, Object>> fills = accountRequest.getAllOrderFills();
