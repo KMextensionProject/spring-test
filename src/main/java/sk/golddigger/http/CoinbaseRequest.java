@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.PostConstruct;
+
 import org.apache.http.Header;
 import org.apache.http.message.BasicHeader;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +22,7 @@ import com.google.gson.Gson;
 import sk.golddigger.core.ExchangeRequest;
 import sk.golddigger.core.RequestDateTime;
 import sk.golddigger.enums.Currency;
+import sk.golddigger.exceptions.UnsupportedConfiguration;
 import sk.golddigger.utils.EncoderUtils;
 import sk.golddigger.utils.URLResolver;
 
@@ -122,6 +125,15 @@ public class CoinbaseRequest extends DefaultHttpRequest implements ExchangeReque
 		}
 		// default headers should contain only static elements without modification
 		return new ArrayList<>(defaultHeaders);
+	}
+
+	@PostConstruct
+	private void validateCoinbaseAPIEnv() {
+		if (environment.getProperty("COINBASE-API-KEY") == null
+				|| environment.getProperty("COINBASE-API-SECRET") == null
+				|| environment.getProperty("COINBASE-API-PASSPHRASE") == null) {
+			throw new UnsupportedConfiguration("missingCoinbaseKeys");
+		}
 	}
 
 }
