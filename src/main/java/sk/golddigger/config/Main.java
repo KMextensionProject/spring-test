@@ -34,13 +34,15 @@ public class Main {
 		MarketPredicate buyPredicate = context.getBean(BuyPredicate.class);
 
 		String tradingCurrencyName = exchange.getTradingCurrency().getName();
-
+		
+		logger.info("-");
 		logger.info("current " + tradingCurrencyName + " price: " + market.getCurrentPrice() + exchange.getAccountCurrency().getAcronym());
 		logger.info(tradingCurrencyName + " first day of week opening price: " + market.getFirstDayOfWeekOpeningPrice() + getAccountCurrencyAcronym(exchange));
 		logger.info(tradingCurrencyName + " first day of week closing price: " + market.getFirstDayOfWeekClosingPrice() + getAccountCurrencyAcronym(exchange));
 		logger.info(tradingCurrencyName + " first day of month opening price: " + market.getFirstDayOfMonthOpeningPrice() + getAccountCurrencyAcronym(exchange));
 		logger.info(tradingCurrencyName + " first day of month closing price: " + market.getFirstDayOfMonthClosingPrice() + getAccountCurrencyAcronym(exchange));
 		logger.info(tradingCurrencyName + " first day of year opening price: " + market.getFirstDayOfYearOpeningPrice() + getAccountCurrencyAcronym(exchange));
+		logger.info(tradingCurrencyName + " all time high price: " + market.getAllTimeHigh() + getAccountCurrencyAcronym(exchange));
 		logger.info("-");
 
 		logger.info("Coinbase account id: " + exchange.getAccountId());
