@@ -11,9 +11,9 @@ import sk.golddigger.enums.PriceType;
  */
 public interface MarketRequest {
 
-	public double getCurrentPrice() throws Exception;
+	public double getCurrentPrice();
 
 	// come up with a better name
-	public Map<PriceType, Double> getPricesByDate(LocalDate date) throws Exception;
+	public Map<PriceType, Double> getPricesByDate(LocalDate date);
 
 }

@@ -9,10 +9,10 @@ import java.util.Map;
  */
 public interface ExchangeRequest {
 
-	public List<Map<String, Object>> getAllAccounts() throws Exception;
+	public List<Map<String, Object>> getAllAccounts();
 
-	public List<Map<String, Object>> getAllOrderFills() throws Exception;
+	public List<Map<String, Object>> getAllOrderFills();
 
-	public double getAccountBalance(String accountId) throws Exception;
+	public double getAccountBalance(String accountId);
 
 }
