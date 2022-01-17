@@ -3,6 +3,7 @@ package sk.golddigger.http;
 import static sk.golddigger.enums.Resources.COINBASE_ACCOUNTS_URL;
 import static sk.golddigger.enums.Resources.COINBASE_ACCOUNT_BY_ID_URL;
 import static sk.golddigger.enums.Resources.COINBASE_ORDER_FILLS;
+import static sk.golddigger.enums.Resources.COINBASE_PLACE_ORDER_URL;
 import static sk.golddigger.utils.MessageResolver.resolveMessage;
 
 import java.util.ArrayList;
@@ -22,6 +23,7 @@ import org.springframework.stereotype.Component;
 import com.google.gson.Gson;
 
 import sk.golddigger.core.ExchangeRequest;
+import sk.golddigger.core.Order;
 import sk.golddigger.core.RequestDateTime;
 import sk.golddigger.enums.Currency;
 import sk.golddigger.exceptions.UnsupportedConfiguration;
@@ -61,7 +63,7 @@ public class CoinbaseRequest extends DefaultHttpRequest implements ExchangeReque
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<Map<String, Object>> getAllAccounts() {
-		List<Header> headers = computeRequestHeaders(COINBASE_ACCOUNTS_URL, HttpMethod.GET);
+		List<Header> headers = computeRequestHeaders(COINBASE_ACCOUNTS_URL, HttpMethod.GET, null);
 		String responseBody = getJson(COINBASE_ACCOUNTS_URL, headers);
 		logPayload(responseBody);
 
@@ -72,7 +74,7 @@ public class CoinbaseRequest extends DefaultHttpRequest implements ExchangeReque
 	@SuppressWarnings("unchecked")
 	public List<Map<String, Object>> getAllOrderFills() {
 		String url = urlResolver.resolveParams(COINBASE_ORDER_FILLS, tradingCurrency.getAcronym(), accountCurrency.getAcronym());
-		List<Header> headers = computeRequestHeaders(url, HttpMethod.GET);
+		List<Header> headers = computeRequestHeaders(url, HttpMethod.GET, null);
 		String responseBody = getJson(url, headers);
 		logPayload(responseBody);
 
@@ -83,7 +85,7 @@ public class CoinbaseRequest extends DefaultHttpRequest implements ExchangeReque
 	@SuppressWarnings("unchecked")
 	public double getAccountBalance(String accountId) {
 		String url = urlResolver.resolveParams(COINBASE_ACCOUNT_BY_ID_URL, accountId);
-		List<Header> headers = computeRequestHeaders(url, HttpMethod.GET);
+		List<Header> headers = computeRequestHeaders(url, HttpMethod.GET, null);
 		String responseBody = getJson(url, headers);
 		Map<String, Object> result = gson.fromJson(responseBody, Map.class);
 		logPayload(responseBody);
@@ -91,20 +93,30 @@ public class CoinbaseRequest extends DefaultHttpRequest implements ExchangeReque
 		return Double.valueOf(String.valueOf(result.get("balance")));
 	}
 
+	@Override
+	@SuppressWarnings("unchecked")
+	public String postOrder(Order order) {
+		String requestBody = gson.toJson(order);
+		logPayload(requestBody);
+
+		List<Header> headers = computeRequestHeaders(COINBASE_PLACE_ORDER_URL, HttpMethod.POST, requestBody);
+		String responseBody = postJson(COINBASE_PLACE_ORDER_URL, headers, requestBody);
+		Map<String, Object> result = gson.fromJson(responseBody, Map.class);
+		logPayload(responseBody);
+
+		return String.valueOf(result.get("id"));
+	}
+
 	/**
 	 * Tato metoda vytvori podpis z URL adresy a aktualneho casu v sekundach UTC.
 	 * Nasledne prida tento podpis s casom do zoznamu hlaviciek HTTP poziadavky.
 	 */
-	private List<Header> computeRequestHeaders(String url, String httpMethod) {
+	private List<Header> computeRequestHeaders(String url, String httpMethod, String jsonBody) {
 		String requestPath = urlResolver.resolvePath(url);
 		long timestamp = requestTime.getEpochSecondsUTC();
-		String signature = computeSignature(timestamp, httpMethod, requestPath);
+		String signature = computeSignature(timestamp, httpMethod, requestPath, jsonBody);
 
 		return addRequestHeaders(timestamp, signature);
-	}
-
-	private final String computeSignature(long timestamp, String httpMethod, String requestPath) {
-		return computeSignature(timestamp, httpMethod, requestPath, null);
 	}
 
 	private final String computeSignature(long timestamp, String httpMethod, String requestPath, String jsonBody) {

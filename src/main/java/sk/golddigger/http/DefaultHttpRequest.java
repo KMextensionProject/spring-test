@@ -11,11 +11,12 @@ import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +43,28 @@ public abstract class DefaultHttpRequest {
 	}
 
 	/**
+	 * Calls the HTTP POST request on the specified URL.
+	 * @param url
+	 * @param headers - list of headers required for request, may be null
+	 * @param body - body message to send
+	 * @return JSON response as string
+	 */
+	protected String postJson(String url, List<Header> headers, String body) {
+		HttpPost request = new HttpPost(url);
+		request.addHeader(HttpHeaders.ACCEPT, APPLICATION_JSON);
+		request.addHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON);
+
+		if (headers != null && !headers.isEmpty()) {
+			headers.forEach(request::addHeader);
+		}
+
+		HttpEntity entity = new StringEntity(body, UTF_8);
+		request.setEntity(entity);
+
+		return processRequest(request);
+	}
+
+	/**
 	 * Calls the HTTP GET request on the specified URL.
 	 * @param url
 	 * @param headers - list of headers required for request, may be null.
@@ -57,10 +80,10 @@ public abstract class DefaultHttpRequest {
 			headers.forEach(request::addHeader);
 		}
 
-		return getJson(request);
+		return processRequest(request);
 	}
 
-	private String getJson(HttpRequestBase request) {
+	private String processRequest(HttpRequestBase request) {
 		logRequest(request);
 		try {
 			HttpResponse response = client.execute(request);

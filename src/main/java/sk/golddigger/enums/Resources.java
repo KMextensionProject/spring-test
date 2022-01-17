@@ -21,6 +21,7 @@ public class Resources {
 	 */
 	public static final String COINBASE_ACCOUNTS_URL = "https://api.exchange.coinbase.com/accounts";
 	public static final String COINBASE_ORDER_FILLS = "https://api.exchange.coinbase.com/fills?product_id=$-$&profile_id=default&limit=100";
+	public static final String COINBASE_PLACE_ORDER_URL = "https://api.exchange.coinbase.com/orders";
 
 	public static final String APPLICATION_JSON = "application/json";
 

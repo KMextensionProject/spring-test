@@ -15,4 +15,5 @@ public interface ExchangeRequest {
 
 	public double getAccountBalance(String accountId);
 
+	public String postOrder(Order order);
 }
