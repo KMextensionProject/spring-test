@@ -29,6 +29,8 @@ public abstract class DefaultHttpRequest {
 
 	private static final Logger logger = Logger.getLogger(DefaultHttpRequest.class);
 
+	private static final int MAX_PAYLOAD_LENGTH = 5_000;
+
 	private HttpClient client;
 
 	@Autowired
@@ -40,7 +42,7 @@ public abstract class DefaultHttpRequest {
 	 * Calls the HTTP GET request on the specified URL.
 	 * @param url
 	 * @param headers - list of headers required for request, may be null.
-	 * @return JSON response as pretty-printed string
+	 * @return JSON response as string
 	 * @throws ClientProtocolException in case of an HTTP protocol error
 	 * @throws IOException if there is some problem with reading InputStream from response
 	 */
@@ -56,8 +58,10 @@ public abstract class DefaultHttpRequest {
 	}
 
 	private String getJson(HttpRequestBase request) {
+		logRequest(request);
 		try {
 			HttpResponse response = client.execute(request);
+			logResponse(response);
 			HttpEntity body = response.getEntity();
 
 			// copyToString() of StreamUtils leaves the stream open when done with copying
@@ -68,9 +72,24 @@ public abstract class DefaultHttpRequest {
 		}
 	}
 
+	private void logRequest(HttpRequestBase request) {
+		logger.info("Request: " + request);
+	}
+
+	private void logResponse(HttpResponse response) {
+		logger.info("Response: " + response);
+	}
+
 	protected void logPayload(String payload) {
-		if (logger.isDebugEnabled()) {
-			logger.debug(payload);
+		if (logger.isDebugEnabled() && payload != null) {
+			logger.debug("Payload: " + optimizePayload(payload));
 		}
+	}
+
+	private String optimizePayload(String payload) {
+		if (payload.length() > MAX_PAYLOAD_LENGTH) {
+			return payload.substring(0, MAX_PAYLOAD_LENGTH);
+		}
+		return payload;
 	}
 }
