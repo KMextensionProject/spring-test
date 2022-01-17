@@ -16,6 +16,9 @@ import sk.golddigger.core.ExchangeAccount;
 import sk.golddigger.core.ExchangeRequest;
 import sk.golddigger.core.Market;
 import sk.golddigger.core.MarketPredicate;
+import sk.golddigger.core.Order;
+import sk.golddigger.core.Order.OrderType;
+import sk.golddigger.core.Order.Side;
 import sk.golddigger.exceptions.UnsupportedConfiguration;
 
 @Component
@@ -57,11 +60,36 @@ public class ScheduledService {
 
 			boolean isSuitableForBuyOrder = buyPredicate.testMarket(market);
 			if (isSuitableForBuyOrder) {
-				account.placeBuyOrder(account.getBalance());
+
+				logger.info("Is market suitable for buy order: " + isSuitableForBuyOrder);
+
+				String productId = createProductId();
+
+				Order buyOrder = new Order.OrderCreator()
+						.setType(OrderType.MARKET)
+						.setProduct_id(productId)
+						.setFunds(10.00)
+						.setSide(Side.BUY)
+						.createOrder();
+
+				logger.info("Placing buy order..");
+				account.placeOrder(buyOrder);
+
+				account.updateBestOrderBuyRate(market.getCurrentPrice());
+
 				String tradingAccountId = accountCache.getAccountIdByCurrency(account.getTradingCurrency());
-				exchangeRequest.getAccountBalance(tradingAccountId);
+				double tradingBalance = exchangeRequest.getAccountBalance(tradingAccountId);
+				logger.info("New state on trading account: " + tradingBalance);
+
+				account.updateState();
+				logger.info("Main account balance: " + account.getBalance());
+				logger.info("The best filled buy order rate: " + account.getBestOrderBuyRate() + account.getAccountCurrency().getAcronym());
 			}
 		}
+	}
+
+	private String createProductId() {
+		return account.getTradingCurrency().getAcronym() + "-" + account.getAccountCurrency().getAcronym();
 	}
 
 	@PostConstruct
