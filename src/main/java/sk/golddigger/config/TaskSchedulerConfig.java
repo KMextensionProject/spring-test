@@ -4,6 +4,7 @@ import static sk.golddigger.utils.MessageResolver.resolveMessage;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ThreadFactory;
 
 import org.apache.log4j.Logger;
 import org.springframework.context.annotation.Bean;
@@ -36,6 +37,15 @@ public class TaskSchedulerConfig implements SchedulingConfigurer {
 
 	@Bean
 	public ScheduledExecutorService taskExecutor() {
-		return Executors.newScheduledThreadPool(THREAD_POOL_SIZE);
+		return Executors.newScheduledThreadPool(THREAD_POOL_SIZE, getDaemonThreadFactory());
+	}
+
+	@Bean
+	public ThreadFactory getDaemonThreadFactory() {
+		return task -> {
+			Thread thread = new Thread(task);
+			thread.setDaemon(true);
+			return thread;
+		};
 	}
 }
