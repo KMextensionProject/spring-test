@@ -30,14 +30,8 @@ public class CoinbaseAccount extends ExchangeAccount {
 	private AccountCache accountCache;
 
 	@Override
-	public void placeSellOrder(double amount) {
-		throw new IllegalStateException();
-	}
-
-	@Override
-	public void placeBuyOrder(double amount) {
-//		this.tradingCurrency; // this is the currency configured by user and this will be bought
-		logger.info("placing buy order for " + this.tradingCurrency.getName() + " in amount of " + amount + this.accountCurrency.getAcronym());
+	public String placeOrder(Order order) {
+		return accountRequest.postOrder(order);
 	}
 
 	@Override
@@ -91,5 +85,4 @@ public class CoinbaseAccount extends ExchangeAccount {
 	private boolean hasBeenFilledInYear(Map<String, Object> fill, int year) {
 		return ZonedDateTime.parse(String.valueOf(fill.get("created_at"))).getYear() == year;
 	}
-
 }

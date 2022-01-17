@@ -29,9 +29,7 @@ public abstract class ExchangeAccount implements Updatable {
 
 	protected double bestOrderBuyRate;
 
-	public abstract void placeBuyOrder(double accountCurrencyAmount);
-
-	public abstract void placeSellOrder(double accountCurrencyAmount);
+	public abstract String placeOrder(Order order);
 
 	public String getAccountId() {
 		return this.accountId;
