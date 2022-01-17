@@ -1,5 +1,7 @@
 package sk.golddigger.core;
 
+import static sk.golddigger.utils.MessageResolver.resolveMessage;
+
 public class Order {
 
 	private String profile_id;
@@ -146,7 +148,12 @@ public class Order {
 		}
 	}
 
-	public class TimeInForce {
+	public static class TimeInForce {
+
+		private TimeInForce() {
+			throw new IllegalStateException(resolveMessage("factoryClassInstantiationError", TimeInForce.class));
+		}
+
 		public static final String GTC = "GTC";
 		public static final String GTT = "GTT";
 		public static final String IOC = "IOC";
@@ -154,25 +161,45 @@ public class Order {
 		// add description
 	}
 
-	public class CancelAfter {
+	public static class CancelAfter {
+
+		private CancelAfter() {
+			throw new IllegalStateException(resolveMessage("factoryClassInstantiationError", CancelAfter.class));
+		}
+
 		public static final String MIN = "min";
 		public static final String HOUR = "hour";
 		public static final String DAY = "day";
 	}
 
-	public class OrderType {
+	public static class OrderType {
+
+		private OrderType() {
+			throw new IllegalStateException(resolveMessage("factoryClassInstantiationError", OrderType.class));
+		}
+
 		public static final String LIMIT = "limit";
 		public static final String MARKET = "market";
 	}
 
-	public class STP {
+	public static class STP {
+
+		private STP() {
+			throw new IllegalStateException(resolveMessage("factoryClassInstantiationError", STP.class));
+		}
+
 		public static final String DECREASE_AND_CANCEL = "dc";
 		public static final String CANCEL_OLDEST = "co";
 		public static final String CANCEL_NEWEST = "cn";
 		public static final String CANCEL_BOTH = "cb";
 	}
 
-	public class Side {
+	public static class Side {
+
+		private Side() {
+			throw new IllegalStateException(resolveMessage("factoryClassInstantiationError", Side.class));
+		}
+
 		public static final String BUY = "buy";
 		public static final String SELL = "sell";
 	}
