@@ -2,6 +2,7 @@ package sk.golddigger.http;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static sk.golddigger.enums.Resources.APPLICATION_JSON;
+import static sk.golddigger.utils.MessageResolver.resolveMessage;
 
 import java.io.IOException;
 import java.util.List;
@@ -10,6 +11,7 @@ import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -19,6 +21,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import sk.golddigger.exceptions.ApplicationFailure;
+import sk.golddigger.exceptions.ClientSideFailure;
 /**
  * This is the top level HTTP request class providing fundamental and
  * conventional HTTP request methods not specific to any business model.
@@ -62,6 +65,8 @@ public abstract class DefaultHttpRequest {
 		try {
 			HttpResponse response = client.execute(request);
 			logResponse(response);
+			handleReqsponseError(response);
+
 			HttpEntity body = response.getEntity();
 
 			// copyToString() of StreamUtils leaves the stream open when done with copying
@@ -80,16 +85,40 @@ public abstract class DefaultHttpRequest {
 		logger.info("Response: " + response);
 	}
 
-	protected void logPayload(String payload) {
-		if (logger.isDebugEnabled() && payload != null) {
-			logger.debug("Payload: " + optimizePayload(payload));
+	private void handleReqsponseError(HttpResponse response) {
+		int responseCode = response.getStatusLine().getStatusCode();
+
+		if (responseCode >= 500) {
+			String serverError = resolveMessage("responseError", responseCode, getResponsePayload(response));
+			logger.error(serverError);
+			throw new ApplicationFailure(serverError);
+		}
+
+		if (responseCode >= 400) {
+			String clientError = resolveMessage("responseError", responseCode, getResponsePayload(response));
+			logger.error(clientError);
+			throw new ClientSideFailure(clientError);
 		}
 	}
 
-	private String optimizePayload(String payload) {
+	protected void logPayload(String payload) {
+		if (logger.isDebugEnabled() && payload != null) {
+			logger.debug("Payload: " + optimizePayloadLength(payload));
+		}
+	}
+
+	private String optimizePayloadLength(String payload) {
 		if (payload.length() > MAX_PAYLOAD_LENGTH) {
 			return payload.substring(0, MAX_PAYLOAD_LENGTH);
 		}
 		return payload;
+	}
+
+	private String getResponsePayload(HttpResponse response) {
+		try {
+			return EntityUtils.toString(response.getEntity(), UTF_8);
+		} catch (IOException ex) {
+			return "";
+		}
 	}
 }
