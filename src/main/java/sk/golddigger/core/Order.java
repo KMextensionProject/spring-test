@@ -4,38 +4,28 @@ import static sk.golddigger.utils.MessageResolver.resolveMessage;
 
 public class Order {
 
-	private String profile_id;
-	private String product_id;
+	private String profileId;
+	private String productId;
 	private String type;
 	private String side;
 	private Double price;
 	private Double size;
-	private String time_in_force;
-	private Boolean post_only;
-	private String cancel_after;
+	private String timeInForce;
+	private Boolean postOnly;
+	private String cancelAfter;
 	private Double funds;
 	private String stp;
 
-	private Order(OrderCreator orderCreator) {
-		this.profile_id = (orderCreator.profile_id == null) ? "default profile_id" : orderCreator.profile_id;
-		this.product_id = orderCreator.product_id;
-		this.type = orderCreator.type;
-		this.side = orderCreator.side;
-		this.price = orderCreator.price;
-		this.size = orderCreator.size;
-		this.time_in_force = orderCreator.time_in_force;
-		this.post_only = orderCreator.post_only;
-		this.cancel_after = orderCreator.cancel_after;
-		this.funds = orderCreator.funds;
-		this.stp = orderCreator.stp;
+	private Order() {
+		
 	}
 
 	public String getProfileId() {
-		return profile_id;
+		return profileId;
 	}
 
 	public String getProductId() {
-		return product_id;
+		return productId;
 	}
 
 	public String getType() {
@@ -55,15 +45,15 @@ public class Order {
 	}
 
 	public String getTimeInForce() {
-		return time_in_force;
+		return timeInForce;
 	}
 
 	public Boolean getPostOnly() {
-		return post_only;
+		return postOnly;
 	}
 
 	public String getCancelAfter() {
-		return cancel_after;
+		return cancelAfter;
 	}
 
 	public Double getFunds() {
@@ -76,75 +66,65 @@ public class Order {
 
 	public static class OrderCreator {
 
-		private String profile_id;
-		private String product_id;
-		private String type;
-		private String side;
-		private Double price;
-		private Double size;
-		private String time_in_force;
-		private Boolean post_only;
-		private String cancel_after;
-		private Double funds;
-		private String stp;
+		private final Order order = new Order();
 
-		public OrderCreator setProfile_id(String profile_id) {
-			this.profile_id = profile_id;
+		public OrderCreator setProfile_id(String profileId) {
+			order.profileId = profileId;
 			return this;
 		}
 
-		public OrderCreator setProduct_id(String product_id) {
-			this.product_id = product_id;
+		public OrderCreator setProduct_id(String productId) {
+			order.productId = productId;
 			return this;
 		}
 
 		public OrderCreator setType(String type) {
-			this.type = type;
+			order.type = type;
 			return this;
 		}
 
 		public OrderCreator setSide(String side) {
-			this.side = side;
+			order.side = side;
 			return this;
 		}
 
 		public OrderCreator setPrice(Double price) {
-			this.price = price;
+			order.price = price;
 			return this;
 		}
 
 		public OrderCreator setSize(Double size) {
-			this.size = size;
+			order.size = size;
 			return this;
 		}
 
-		public OrderCreator setTime_in_force(String time_in_force) {
-			this.time_in_force = time_in_force;
+		public OrderCreator setTime_in_force(String timeInForce) {
+			order.timeInForce = timeInForce;
 			return this;
 		}
 
-		public OrderCreator setPost_only(Boolean post_only) {
-			this.post_only = post_only;
+		public OrderCreator setPost_only(Boolean postOnly) {
+			order.postOnly = postOnly;
 			return this;
 		}
 
-		public OrderCreator setCancel_after(String cancel_after) {
-			this.cancel_after = cancel_after;
+		public OrderCreator setCancelAfter(String cancelAfter) {
+			order.cancelAfter = cancelAfter;
 			return this;
 		}
 
 		public OrderCreator setFunds(Double funds) {
-			this.funds = funds;
+			order.funds = funds;
 			return this;
 		}
 
 		public OrderCreator setSelfTradePrevention(String stp) {
-			this.stp = stp;
+			order.stp = stp;
 			return this;
 		}
 
 		public Order createOrder() {
-			return new Order(this);
+			return order;
 		}
 	}
 
