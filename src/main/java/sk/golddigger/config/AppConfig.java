@@ -14,6 +14,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
@@ -34,6 +35,7 @@ import sk.golddigger.enums.Currency;
  */
 @Configuration
 @EnableCaching
+@EnableWebMvc
 @PropertySource("classpath:account_defaults.properties")
 @ComponentScan(basePackages = "sk")
 public class AppConfig {
