@@ -13,7 +13,7 @@ public class WebMvcConfig extends AbstractAnnotationConfigDispatcherServletIniti
 
 	@Override
 	protected Class<?>[] getServletConfigClasses() {
-		return null;
+		return null; // NOSONAR
 	}
 
 	@Override
