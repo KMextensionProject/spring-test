@@ -4,6 +4,8 @@ import static sk.golddigger.utils.MessageResolver.resolveMessage;
 
 public class Order {
 
+	private static final String INSTANTIATION_MESSAGE_CODE = "factoryClassInstantiationError";
+
 	private String profileId;
 	private String productId;
 	private String type;
@@ -131,7 +133,7 @@ public class Order {
 	public static class TimeInForce {
 
 		private TimeInForce() {
-			throw new IllegalStateException(resolveMessage("factoryClassInstantiationError", TimeInForce.class));
+			throw new IllegalStateException(resolveMessage(INSTANTIATION_MESSAGE_CODE, TimeInForce.class));
 		}
 
 		public static final String GTC = "GTC";
@@ -144,7 +146,7 @@ public class Order {
 	public static class CancelAfter {
 
 		private CancelAfter() {
-			throw new IllegalStateException(resolveMessage("factoryClassInstantiationError", CancelAfter.class));
+			throw new IllegalStateException(resolveMessage(INSTANTIATION_MESSAGE_CODE, CancelAfter.class));
 		}
 
 		public static final String MIN = "min";
@@ -155,7 +157,7 @@ public class Order {
 	public static class OrderType {
 
 		private OrderType() {
-			throw new IllegalStateException(resolveMessage("factoryClassInstantiationError", OrderType.class));
+			throw new IllegalStateException(resolveMessage(INSTANTIATION_MESSAGE_CODE, OrderType.class));
 		}
 
 		public static final String LIMIT = "limit";
@@ -165,7 +167,7 @@ public class Order {
 	public static class STP {
 
 		private STP() {
-			throw new IllegalStateException(resolveMessage("factoryClassInstantiationError", STP.class));
+			throw new IllegalStateException(resolveMessage(INSTANTIATION_MESSAGE_CODE, STP.class));
 		}
 
 		public static final String DECREASE_AND_CANCEL = "dc";
@@ -177,7 +179,7 @@ public class Order {
 	public static class Side {
 
 		private Side() {
-			throw new IllegalStateException(resolveMessage("factoryClassInstantiationError", Side.class));
+			throw new IllegalStateException(resolveMessage(INSTANTIATION_MESSAGE_CODE, Side.class));
 		}
 
 		public static final String BUY = "buy";
