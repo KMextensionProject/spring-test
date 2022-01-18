@@ -73,7 +73,7 @@ public class ScheduledService {
 						.createOrder();
 
 				logger.info("Placing buy order..");
-				account.placeOrder(buyOrder);
+//				account.placeOrder(buyOrder);
 
 				account.updateBestOrderBuyRate(market.getCurrentPrice());
 
