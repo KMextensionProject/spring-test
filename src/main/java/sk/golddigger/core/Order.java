@@ -60,7 +60,7 @@ public class Order {
 		return funds;
 	}
 
-	public String getStp() {
+	public String getSelfTradePrevention() {
 		return stp;
 	}
 
@@ -68,12 +68,12 @@ public class Order {
 
 		private final Order order = new Order();
 
-		public OrderCreator setProfile_id(String profileId) {
+		public OrderCreator setProfileId(String profileId) {
 			order.profileId = profileId;
 			return this;
 		}
 
-		public OrderCreator setProduct_id(String productId) {
+		public OrderCreator setProductId(String productId) {
 			order.productId = productId;
 			return this;
 		}
@@ -98,12 +98,12 @@ public class Order {
 			return this;
 		}
 
-		public OrderCreator setTime_in_force(String timeInForce) {
+		public OrderCreator setTimeInForce(String timeInForce) {
 			order.timeInForce = timeInForce;
 			return this;
 		}
 
-		public OrderCreator setPost_only(Boolean postOnly) {
+		public OrderCreator setPostOnly(Boolean postOnly) {
 			order.postOnly = postOnly;
 			return this;
 		}

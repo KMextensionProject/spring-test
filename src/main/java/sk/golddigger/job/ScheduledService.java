@@ -67,7 +67,7 @@ public class ScheduledService {
 
 				Order buyOrder = new Order.OrderCreator()
 						.setType(OrderType.MARKET)
-						.setProduct_id(productId)
+						.setProductId(productId)
 						.setFunds(10.00)
 						.setSide(Side.BUY)
 						.createOrder();
