@@ -68,12 +68,12 @@ public class ScheduledService {
 				Order buyOrder = new Order.OrderCreator()
 						.setType(OrderType.MARKET)
 						.setProductId(productId)
-						.setFunds(10.00)
+						.setFunds(1_000.00)
 						.setSide(Side.BUY)
 						.createOrder();
 
 				logger.info("Placing buy order..");
-//				account.placeOrder(buyOrder);
+				account.placeOrder(buyOrder);
 
 				account.updateBestOrderBuyRate(market.getCurrentPrice());
 
