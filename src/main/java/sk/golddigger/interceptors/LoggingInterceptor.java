@@ -17,11 +17,13 @@ public class LoggingInterceptor implements HandlerInterceptor {
 
 	private long requestStartTime;
 
+	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
 		this.requestStartTime = System.currentTimeMillis();
 		return true;
 	}
 
+	@Override
 	public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) {
 		String url = request.getRequestURL().toString();
 		long time = System.currentTimeMillis() - requestStartTime;
