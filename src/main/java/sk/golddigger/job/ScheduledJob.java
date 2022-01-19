@@ -53,38 +53,44 @@ public class ScheduledJob {
 
 	@Scheduled(initialDelayString = "${scheduler.initial_task_delay}", fixedRateString = "${scheduler.fixed_task_rate}")
 	public void scheduledAction() {
-		account.updateState();
 
-		if (account.getBalance() > 1) {
-			market.updateState();
+		if (SchedulerSwitch.isSwitchedOn()) {
+			logger.info("Scheduled job is running..");
+			account.updateState();
 
-			boolean isSuitableForBuyOrder = buyPredicate.testMarket(market);
-			if (isSuitableForBuyOrder) {
+			if (account.getBalance() > 1) {
+				market.updateState();
 
-				logger.info("Is market suitable for buy order: " + isSuitableForBuyOrder);
+				boolean isSuitableForBuyOrder = buyPredicate.testMarket(market);
+				if (isSuitableForBuyOrder) {
 
-				String productId = createProductId();
+					logger.info("Is market suitable for buy order: " + isSuitableForBuyOrder);
+					String productId = createProductId();
 
-				Order buyOrder = new Order.OrderCreator()
-						.setType(OrderType.MARKET)
-						.setProductId(productId)
-						.setFunds(1_000.00)
-						.setSide(Side.BUY)
-						.createOrder();
+					Order buyOrder = new Order.OrderCreator()
+							.setType(OrderType.MARKET)
+							.setProductId(productId)
+							.setFunds(1_000.00)
+							.setSide(Side.BUY)
+							.createOrder();
 
-				logger.info("Placing buy order..");
-				account.placeOrder(buyOrder);
+					logger.info("Placing buy order..");
+					account.placeOrder(buyOrder);
 
-				account.updateBestOrderBuyRate(market.getCurrentPrice());
+					account.updateBestOrderBuyRate(market.getCurrentPrice());
 
-				String tradingAccountId = accountCache.getAccountIdByCurrency(account.getTradingCurrency());
-				double tradingBalance = exchangeRequest.getAccountBalance(tradingAccountId);
-				logger.info("New state on trading account: " + tradingBalance);
+					String tradingAccountId = accountCache.getAccountIdByCurrency(account.getTradingCurrency());
+					double tradingBalance = exchangeRequest.getAccountBalance(tradingAccountId);
+					logger.info("New state on trading account: " + tradingBalance);
 
-				account.updateState();
-				logger.info("Main account balance: " + account.getBalance());
-				logger.info("The best filled buy order rate: " + account.getBestOrderBuyRate() + account.getAccountCurrency().getAcronym());
+					account.updateState();
+					logger.info("Main account balance: " + account.getBalance());
+					logger.info("The best filled buy order rate: " + account.getBestOrderBuyRate()
+						+ account.getAccountCurrency().getAcronym());
+				}
 			}
+		} else {
+			logger.warn("Scheduled job run has been skipped.");
 		}
 	}
 
