@@ -13,10 +13,6 @@ public class ApplicationService {
 	@Autowired
 	private EndpointLoader endpointLoader;
 
-	public String ping() {
-		return "Status OK";
-	}
-
 	public final Set<String> getAvailableEndpoints() {
 		return endpointLoader.getApplicationEndpoints();
 	}

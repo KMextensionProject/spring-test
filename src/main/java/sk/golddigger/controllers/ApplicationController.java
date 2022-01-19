@@ -18,7 +18,7 @@ public class ApplicationController {
 	@GetMapping(path = "/ping", produces = "text/plain")
 	@ResponseBody
 	public String ping() {
-		return applicationService.ping();
+		return "Status OK";
 	}
 
 	@GetMapping(path = "/endpoints", produces = "application/json")
