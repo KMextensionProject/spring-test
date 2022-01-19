@@ -29,11 +29,11 @@ public final class EndpointLoader {
 	private static final String ENDPOINT_APP_NAME = "/gold-digger";
 
 	private Set<String> endpoints;
-	private InetAddress ip_address;
+	private InetAddress ipAddress;
 
 	public EndpointLoader() {
 		try {
-			this.ip_address = InetAddress.getLocalHost();
+			this.ipAddress = InetAddress.getLocalHost();
 			this.endpoints = new HashSet<>(10);
 		} catch (UnknownHostException hostError) {
 			String errorMessage = resolveMessage("unknownHostError", hostError.getMessage());
@@ -56,7 +56,7 @@ public final class EndpointLoader {
 
 	private String constructEndpoint(Set<String> directPaths) {		
 		StringBuilder endpoint = new StringBuilder(ENDPOINT_PROTOCOL);
-		endpoint.append(ip_address.getHostAddress());
+		endpoint.append(ipAddress.getHostAddress());
 		endpoint.append(ENDPOINT_PORT);
 		endpoint.append(ENDPOINT_APP_NAME);
 		endpoint.append(directPaths.toString().substring(1));
