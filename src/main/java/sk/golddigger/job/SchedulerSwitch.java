@@ -10,7 +10,8 @@ public class SchedulerSwitch {
 
 	private static boolean isActive = true;
 	private static String switchOwner;
-
+	private static long suspensionStart;
+	
 	private SchedulerSwitch() {
 		throw new IllegalStateException(resolveMessage("factoryClassInstantiationError", SchedulerSwitch.class));
 	}
@@ -28,17 +29,22 @@ public class SchedulerSwitch {
 	private static void suspend(String host) {
 		switchOwner = host;
 		isActive = false;
+		suspensionStart = System.currentTimeMillis();
 		logger.info(resolveMessage("jobSuspension", host));
 	}
 
 	private static void reActivate(String host) {
 		if (switchOwner.equals(host)) {
-			switchOwner = null;
 			isActive = true;
-			logger.info(resolveMessage("jobReactivationWithTime", host));
+			long durationSeconds = getSuspensionDurationInSeconds();
+			logger.info(resolveMessage("jobReactivationWithTime", host, durationSeconds));
 		} else {
 			logger.warn(resolveMessage("jobReactivationError", host));
 		}
+	}
+
+	private static long getSuspensionDurationInSeconds() {
+		return ((System.currentTimeMillis() - suspensionStart) / 1000) / 60;
 	}
 
 	public static boolean isSwitchedOn() {
