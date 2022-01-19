@@ -22,9 +22,9 @@ import sk.golddigger.core.Order.Side;
 import sk.golddigger.exceptions.UnsupportedConfiguration;
 
 @Component
-public class ScheduledService {
+public class ScheduledJob {
 
-	private static final Logger logger = Logger.getLogger(ScheduledService.class);
+	private static final Logger logger = Logger.getLogger(ScheduledJob.class);
 
 /* THERSE TWO PROPERTIES ARE NEEDED FOR PURPOSE OF USER INPUT VALIDATION.
  * BECAUSE @Scheduled VALUES NEED TO BE CONSTANT EXPRESSION, THEY NEED
