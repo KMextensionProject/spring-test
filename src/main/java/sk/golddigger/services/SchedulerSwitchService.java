@@ -1,5 +1,7 @@
 package sk.golddigger.services;
 
+import static sk.golddigger.utils.MessageResolver.resolveMessage;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.stereotype.Service;
@@ -13,11 +15,12 @@ public class SchedulerSwitchService {
 		String host = request.getRemoteHost();
 
 		SchedulerSwitch.toggleSwitch(host);
+		String controlOwner = SchedulerSwitch.getSwitchOwner();
 
 		if (SchedulerSwitch.isSwitchedOn()) {
-			return "Scheduled service has been switched on by " + SchedulerSwitch.getHostInControl();
+			return resolveMessage("jobReactivation", controlOwner);
 		}
-		return "Scheduled service has been suspended by " + SchedulerSwitch.getHostInControl();
+		return resolveMessage("jobSuspension", controlOwner);
 	}
 
 }

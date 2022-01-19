@@ -9,7 +9,7 @@ public class SchedulerSwitch {
 	private static final Logger logger = Logger.getLogger(SchedulerSwitch.class);
 
 	private static boolean isActive = true;
-	private static String hostInControl;
+	private static String switchOwner;
 
 	private SchedulerSwitch() {
 		throw new IllegalStateException(resolveMessage("factoryClassInstantiationError", SchedulerSwitch.class));
@@ -18,18 +18,26 @@ public class SchedulerSwitch {
 	public static void toggleSwitch(String host) {
 		synchronized (SchedulerSwitch.class) {
 			if (isActive) {
-				hostInControl = host;
-				isActive = false;
-				logger.info("Host " + host + " suspended the scheduler.");
+				suspend(host);
 			} else {
-				if (hostInControl.equals(host)) {
-					hostInControl = null;
-					isActive = true;
-					logger.info("Host " + host + " reactivated the scheduler.");
-				} else {
-					logger.warn("Host " + host + " cannot reactivate the scheduled task because " + hostInControl + " is the owner.");
-				}
+				reActivate(host);
 			}
+		}
+	}
+
+	private static void suspend(String host) {
+		switchOwner = host;
+		isActive = false;
+		logger.info(resolveMessage("jobSuspension", host));
+	}
+
+	private static void reActivate(String host) {
+		if (switchOwner.equals(host)) {
+			switchOwner = null;
+			isActive = true;
+			logger.info(resolveMessage("jobReactivationWithTime", host));
+		} else {
+			logger.warn(resolveMessage("jobReactivationError", host));
 		}
 	}
 
@@ -37,7 +45,7 @@ public class SchedulerSwitch {
 		return isActive;
 	}
 
-	public static String getHostInControl() {
-		return hostInControl;
+	public static String getSwitchOwner() {
+		return switchOwner;
 	}
 }
