@@ -4,6 +4,7 @@ import static sk.golddigger.enums.PriceType.CLOSING;
 import static sk.golddigger.enums.PriceType.OPENING;
 import static sk.golddigger.utils.MessageResolver.resolveMessage;
 
+import java.time.LocalDate;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -18,6 +19,8 @@ import sk.golddigger.http.CryptoMarketRequest;
 public class CryptoMarket extends Market {
 
 	private static final Logger logger = Logger.getLogger(CryptoMarket.class);
+
+	private static LocalDate lastUpdated;
 
 	@Autowired
 	private CryptoMarketRequest cryptoMarketRequest;
@@ -41,18 +44,25 @@ public class CryptoMarket extends Market {
 	}
 
 	private void updateOpeningAndClosingPrices() {
+		LocalDate today = requestTime.getLocalDateUTC();
 
-		Map<PriceType, Double> weekPrice = cryptoMarketRequest.getPricesByDate(requestTime.getFirstDayAdjusted(DateUnit.WEEK));
-		this.firstDayOfWeekOpeningPrice = weekPrice.get(OPENING);
-		this.firstDayOfWeekClosingPrice = weekPrice.get(CLOSING);
+		if (!requestTime.getLocalDateUTC().equals(lastUpdated)) {
 
-		Map<PriceType, Double> monthPrice = cryptoMarketRequest.getPricesByDate(requestTime.getFirstDayAdjusted(DateUnit.MONTH));
-		this.firstDayOfMonthOpeningPrice = monthPrice.get(OPENING);
-		this.firstDayOfMonthClosingPrice = monthPrice.get(CLOSING);
+			Map<PriceType, Double> weekPrice = cryptoMarketRequest.getPricesByDate(requestTime.getFirstDayAdjusted(DateUnit.WEEK));
+			this.firstDayOfWeekOpeningPrice = weekPrice.get(OPENING);
+			this.firstDayOfWeekClosingPrice = weekPrice.get(CLOSING);
 
-		Map<PriceType, Double> yearPrice = cryptoMarketRequest.getPricesByDate(requestTime.getFirstDayAdjusted(DateUnit.YEAR));
-		this.firstDayOfYearOpeningPrice = yearPrice.get(OPENING);
-		this.firstDayOfYearOpeningPrice = yearPrice.get(CLOSING);
+			Map<PriceType, Double> monthPrice = cryptoMarketRequest.getPricesByDate(requestTime.getFirstDayAdjusted(DateUnit.MONTH));
+			this.firstDayOfMonthOpeningPrice = monthPrice.get(OPENING);
+			this.firstDayOfMonthClosingPrice = monthPrice.get(CLOSING);
+
+			Map<PriceType, Double> yearPrice = cryptoMarketRequest.getPricesByDate(requestTime.getFirstDayAdjusted(DateUnit.YEAR));
+			this.firstDayOfYearOpeningPrice = yearPrice.get(OPENING);
+			this.firstDayOfYearOpeningPrice = yearPrice.get(CLOSING);
+
+		} else {
+			lastUpdated = today;
+		}
 	}
 
 	private void logMarketPrices() {
