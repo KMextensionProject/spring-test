@@ -1,7 +1,7 @@
 package sk.golddigger.http;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static sk.golddigger.http.ContentType.APPLICATION_JSON;
+import static sk.golddigger.enums.ContentType.APPLICATION_JSON;
 import static sk.golddigger.utils.MessageResolver.resolveMessage;
 
 import java.io.IOException;

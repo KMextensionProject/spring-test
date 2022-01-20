@@ -1,4 +1,4 @@
-package sk.golddigger.http;
+package sk.golddigger.enums;
 
 public class ContentType {
 

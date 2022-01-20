@@ -26,6 +26,7 @@ import sk.golddigger.core.ExchangeRequest;
 import sk.golddigger.core.Order;
 import sk.golddigger.core.RequestDateTime;
 import sk.golddigger.enums.Currency;
+import sk.golddigger.enums.HttpMethod;
 import sk.golddigger.exceptions.UnsupportedConfiguration;
 import sk.golddigger.utils.EncoderUtils;
 import sk.golddigger.utils.URLResolver;

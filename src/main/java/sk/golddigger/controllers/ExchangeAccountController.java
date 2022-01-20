@@ -1,6 +1,6 @@
 package sk.golddigger.controllers;
 
-import static sk.golddigger.http.ContentType.APPLICATION_JSON;
+import static sk.golddigger.enums.ContentType.APPLICATION_JSON;
 
 import java.util.Map;
 
