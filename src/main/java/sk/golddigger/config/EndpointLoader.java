@@ -2,8 +2,11 @@ package sk.golddigger.config;
 
 import static sk.golddigger.utils.MessageResolver.resolveMessage;
 
+import java.net.Inet4Address;
 import java.net.InetAddress;
-import java.net.UnknownHostException;
+import java.net.NetworkInterface;
+import java.net.SocketException;
+import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -29,17 +32,11 @@ public final class EndpointLoader {
 	private static final String ENDPOINT_APP_NAME = "/gold-digger";
 
 	private Set<String> endpoints;
-	private InetAddress ipAddress;
+	private String ipAddress;
 
 	public EndpointLoader() {
-		try {
-			this.ipAddress = InetAddress.getLocalHost();
-			this.endpoints = new HashSet<>(10);
-		} catch (UnknownHostException hostError) {
-			String errorMessage = resolveMessage("unknownHostError", hostError.getMessage());
-			logger.error(errorMessage);
-			throw new ApplicationFailure(errorMessage);
-		}
+		this.ipAddress = findIpAddress();
+		this.endpoints = new HashSet<>(10);
 	}
 
 	@EventListener
@@ -56,7 +53,7 @@ public final class EndpointLoader {
 
 	private String constructEndpoint(Set<String> directPaths) {		
 		StringBuilder endpoint = new StringBuilder(ENDPOINT_PROTOCOL);
-		endpoint.append(ipAddress.getHostAddress());
+		endpoint.append(ipAddress);//.getHostAddress());
 		endpoint.append(ENDPOINT_PORT);
 		endpoint.append(ENDPOINT_APP_NAME);
 		endpoint.append(directPaths.toString().substring(1));
@@ -69,4 +66,30 @@ public final class EndpointLoader {
 		return new HashSet<>(this.endpoints);
 	}
 
+	private static String findIpAddress() {
+		Enumeration<NetworkInterface> networkInterfaces = null;
+
+		try {
+			networkInterfaces = NetworkInterface.getNetworkInterfaces();
+		} catch (SocketException error) {
+			String message = resolveMessage("ipResolveError", error);
+			logger.error(message);
+			throw new ApplicationFailure(message, error);
+		}
+
+		while (networkInterfaces.hasMoreElements()) {
+			NetworkInterface ni = (NetworkInterface) networkInterfaces.nextElement();
+			if (ni.getName().equalsIgnoreCase("wlp2s0")) {
+				Enumeration<InetAddress> nias = ni.getInetAddresses();
+
+				while (nias.hasMoreElements()) {
+					InetAddress ia = (InetAddress) nias.nextElement();
+					if (!ia.isLinkLocalAddress() && !ia.isLoopbackAddress() && ia instanceof Inet4Address) {
+						return ia.getHostAddress();
+					}
+				}
+			}
+		}
+		return null;
+	}
 }
