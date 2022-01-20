@@ -55,7 +55,6 @@ public class ScheduledJob {
 	public void scheduledAction() {
 
 		if (SchedulerSwitch.isSwitchedOn()) {
-			logger.info("Scheduled job is running..");
 			account.updateState();
 
 			if (account.getBalance() > 1) {
@@ -89,8 +88,6 @@ public class ScheduledJob {
 						+ account.getAccountCurrency().getAcronym());
 				}
 			}
-		} else {
-			logger.warn("Scheduled job run has been skipped.");
 		}
 	}
 
