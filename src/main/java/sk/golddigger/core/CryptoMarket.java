@@ -46,7 +46,7 @@ public class CryptoMarket extends Market {
 	private void updateOpeningAndClosingPrices() {
 		LocalDate today = requestTime.getLocalDateUTC();
 
-		if (!requestTime.getLocalDateUTC().equals(lastUpdated)) {
+		if (!today.equals(lastUpdated)) {
 
 			Map<PriceType, Double> weekPrice = cryptoMarketRequest.getPricesByDate(requestTime.getFirstDayAdjusted(DateUnit.WEEK));
 			this.firstDayOfWeekOpeningPrice = weekPrice.get(OPENING);
@@ -60,7 +60,6 @@ public class CryptoMarket extends Market {
 			this.firstDayOfYearOpeningPrice = yearPrice.get(OPENING);
 			this.firstDayOfYearOpeningPrice = yearPrice.get(CLOSING);
 
-		} else {
 			lastUpdated = today;
 		}
 	}
