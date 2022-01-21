@@ -33,7 +33,7 @@ public final class EndpointLoader {
 	private static final String ENDPOINT_PROTOCOL = "http://";
 	private static final String ENDPOINT_PORT = ":8080";
 	private static final String ENDPOINT_APP_NAME = "/gold-digger";
-	private static final int PRIVATE_IP_LENGTH = 13;
+	private static final int PRIVATE_IP_LENGTH = 11;
 
 	private Set<String> endpoints;
 	private String ipAddress;
@@ -43,14 +43,16 @@ public final class EndpointLoader {
 	}
 
 	@EventListener
-	public void handleContextRefresh(ContextRefreshedEvent event) {
+	private void handleContextRefresh(ContextRefreshedEvent event) {
 		if (endpoints.isEmpty()) {
 			ApplicationContext context = event.getApplicationContext();
 			RequestMappingHandlerMapping requestMapping = context.getBean("requestMappingHandlerMapping", RequestMappingHandlerMapping.class);
 			Map<RequestMappingInfo, HandlerMethod> handlerMethods = requestMapping.getHandlerMethods();
 
-			handlerMethods.forEach((key, value) -> endpoints.add(constructEndpoint(key.getDirectPaths())));
-			logger.info(resolveMessage("endpointsCount", handlerMethods.size()));
+			if (ipAddress != null) {
+				handlerMethods.forEach((key, value) -> endpoints.add(constructEndpoint(key.getDirectPaths())));
+				logger.info(resolveMessage("endpointsCount", handlerMethods.size()));
+			}
 		}
 	}
 
