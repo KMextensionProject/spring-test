@@ -9,7 +9,10 @@ import java.net.SocketException;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
+
+import javax.annotation.PostConstruct;
 
 import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
@@ -30,12 +33,12 @@ public final class EndpointLoader {
 	private static final String ENDPOINT_PROTOCOL = "http://";
 	private static final String ENDPOINT_PORT = ":8080";
 	private static final String ENDPOINT_APP_NAME = "/gold-digger";
+	private static final int PRIVATE_IP_LENGTH = 13;
 
 	private Set<String> endpoints;
 	private String ipAddress;
 
 	public EndpointLoader() {
-		this.ipAddress = findIpAddress();
 		this.endpoints = new HashSet<>(10);
 	}
 
@@ -66,7 +69,8 @@ public final class EndpointLoader {
 		return new HashSet<>(this.endpoints);
 	}
 
-	private static String findIpAddress() {
+	@PostConstruct
+	private void initializeIpAddress() {
 		Enumeration<NetworkInterface> networkInterfaces = null;
 
 		try {
@@ -77,19 +81,48 @@ public final class EndpointLoader {
 			throw new ApplicationFailure(message, error);
 		}
 
-		while (networkInterfaces.hasMoreElements()) {
-			NetworkInterface ni = (NetworkInterface) networkInterfaces.nextElement();
-			if (ni.getName().equalsIgnoreCase("wlp2s0")) {
-				Enumeration<InetAddress> nias = ni.getInetAddresses();
+		this.ipAddress = lookupServerIpAddress(networkInterfaces);
+	}
 
-				while (nias.hasMoreElements()) {
-					InetAddress ia = (InetAddress) nias.nextElement();
-					if (!ia.isLinkLocalAddress() && !ia.isLoopbackAddress() && ia instanceof Inet4Address) {
-						return ia.getHostAddress();
+	/*
+	 * vratit optional <String>
+	 */
+	private String lookupServerIpAddress(Enumeration<NetworkInterface> networkInterfaces) {
+		while (networkInterfaces.hasMoreElements()) {
+			NetworkInterface networkInterface = (NetworkInterface) networkInterfaces.nextElement();
+			Enumeration<InetAddress> networkAddresses = networkInterface.getInetAddresses();
+
+			Optional<String> privateIp = checkForPrivateIpAddress(networkAddresses);
+			if (privateIp.isPresent()) {
+				return privateIp.get();
+			}
+		}
+
+		String serverIpNotFoundMessage = resolveMessage("serverIpNotFound");
+		if (logger.isDebugEnabled()) {
+			logger.debug(serverIpNotFoundMessage);
+		}
+
+		throw new ApplicationFailure(serverIpNotFoundMessage);
+	}
+
+	private Optional<String> checkForPrivateIpAddress(Enumeration<InetAddress> networkAddresses) {
+		while (networkAddresses.hasMoreElements()) {
+
+			InetAddress ip = (InetAddress) networkAddresses.nextElement();
+			if (!ip.isLinkLocalAddress() && !ip.isLoopbackAddress() && ip instanceof Inet4Address) {
+
+				String address = ip.getHostAddress();
+				if (address.length() >= PRIVATE_IP_LENGTH) {
+
+					if (logger.isDebugEnabled()) {
+						logger.debug(resolveMessage("serverIpFound", address));
 					}
+
+					return Optional.of(address);
 				}
 			}
 		}
-		return null;
+		return Optional.empty();
 	}
 }
