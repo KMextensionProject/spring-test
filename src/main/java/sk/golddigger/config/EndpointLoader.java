@@ -91,7 +91,7 @@ public final class EndpointLoader {
 	 */
 	private String lookupServerIpAddress(Enumeration<NetworkInterface> networkInterfaces) {
 		while (networkInterfaces.hasMoreElements()) {
-			NetworkInterface networkInterface = (NetworkInterface) networkInterfaces.nextElement();
+			NetworkInterface networkInterface = networkInterfaces.nextElement();
 			Enumeration<InetAddress> networkAddresses = networkInterface.getInetAddresses();
 
 			Optional<String> privateIp = checkForPrivateIpAddress(networkAddresses);
@@ -111,7 +111,7 @@ public final class EndpointLoader {
 	private Optional<String> checkForPrivateIpAddress(Enumeration<InetAddress> networkAddresses) {
 		while (networkAddresses.hasMoreElements()) {
 
-			InetAddress ip = (InetAddress) networkAddresses.nextElement();
+			InetAddress ip = networkAddresses.nextElement();
 			if (!ip.isLinkLocalAddress() && !ip.isLoopbackAddress() && ip instanceof Inet4Address) {
 
 				String address = ip.getHostAddress();
