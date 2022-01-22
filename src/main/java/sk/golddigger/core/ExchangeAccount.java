@@ -44,7 +44,7 @@ public abstract class ExchangeAccount implements Updatable {
 	}
 
 	public double getBalance() {
-		return this.balance;
+		return Math.floor(this.balance);
 	}
 
 	public void updateBestOrderBuyRate(final double newRate) {
@@ -60,4 +60,5 @@ public abstract class ExchangeAccount implements Updatable {
 	public double getBestOrderBuyRate() {
 		return this.bestOrderBuyRate;
 	}
+
 }
