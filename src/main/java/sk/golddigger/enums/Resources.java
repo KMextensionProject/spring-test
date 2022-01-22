@@ -25,6 +25,8 @@ public class Resources {
 
 	public static final String MESSAGES_MAP = "messages.properties";
 
+	public static final String FILLED_ORDERS_TEMPLATE = "/reports/Filled_orders.xlsx";
+
 	private Resources() {
 		throw new IllegalStateException(resolveMessage("factoryClassInstantiationError", Resources.class));
 	}
