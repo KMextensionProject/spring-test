@@ -1,20 +1,33 @@
 package sk.golddigger.services;
 
+import static sk.golddigger.enums.Resources.FILLED_ORDERS_TEMPLATE;
+
+import java.io.IOException;
+import java.time.LocalDate;
+import java.time.ZonedDateTime;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.log4j.Logger;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import sk.golddigger.cache.AccountCache;
 import sk.golddigger.core.ExchangeAccount;
 import sk.golddigger.core.ExchangeRequest;
+import sk.golddigger.core.RequestDateTime;
 import sk.golddigger.enums.Currency;
+import sk.golddigger.utils.XlsxUtils;
 
 @Service
 public class ExchangeAccountService {
+
+	private static final Logger logger = Logger.getLogger(ExchangeAccountService.class);
 
 	@Autowired
 	private ExchangeAccount exchangeAccount;
@@ -24,6 +37,9 @@ public class ExchangeAccountService {
 
 	@Autowired
 	private AccountCache accountCache;
+
+	@Autowired
+	private RequestDateTime requestTime;
 
 	public Map<String, Object> getAccountComplexOverview() {
 		Map<String, Object> accountComplexOverview = new LinkedHashMap<>(2);
@@ -66,7 +82,24 @@ public class ExchangeAccountService {
 	 * Including buy orders and sell orders.
 	 */
 	public void generateOrdersReportToExcel(HttpServletResponse response) {
-		// TODO: implement
+		LocalDate today = requestTime.getLocalDateUTC();
+		String fileName = "Filled_orders_" + today + ".xlsx";
+
+		List<Map<String, Object>> filledOrders = getOrdersFilledInYear(today.getYear());
+		Map<String, Object> dataSource = new HashMap<>();
+		dataSource.put("table", filledOrders);
+
+		try {
+			XlsxUtils.generateXlsx(FILLED_ORDERS_TEMPLATE, dataSource, fileName, response);
+		} catch (IOException | InvalidFormatException e) {
+			logger.error("Error: ", e);
+		}
+	}
+
+	private List<Map<String, Object>> getOrdersFilledInYear(int year) {
+		List<Map<String, Object>> filledOrders = exchangeRequest.getAllOrderFills();
+		filledOrders.removeIf(e -> ZonedDateTime.parse(String.valueOf(e.get("created_at"))).getYear() == year);
+		return filledOrders;
 	}
 
 }
