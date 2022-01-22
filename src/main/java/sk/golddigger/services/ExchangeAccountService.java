@@ -96,9 +96,12 @@ public class ExchangeAccountService {
 		}
 	}
 
+	// TODO: size field is reserved by JEXL so it cannot be used -> re-map it
+	// + set excel document to round/trim larger numbers
+	// + sort data by date and remove time units
 	private List<Map<String, Object>> getOrdersFilledInYear(int year) {
 		List<Map<String, Object>> filledOrders = exchangeRequest.getAllOrderFills();
-		filledOrders.removeIf(e -> ZonedDateTime.parse(String.valueOf(e.get("created_at"))).getYear() == year);
+		filledOrders.removeIf(e -> ZonedDateTime.parse(String.valueOf(e.get("created_at"))).getYear() != year);
 		return filledOrders;
 	}
 
