@@ -1,5 +1,7 @@
 package sk.golddigger.core;
 
+import java.time.LocalDate;
+
 public abstract class Market implements Updatable {
 
 	protected double currentPrice;
@@ -9,6 +11,7 @@ public abstract class Market implements Updatable {
 	protected double firstDayOfMonthClosingPrice;
 	protected double firstDayOfYearOpeningPrice;
 	protected double allTimeHigh;
+	protected LocalDate lastUpdated;
 
 	public double getCurrentPrice() {
 		return currentPrice;
@@ -36,6 +39,10 @@ public abstract class Market implements Updatable {
 
 	public double getAllTimeHigh() {
 		return allTimeHigh;
+	}
+
+	public LocalDate getLastUpdated() {
+		return lastUpdated;
 	}
 
 }

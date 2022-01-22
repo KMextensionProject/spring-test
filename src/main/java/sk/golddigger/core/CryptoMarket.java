@@ -20,8 +20,6 @@ public class CryptoMarket extends Market {
 
 	private static final Logger logger = Logger.getLogger(CryptoMarket.class);
 
-	private static LocalDate lastUpdated;
-
 	@Autowired
 	private CryptoMarketRequest cryptoMarketRequest;
 
