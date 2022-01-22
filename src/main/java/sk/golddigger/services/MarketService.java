@@ -32,7 +32,7 @@ public class MarketService {
 
 		Map<String, Object> marketData = new LinkedHashMap<>();
 		marketData.put("market_currency", tradingCurrency.getName());
-		marketData.put("price_conversion_currency", accountCurrency.getName());
+		marketData.put("conversion_currency", accountCurrency.getName());
 		marketData.put("current_price", market.getCurrentPrice());
 		marketData.put("ath", market.getAllTimeHigh());
 		marketData.put("week_opening_price", market.getFirstDayOfWeekOpeningPrice());
@@ -40,6 +40,8 @@ public class MarketService {
 		marketData.put("year_opening_price", market.getFirstDayOfYearOpeningPrice());
 		marketData.put("market_predicate_setting", getMarketPredicateSetting());
 		marketData.put("market_predicate_result", marketPredicate.testMarket(market));
+		// TODO: add JSR-310 as project dependency
+		marketData.put("last_updated", market.getLastUpdated().toString());
 
 		return marketData;
 	}
