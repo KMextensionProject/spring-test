@@ -25,7 +25,7 @@ public class ExchangeAccountController {
 		return exchangeService.getAccountComplexOverview();
 	}
 
-	@GetMapping(path = "/account/orders/?excel()")
+	@GetMapping(path = "/account/orders/excel")
 	public void generateOrdersReportToExcel(HttpServletResponse response) {
 		exchangeService.generateOrdersReportToExcel(response);
 	}
