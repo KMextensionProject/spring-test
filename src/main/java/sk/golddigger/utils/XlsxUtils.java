@@ -1,5 +1,7 @@
 package sk.golddigger.utils;
 
+import static sk.golddigger.utils.MessageResolver.resolveMessage;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Base64;
@@ -17,6 +19,10 @@ import net.sf.jett.transform.ExcelTransformer;
  * 
  */
 public class XlsxUtils {
+
+	private XlsxUtils() {
+		throw new IllegalStateException(resolveMessage("factoryClassInstantiationError", XlsxUtils.class));
+	}
 
 	public static void generateXlsx(String template, Map<String, Object> dataSource, String targetName, HttpServletResponse response) throws IOException, InvalidFormatException {
 		InputStream inputStream = XlsxUtils.class.getClassLoader().getResourceAsStream(template);
