@@ -1,5 +1,6 @@
 package sk.golddigger.services;
 
+import java.time.LocalDate;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,9 +42,18 @@ public class MarketService {
 		marketData.put("market_predicate_setting", getMarketPredicateSetting());
 		marketData.put("market_predicate_result", marketPredicate.testMarket(market));
 		// TODO: add JSR-310 as project dependency
-		marketData.put("last_updated", market.getLastUpdated().toString());
+		marketData.put("last_updated", getUpdatedValue());
 
 		return marketData;
+	}
+
+	private String getUpdatedValue() {
+		LocalDate updated = market.getLastUpdated();
+		if (updated == null) {
+			return "Never updated yet";
+		} else {
+			return updated.toString();
+		}
 	}
 
 	private Map<String, Object> getMarketPredicateSetting() {
