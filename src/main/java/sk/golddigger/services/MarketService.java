@@ -31,6 +31,8 @@ public class MarketService {
 		Currency accountCurrency = account.getAccountCurrency();
 		Currency tradingCurrency = account.getTradingCurrency();
 
+		market.updateState();
+
 		Map<String, Object> marketData = new LinkedHashMap<>();
 		marketData.put("market_currency", tradingCurrency.getName());
 		marketData.put("conversion_currency", accountCurrency.getName());
@@ -42,18 +44,9 @@ public class MarketService {
 		marketData.put("market_predicate_setting", getMarketPredicateSetting());
 		marketData.put("market_predicate_result", marketPredicate.testMarket(market));
 		// TODO: add JSR-310 as project dependency
-		marketData.put("last_updated", getUpdatedValue());
+		marketData.put("last_updated", market.getLastUpdated().toString());
 
 		return marketData;
-	}
-
-	private String getUpdatedValue() {
-		LocalDate updated = market.getLastUpdated();
-		if (updated == null) {
-			return "Never updated yet";
-		} else {
-			return updated.toString();
-		}
 	}
 
 	private Map<String, Object> getMarketPredicateSetting() {
