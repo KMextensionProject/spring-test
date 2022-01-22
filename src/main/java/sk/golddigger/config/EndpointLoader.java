@@ -58,7 +58,7 @@ public final class EndpointLoader {
 
 	private String constructEndpoint(Set<String> directPaths) {		
 		StringBuilder endpoint = new StringBuilder(ENDPOINT_PROTOCOL);
-		endpoint.append(ipAddress);//.getHostAddress());
+		endpoint.append(ipAddress);
 		endpoint.append(ENDPOINT_PORT);
 		endpoint.append(ENDPOINT_APP_NAME);
 		endpoint.append(directPaths.toString().substring(1));
