@@ -97,23 +97,42 @@ public class ExchangeAccountService {
 		}
 	}
 
-	// TODO: set excel document to round/trim larger numbers
-	// + sort data by date and remove time units
-	private List<Map<String, Object>> getOrdersFilledInYear(int year) {		
-		return exchangeRequest.getAllOrderFills().stream()
-			.filter(e -> filterByYear(e, year))
-			.map(this::changeSizeProperty)
-			.collect(Collectors.toList());
+	private List<Map<String, Object>> getOrdersFilledInYear(int year) {
+		return exchangeRequest.getAllOrderFills()
+				.stream()
+				.filter(e -> filterByYear(e, year))
+				.map(this::adjustPropertiesForExcel)
+				.collect(Collectors.toList());
 	}
 
 	private boolean filterByYear(Map<String, Object> map, int year) {
 		return ZonedDateTime.parse(String.valueOf(map.get("created_at"))).getYear() == year;
 	}
 
-	private Map<String, Object> changeSizeProperty(Map<String, Object> map) {
-		Object obj = map.remove("size");
-		map.put("order_size", obj);
-		return map;
+	private Map<String, Object> adjustPropertiesForExcel(Map<String, Object> data) {
+		// remove time from date because of excel template formating
+		LocalDate createdAt = ZonedDateTime.parse(String.valueOf(data.get("created_at"))).toLocalDate();
+		data.replace("created_at", createdAt);
+
+		// size is reserved keyword in JEXL
+		updateMapPropertyAsDouble(data, "size", "order_size");
+
+		// to properly round these by excel template, they must be of type Number
+		updateMapPropertyAsDouble(data, "price", null);
+		updateMapPropertyAsDouble(data, "fee", null);
+
+		return data;
 	}
 
+	private void updateMapPropertyAsDouble(Map<String, Object> map, String propertyName, String newPropertyName) {
+		String stringValue = String.valueOf(map.get(propertyName));
+		Double value = Double.parseDouble(stringValue);
+
+		if (newPropertyName != null) {
+			map.remove(propertyName);
+			map.put(newPropertyName, value);
+		} else {
+			map.put(propertyName, value);
+		}
+	}
 }
