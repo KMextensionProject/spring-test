@@ -16,7 +16,7 @@ public class WebAppInitializer implements WebMvcConfigurer {
 
 	@Override
 	public void configureViewResolvers(ViewResolverRegistry registry) {
-		// add jsp with prefix
+		registry.jsp("/WEB-INF/views/", ".jsp");
 	}
 
 	@Override
