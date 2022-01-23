@@ -111,8 +111,9 @@ public class ExchangeAccountService {
 
 	private Map<String, Object> adjustPropertiesForExcel(Map<String, Object> data) {
 		// remove time from date because of excel template formating
-		LocalDate createdAt = ZonedDateTime.parse(String.valueOf(data.get("created_at"))).toLocalDate();
-		data.replace("created_at", createdAt);
+		String createdKey = "created_at";
+		LocalDate createdValue = ZonedDateTime.parse(String.valueOf(data.get(createdKey))).toLocalDate();
+		data.replace(createdKey, createdValue);
 
 		// size is reserved keyword in JEXL
 		updateMapPropertyAsDouble(data, "size", "order_size");
