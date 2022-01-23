@@ -29,7 +29,7 @@ public class ApplicationController {
 
 	@GetMapping(path = "/home")
 	public String home() {
-		return "SchedulerSwitch";
+		return "Home";
 	}
 
 }
