@@ -13,8 +13,10 @@ import java.util.Optional;
 import java.util.Set;
 
 import javax.annotation.PostConstruct;
+import javax.servlet.ServletContext;
 
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
@@ -33,10 +35,13 @@ public final class EndpointLoader {
 	private static final String ENDPOINT_PROTOCOL = "http://";
 	private static final String ENDPOINT_PORT = ":8080";
 	private static final String ENDPOINT_APP_NAME = "/gold-digger";
-	private static final int PRIVATE_IP_LENGTH = 11;
+	private static final int PRIVATE_IP_LENGTH = 13;
 
 	private Set<String> endpoints;
-	private static String ipAddress;
+	private String ipAddress;
+
+	@Autowired
+	private ServletContext servletContext;
 
 	public EndpointLoader() {
 		this.endpoints = new HashSet<>(10);
@@ -88,6 +93,7 @@ public final class EndpointLoader {
 		}
 
 		ipAddress = lookupServerIpAddress(networkInterfaces);
+		servletContext.setAttribute("ip", ipAddress); // for JSP
 	}
 
 	/*
