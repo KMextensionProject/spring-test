@@ -42,7 +42,6 @@ public class MarketService {
 		marketData.put("year_opening_price", market.getFirstDayOfYearOpeningPrice());
 		marketData.put("market_predicate_setting", getMarketPredicateSetting());
 		marketData.put("market_predicate_result", marketPredicate.testMarket(market));
-		// TODO: add JSR-310 as project dependency
 		marketData.put("last_updated", market.getLastUpdated().toString());
 
 		return marketData;
