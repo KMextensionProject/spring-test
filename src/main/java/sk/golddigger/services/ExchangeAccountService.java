@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -96,13 +97,23 @@ public class ExchangeAccountService {
 		}
 	}
 
-	// TODO: size field is reserved by JEXL so it cannot be used -> re-map it
-	// + set excel document to round/trim larger numbers
+	// TODO: set excel document to round/trim larger numbers
 	// + sort data by date and remove time units
-	private List<Map<String, Object>> getOrdersFilledInYear(int year) {
-		List<Map<String, Object>> filledOrders = exchangeRequest.getAllOrderFills();
-		filledOrders.removeIf(e -> ZonedDateTime.parse(String.valueOf(e.get("created_at"))).getYear() != year);
-		return filledOrders;
+	private List<Map<String, Object>> getOrdersFilledInYear(int year) {		
+		return exchangeRequest.getAllOrderFills().stream()
+			.filter(e -> filterByYear(e, year))
+			.map(this::changeSizeProperty)
+			.collect(Collectors.toList());
+	}
+
+	private boolean filterByYear(Map<String, Object> map, int year) {
+		return ZonedDateTime.parse(String.valueOf(map.get("created_at"))).getYear() == year;
+	}
+
+	private Map<String, Object> changeSizeProperty(Map<String, Object> map) {
+		Object obj = map.remove("size");
+		map.put("order_size", obj);
+		return map;
 	}
 
 }
