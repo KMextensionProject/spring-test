@@ -121,6 +121,7 @@ public class ExchangeAccountService {
 		// to properly round these by excel template, they must be of type Number
 		updateMapPropertyAsDouble(data, "price", null);
 		updateMapPropertyAsDouble(data, "fee", null);
+		updateMapPropertyAsDouble(data, "usd_volume", null);
 
 		return data;
 	}
