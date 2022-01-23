@@ -27,4 +27,9 @@ public class ApplicationController {
 		return applicationService.getAvailableEndpoints();
 	}
 
+	@GetMapping(path = "/home")
+	public String home() {
+		return "SchedulerSwitch";
+	}
+
 }
