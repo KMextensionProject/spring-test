@@ -36,7 +36,7 @@ public final class EndpointLoader {
 	private static final int PRIVATE_IP_LENGTH = 11;
 
 	private Set<String> endpoints;
-	private String ipAddress;
+	private static String ipAddress;
 
 	public EndpointLoader() {
 		this.endpoints = new HashSet<>(10);
@@ -71,6 +71,10 @@ public final class EndpointLoader {
 		return new HashSet<>(this.endpoints);
 	}
 
+	public String getServerIpAddress() {
+		return ipAddress;
+	}
+
 	@PostConstruct
 	private void initializeIpAddress() {
 		Enumeration<NetworkInterface> networkInterfaces = null;
@@ -83,7 +87,7 @@ public final class EndpointLoader {
 			throw new ApplicationFailure(message, error);
 		}
 
-		this.ipAddress = lookupServerIpAddress(networkInterfaces);
+		ipAddress = lookupServerIpAddress(networkInterfaces);
 	}
 
 	/*
