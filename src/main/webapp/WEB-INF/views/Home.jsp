@@ -19,5 +19,11 @@
 		<button type="submit">Switch scheduler</button>
 	</form>
 
+	<form
+		action=<%="http://" + ip + ":8080/gold-digger/account/orders/excel"%>
+		method="get">
+		<button type="submit">Generate orders report</button>
+	</form>
+
 </body>
 </html>
