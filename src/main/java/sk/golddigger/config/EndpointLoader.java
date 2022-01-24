@@ -2,14 +2,11 @@ package sk.golddigger.config;
 
 import static sk.golddigger.utils.MessageResolver.resolveMessage;
 
-import java.net.Inet4Address;
-import java.net.InetAddress;
-import java.net.NetworkInterface;
-import java.net.SocketException;
-import java.util.Enumeration;
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.net.Socket;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 
 import javax.annotation.PostConstruct;
@@ -35,7 +32,6 @@ public final class EndpointLoader {
 	private static final String ENDPOINT_PROTOCOL = "http://";
 	private static final String ENDPOINT_PORT = ":8080";
 	private static final String ENDPOINT_APP_NAME = "/gold-digger";
-	private static final int PRIVATE_IP_LENGTH = 13;
 
 	private Set<String> endpoints;
 	private String ipAddress;
@@ -81,60 +77,21 @@ public final class EndpointLoader {
 	}
 
 	@PostConstruct
-	private void initializeIpAddress() {
-		Enumeration<NetworkInterface> networkInterfaces = null;
-
-		try {
-			networkInterfaces = NetworkInterface.getNetworkInterfaces();
-		} catch (SocketException error) {
-			String message = resolveMessage("ipResolveError", error);
-			logger.error(message);
-			throw new ApplicationFailure(message, error);
-		}
-
-		ipAddress = lookupServerIpAddress(networkInterfaces);
+	private void initializeIpAddress() throws IOException {
+		ipAddress = lookupServerIpAddress();
 		servletContext.setAttribute("ip", ipAddress); // for JSP
 	}
 
-	/*
-	 * vratit optional <String>
-	 */
-	private String lookupServerIpAddress(Enumeration<NetworkInterface> networkInterfaces) {
-		while (networkInterfaces.hasMoreElements()) {
-			NetworkInterface networkInterface = networkInterfaces.nextElement();
-			Enumeration<InetAddress> networkAddresses = networkInterface.getInetAddresses();
-
-			Optional<String> privateIp = checkForPrivateIpAddress(networkAddresses);
-			if (privateIp.isPresent()) {
-				return privateIp.get();
+	private String lookupServerIpAddress() {
+		try (Socket s = new Socket()) {
+			s.connect(new InetSocketAddress("www.google.com", 80));
+			return s.getInetAddress().getHostAddress();
+		} catch (IOException ioe) {
+			String serverIpNotFoundMessage = resolveMessage("serverIpNotFound");
+			if (logger.isDebugEnabled()) {
+				logger.debug(serverIpNotFoundMessage);
 			}
+			throw new ApplicationFailure(serverIpNotFoundMessage);
 		}
-
-		String serverIpNotFoundMessage = resolveMessage("serverIpNotFound");
-		if (logger.isDebugEnabled()) {
-			logger.debug(serverIpNotFoundMessage);
-		}
-
-		throw new ApplicationFailure(serverIpNotFoundMessage);
-	}
-
-	private Optional<String> checkForPrivateIpAddress(Enumeration<InetAddress> networkAddresses) {
-		while (networkAddresses.hasMoreElements()) {
-
-			InetAddress ip = networkAddresses.nextElement();
-			if (!ip.isLinkLocalAddress() && !ip.isLoopbackAddress() && ip instanceof Inet4Address) {
-
-				String address = ip.getHostAddress();
-				if (address.length() >= PRIVATE_IP_LENGTH) {
-
-					if (logger.isDebugEnabled()) {
-						logger.debug(resolveMessage("serverIpFound", address));
-					}
-
-					return Optional.of(address);
-				}
-			}
-		}
-		return Optional.empty();
 	}
 }
