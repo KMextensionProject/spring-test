@@ -85,7 +85,7 @@ public final class EndpointLoader {
 	private String lookupServerIpAddress() {
 		try (Socket s = new Socket()) {
 			s.connect(new InetSocketAddress("www.google.com", 80));
-			return s.getInetAddress().getHostAddress();
+			return s.getLocalAddress().getHostAddress();
 		} catch (IOException ioe) {
 			String serverIpNotFoundMessage = resolveMessage("serverIpNotFound");
 			if (logger.isDebugEnabled()) {
