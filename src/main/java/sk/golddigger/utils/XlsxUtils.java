@@ -4,7 +4,6 @@ import static sk.golddigger.utils.MessageResolver.resolveMessage;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Base64;
 import java.util.Map;
 
 import javax.servlet.ServletOutputStream;
@@ -37,9 +36,7 @@ public class XlsxUtils {
 
 	private static void addResponseHeaders(HttpServletResponse response, String targetName) {
 		response.addHeader("Content-type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-		String encoded = Base64.getEncoder().encodeToString(targetName.getBytes());
-		String contentDisposition = "attachment; filename=\"=?UTF-8?B?" + encoded + "?=\"";
+		String contentDisposition = "attachment; filename=" + targetName;
 		response.addHeader("Content-disposition", contentDisposition);
 	}
-
 }
