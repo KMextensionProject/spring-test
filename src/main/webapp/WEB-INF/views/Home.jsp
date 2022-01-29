@@ -20,7 +20,7 @@ button {
      String ip = (String) sc.getAttribute("ip");
 	%>
 
-<h3><i>WELCOME TO YOUR GOLD DIGGER TOOL !</i></h3>
+<h3>WELCOME TO YOUR GOLD DIGGER TOOL !</h3>
 
 	<form
 		action=<%="http://" + ip + ":8080/gold-digger/scheduler/switch"%>
