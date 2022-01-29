@@ -17,6 +17,7 @@ public abstract class MarketPredicate {
 	protected int week;
 	protected int month;
 	protected int year;
+	protected boolean hasAdditionalPredicates;
 
 	public int getWeekPredicatePercentage() {
 		return this.week;
@@ -28,6 +29,10 @@ public abstract class MarketPredicate {
 
 	public int getYearPredicatePercentage() {
 		return this.year;
+	}
+
+	public boolean containsAdditionalPredicates() {
+		return this.hasAdditionalPredicates;
 	}
 
 	public abstract void addPredicate(Predicate<Market> predicate);
