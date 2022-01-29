@@ -70,6 +70,8 @@ public class MarketService {
 			marketPredicateSetting.put(key, value);
 		}
 
+		marketPredicateSetting.put("additional_settings", marketPredicate.containsAdditionalPredicates());
+
 		return marketPredicateSetting;
 	}
 }
