@@ -2,11 +2,16 @@ package sk.golddigger.config;
 
 import static sk.golddigger.utils.MessageResolver.resolveMessage;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import javax.annotation.PostConstruct;
@@ -32,6 +37,7 @@ public final class EndpointLoader {
 	private static final String ENDPOINT_PROTOCOL = "http://";
 	private static final String ENDPOINT_PORT = ":8080";
 	private static final String ENDPOINT_APP_NAME = "/gold-digger";
+	private static final String HOME_ENDPOINT_FILE = "home_endpoint.dat";
 
 	private Set<String> endpoints;
 	private String ipAddress;
@@ -80,6 +86,7 @@ public final class EndpointLoader {
 	private void initializeIpAddress() {
 		ipAddress = lookupServerIpAddress();
 		servletContext.setAttribute("ip", ipAddress); // for JSP
+		exportHomePageLocation();
 	}
 
 	private String lookupServerIpAddress() {
@@ -93,5 +100,33 @@ public final class EndpointLoader {
 			}
 			throw new ApplicationFailure(serverIpNotFoundMessage);
 		}
+	}
+
+	private void exportHomePageLocation() {
+		if (Files.exists(Paths.get(HOME_ENDPOINT_FILE))) {
+			logger.info(resolveMessage("homePageFileExists", HOME_ENDPOINT_FILE));
+			return;
+		}
+
+		Optional<String> homeEndpoint = endpoints.stream()
+				.filter(e -> e.contains("home"))
+				.findFirst();
+
+		if (!homeEndpoint.isPresent()) {
+			String messageError = resolveMessage("missingHomeEndpoint");
+			logger.error(messageError);
+			throw new ApplicationFailure(messageError);
+		}
+
+		String home = homeEndpoint.get();
+
+		try (BufferedWriter bw = new BufferedWriter(new FileWriter(HOME_ENDPOINT_FILE))) {
+			bw.write(home);
+		} catch (IOException e) {
+			logger.error("Error: ", e);
+			throw new ApplicationFailure(e.getMessage());
+		}
+
+		logger.info(resolveMessage("homePageFileCreated", HOME_ENDPOINT_FILE));
 	}
 }
