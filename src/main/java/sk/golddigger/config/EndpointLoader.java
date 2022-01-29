@@ -60,6 +60,8 @@ public final class EndpointLoader {
 				handlerMethods.forEach((key, value) -> endpoints.add(constructEndpoint(key.getDirectPaths())));
 				logger.info(resolveMessage("endpointsCount", handlerMethods.size()));
 			}
+
+			exportHomePageLocation();
 		}
 	}
 
@@ -86,7 +88,6 @@ public final class EndpointLoader {
 	private void initializeIpAddress() {
 		ipAddress = lookupServerIpAddress();
 		servletContext.setAttribute("ip", ipAddress); // for JSP
-		exportHomePageLocation();
 	}
 
 	private String lookupServerIpAddress() {
