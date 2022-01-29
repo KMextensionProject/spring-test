@@ -77,7 +77,7 @@ public final class EndpointLoader {
 	}
 
 	@PostConstruct
-	private void initializeIpAddress() throws IOException {
+	private void initializeIpAddress() {
 		ipAddress = lookupServerIpAddress();
 		servletContext.setAttribute("ip", ipAddress); // for JSP
 	}
