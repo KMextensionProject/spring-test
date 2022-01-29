@@ -100,6 +100,8 @@ public class ScheduledJob {
 		validateTimingPresence();
 		validateTimingContent();
 		logger.info(resolveMessage("scheduledTaskInit", initDelay, fixedRate));
+
+		buyPredicate.addPredicate(m -> m.getCurrentPrice() < account.getBestOrderBuyRate());
 	}
 
 	private void validateTimingPresence() {
