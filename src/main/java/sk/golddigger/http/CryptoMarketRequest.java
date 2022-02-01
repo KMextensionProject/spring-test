@@ -53,7 +53,7 @@ public final class CryptoMarketRequest extends DefaultHttpRequest implements Mar
 	@Autowired
 	private Gson gson;
 
-	@Value("${polygon.api_key:null}")
+	@Value("${POLYGON-API-KEY}")
 	private String polygonApiKey;
 
 	/**
@@ -142,7 +142,7 @@ public final class CryptoMarketRequest extends DefaultHttpRequest implements Mar
 	// and not whether it is a valid api key !
 	@PostConstruct
 	private void validatePolygonApiKeyPresence() {
-		if (polygonApiKey.equals("null") || polygonApiKey.isEmpty()) {
+		if (polygonApiKey == null || polygonApiKey.isEmpty()) {
 			String missingPolygonApiKey = resolveMessage("missingPolygonApiKey");
 			logger.error(missingPolygonApiKey);
 			throw new UnsupportedConfiguration(missingPolygonApiKey);
