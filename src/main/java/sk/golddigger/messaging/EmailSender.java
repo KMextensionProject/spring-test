@@ -8,14 +8,14 @@ import org.springframework.stereotype.Component;
 @Component
 public class EmailSender {
 
-	private JavaMailSender emailSender;
+	private JavaMailSender javaMailSender;
 
 	@Autowired
 	public EmailSender(EmailProvider emailProvider) {
-		this.emailSender = emailProvider.configure();
+		this.javaMailSender = emailProvider.configure();
 	}
 
 	public void send(Email email) throws MailException {
-		emailSender.send(email);
+		javaMailSender.send(email);
 	}
 }
