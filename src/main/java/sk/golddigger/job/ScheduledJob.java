@@ -20,6 +20,9 @@ import sk.golddigger.core.Order;
 import sk.golddigger.core.Order.OrderType;
 import sk.golddigger.core.Order.Side;
 import sk.golddigger.exceptions.UnsupportedConfiguration;
+import sk.golddigger.messaging.Message;
+import sk.golddigger.messaging.Recipient;
+import sk.golddigger.notification.Notification;
 
 @Component
 public class ScheduledJob {
@@ -50,6 +53,12 @@ public class ScheduledJob {
 
 	@Autowired
 	private ExchangeRequest exchangeRequest;
+
+	@Autowired
+	private Notification notification;
+
+	@Autowired
+	private Recipient recipient;
 
 	@Scheduled(initialDelayString = "${scheduler.initial_task_delay}", fixedRateString = "${scheduler.fixed_task_rate}")
 	public void scheduledAction() {
@@ -86,6 +95,9 @@ public class ScheduledJob {
 					logger.info("Main account balance: " + account.getBalance());
 					logger.info("The best filled buy order rate: " + account.getBestOrderBuyRate()
 						+ account.getAccountCurrency().getAcronym());
+
+					Message message = new Message("Buy order placed !", "example message");
+					notification.send(message, recipient);
 				}
 			}
 		}
