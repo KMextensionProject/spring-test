@@ -13,6 +13,7 @@ import org.springframework.cache.support.SimpleCacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
@@ -22,6 +23,7 @@ import com.google.gson.GsonBuilder;
 
 import sk.golddigger.cache.CacheNames;
 import sk.golddigger.enums.Currency;
+import sk.golddigger.messaging.Recipient;
 
 /**
  * This is the base configuration class.
@@ -36,7 +38,7 @@ import sk.golddigger.enums.Currency;
 @Configuration
 @EnableCaching
 @EnableWebMvc
-@PropertySource({"classpath:account_defaults.properties", "classpath:email_provider.properties"})
+@PropertySource({"classpath:account_defaults.properties", "classpath:email.properties"})
 @ComponentScan(basePackages = "sk")
 public class AppConfig {
 
@@ -90,5 +92,11 @@ public class AppConfig {
 				new ConcurrentMapCache(CacheNames.ACCOUNT_ID_CACHE)));
 
 		return cacheManager;
+	}
+
+	@Bean
+	@Primary
+	public Recipient getRecipientWithEmail(@Value("${recipient}") String recipient) {
+		return new Recipient().withEmail(recipient);
 	}
 }
