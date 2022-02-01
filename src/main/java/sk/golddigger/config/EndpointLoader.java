@@ -2,13 +2,9 @@ package sk.golddigger.config;
 
 import static sk.golddigger.utils.MessageResolver.resolveMessage;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
@@ -37,7 +33,6 @@ public final class EndpointLoader {
 	private static final String ENDPOINT_PROTOCOL = "http://";
 	private static final String ENDPOINT_PORT = ":8080";
 	private static final String ENDPOINT_APP_NAME = "/gold-digger";
-	private static final String HOME_ENDPOINT_FILE = "home_endpoint.dat";
 
 	private Set<String> endpoints;
 	private String ipAddress;
@@ -61,7 +56,7 @@ public final class EndpointLoader {
 				logger.info(resolveMessage("endpointsCount", handlerMethods.size()));
 			}
 
-			exportHomePageLocation();
+			logHomePageURL();
 		}
 	}
 
@@ -103,11 +98,11 @@ public final class EndpointLoader {
 		}
 	}
 
-	private void exportHomePageLocation() {
-		if (Files.exists(Paths.get(HOME_ENDPOINT_FILE))) {
-			logger.info(resolveMessage("homePageFileExists", HOME_ENDPOINT_FILE));
-			return;
-		}
+	/*
+	 * if the home page is not found, the user won't know 
+	 * how to access the application from another device
+	 */
+	private void logHomePageURL() {
 
 		Optional<String> homeEndpoint = endpoints.stream()
 				.filter(e -> e.contains("home"))
@@ -120,14 +115,6 @@ public final class EndpointLoader {
 		}
 
 		String home = homeEndpoint.get();
-
-		try (BufferedWriter bw = new BufferedWriter(new FileWriter(HOME_ENDPOINT_FILE))) {
-			bw.write(home);
-		} catch (IOException e) {
-			logger.error("Error: ", e);
-			throw new ApplicationFailure(e.getMessage());
-		}
-
-		logger.info(resolveMessage("homePageFileCreated", HOME_ENDPOINT_FILE));
+		logger.info("**********  " + home + "  **********");
 	}
 }
