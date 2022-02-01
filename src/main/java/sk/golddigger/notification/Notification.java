@@ -1,7 +1,10 @@
 package sk.golddigger.notification;
 
+import sk.golddigger.messaging.Message;
+import sk.golddigger.messaging.Recipient;
+
 public interface Notification {
 
-	public void send(String message, String recipient);
+	public void send(Message message, Recipient recipient);
 
 }
