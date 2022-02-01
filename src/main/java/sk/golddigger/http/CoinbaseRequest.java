@@ -6,6 +6,7 @@ import static sk.golddigger.enums.Resources.COINBASE_ORDER_FILLS;
 import static sk.golddigger.enums.Resources.COINBASE_PLACE_ORDER_URL;
 import static sk.golddigger.utils.MessageResolver.resolveMessage;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -131,7 +132,7 @@ public class CoinbaseRequest extends DefaultHttpRequest implements ExchangeReque
 		byte[] decodedSecretKey = encoder.decodeBase64(apiSecret.getBytes()); // NOSONAR (validation in @PostConstruct)
 		byte[] signature = encoder.encodeHmacSha256(decodedSecretKey, preHash.getBytes());
 
-		return new String(encoder.encodeBase64(signature));		
+		return new String(encoder.encodeBase64(signature), StandardCharsets.UTF_8);		
 	}
 
 	private final List<Header> addRequestHeaders(long timestamp, String signature) {
