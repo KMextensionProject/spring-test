@@ -17,7 +17,7 @@ import org.apache.http.message.BasicHeader;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.core.env.Environment;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.google.gson.Gson;
@@ -36,14 +36,14 @@ public class CoinbaseRequest extends DefaultHttpRequest implements ExchangeReque
 
 	private static final Logger logger = Logger.getLogger(CoinbaseRequest.class);
 
-	@Autowired
-	private Environment environment;
+	@Value("${COINBASE-API-KEY}")
+	private String apiKey;
 
-	@Autowired
-	private EncoderUtils encoder;
+	@Value("${COINBASE-API-SECRET}")
+	private String apiSecret;
 
-	@Autowired
-	private URLResolver urlResolver;
+	@Value("${COINBASE-API-PASSPHRASE}")
+	private String apiPassphrase;
 
 	@Autowired
 	@Qualifier("accountCurrency")
@@ -52,6 +52,12 @@ public class CoinbaseRequest extends DefaultHttpRequest implements ExchangeReque
 	@Autowired
 	@Qualifier("tradingCurrency")
 	private Currency tradingCurrency;
+
+	@Autowired
+	private EncoderUtils encoder;
+
+	@Autowired
+	private URLResolver urlResolver;
 
 	@Autowired
 	private RequestDateTime requestTime;
@@ -122,7 +128,7 @@ public class CoinbaseRequest extends DefaultHttpRequest implements ExchangeReque
 
 	private final String computeSignature(long timestamp, String httpMethod, String requestPath, String jsonBody) {
 		String preHash = timestamp + httpMethod + requestPath + (jsonBody != null ? jsonBody : "");
-		byte[] decodedSecretKey = encoder.decodeBase64(environment.getProperty("COINBASE-API-SECRET").getBytes()); // NOSONAR (validation in @PostConstruct)
+		byte[] decodedSecretKey = encoder.decodeBase64(apiSecret.getBytes()); // NOSONAR (validation in @PostConstruct)
 		byte[] signature = encoder.encodeHmacSha256(decodedSecretKey, preHash.getBytes());
 
 		return new String(encoder.encodeBase64(signature));		
@@ -138,8 +144,8 @@ public class CoinbaseRequest extends DefaultHttpRequest implements ExchangeReque
 	private final List<Header> getDefaultHeaders() {
 		if (defaultHeaders == null) {
 			defaultHeaders = new ArrayList<>(5);
-			defaultHeaders.add(new BasicHeader("cb-access-key", environment.getProperty("COINBASE-API-KEY")));
-			defaultHeaders.add(new BasicHeader("cb-access-passphrase", environment.getProperty("COINBASE-API-PASSPHRASE")));
+			defaultHeaders.add(new BasicHeader("cb-access-key", apiKey));
+			defaultHeaders.add(new BasicHeader("cb-access-passphrase", apiPassphrase));
 		}
 		// default headers should contain only static elements without modification
 		return new ArrayList<>(defaultHeaders);
@@ -147,9 +153,7 @@ public class CoinbaseRequest extends DefaultHttpRequest implements ExchangeReque
 
 	@PostConstruct
 	private void validateCoinbaseAPIEnv() {
-		if (environment.getProperty("COINBASE-API-KEY") == null
-				|| environment.getProperty("COINBASE-API-SECRET") == null
-				|| environment.getProperty("COINBASE-API-PASSPHRASE") == null) {
+		if (apiKey == null || apiSecret == null || apiPassphrase == null) {
 			throw new UnsupportedConfiguration("missingCoinbaseKeys");
 		}
 		logger.info(resolveMessage("coinbaseKeysValidation"));
