@@ -36,7 +36,7 @@ import sk.golddigger.enums.Currency;
 @Configuration
 @EnableCaching
 @EnableWebMvc
-@PropertySource("classpath:account_defaults.properties")
+@PropertySource({"classpath:account_defaults.properties", "classpath:email_provider.properties"})
 @ComponentScan(basePackages = "sk")
 public class AppConfig {
 
