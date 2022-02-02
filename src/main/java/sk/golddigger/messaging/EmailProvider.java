@@ -4,6 +4,7 @@ import java.util.Properties;
 
 import javax.annotation.PostConstruct;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
@@ -12,18 +13,19 @@ import org.springframework.stereotype.Component;
 @Component
 public class EmailProvider {
 
-	@Value("${smtp_host}")
+	@Value("${email_smtp_host}")
 	private String smtpHost;
 
-	// how to inject int value?
-	@Value("${port}")
+	@Value("${email_port}")
 	private String port;
 
-	@Value("${username}")
+	@Value("${email_username}")
 	private String username;
 
-	@Value("${password}")
+	@Value("${email_password}")
 	private String password;
+
+	private boolean isMailSenderConfigured;
 
 	public JavaMailSender configure() {
 
@@ -41,9 +43,12 @@ public class EmailProvider {
 		return mailSender;
 	}
 
+	public boolean hasValidConfiguration() {
+		return this.isMailSenderConfigured;
+	}
+
 	@PostConstruct
-	private void validateConfigurationPresence() {
-		// if those values are not set, log that it was not configured and
-		// do not force this setting to prevent the application to run
+	private void checkConfigurationParamsPresence() {
+		this.isMailSenderConfigured = (smtpHost != null || !smtpHost.isEmpty()) && StringUtils.isNumeric(port);
 	}
 }
