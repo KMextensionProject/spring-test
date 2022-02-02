@@ -49,6 +49,6 @@ public class EmailProvider {
 
 	@PostConstruct
 	private void checkConfigurationParamsPresence() {
-		this.isMailSenderConfigured = (smtpHost != null || !smtpHost.isEmpty()) && StringUtils.isNumeric(port);
+		this.isMailSenderConfigured = (smtpHost != null && !smtpHost.isEmpty()) && StringUtils.isNumeric(port);
 	}
 }
