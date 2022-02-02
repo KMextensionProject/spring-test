@@ -96,7 +96,7 @@ public class AppConfig {
 
 	@Bean
 	@Primary
-	public Recipient getRecipientWithEmail(@Value("${recipient}") String recipient) {
+	public Recipient getRecipientWithEmail(@Value("${email_recipient}") String recipient) {
 		return new Recipient().withEmail(recipient);
 	}
 }
