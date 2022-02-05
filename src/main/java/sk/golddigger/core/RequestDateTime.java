@@ -25,7 +25,7 @@ public class RequestDateTime {
 	}
 
 	public LocalDate getFirstDayOf(DateUnit dateUnit) {
-		LocalDate requestedDate = LocalDate.now(ZoneId.of("UTC"));
+		LocalDate requestedDate = getLocalDateUTC();
 		switch (dateUnit) {
 		case WEEK:
 			return requestedDate.with(DayOfWeek.MONDAY);
