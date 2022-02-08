@@ -1,8 +1,7 @@
 package sk.golddigger.controllers;
 
-import static sk.golddigger.enums.ContentType.APPLICATION_JSON;
-
-import java.util.Map;
+import static sk.golddigger.enums.ContentType.TEXT_PLAIN;
+import static sk.golddigger.utils.MapUtils.toStringTree;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -19,10 +18,10 @@ public class ExchangeAccountController {
 	@Autowired
 	private ExchangeAccountService exchangeService;
 
-	@GetMapping(path = "/account/complexOverview", produces = APPLICATION_JSON)
+	@GetMapping(path = "/account/complexOverview", produces = TEXT_PLAIN)
 	@ResponseBody
-	public Map<String, Object> getAccountComplexOverview() {
-		return exchangeService.getAccountComplexOverview();
+	public String getAccountComplexOverview() {
+		return toStringTree(exchangeService.getAccountComplexOverview());
 	}
 
 	@GetMapping(path = "/account/orders/excel")
