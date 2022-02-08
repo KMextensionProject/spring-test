@@ -22,7 +22,6 @@ import com.google.gson.Gson;
 import sk.golddigger.core.MarketRequest;
 import sk.golddigger.enums.Currency;
 import sk.golddigger.enums.PriceType;
-import sk.golddigger.exceptions.UnsupportedConfiguration;
 import sk.golddigger.utils.URLResolver;
 
 /**
@@ -53,7 +52,7 @@ public final class CryptoMarketRequest extends DefaultHttpRequest implements Mar
 	@Autowired
 	private Gson gson;
 
-	@Value("${POLYGON-API-KEY}")
+	@Value("${POLYGON-API-KEY:null}")
 	private String polygonApiKey;
 
 	/**
@@ -142,10 +141,9 @@ public final class CryptoMarketRequest extends DefaultHttpRequest implements Mar
 	// and not whether it is a valid api key !
 	@PostConstruct
 	private void validatePolygonApiKeyPresence() {
-		if (polygonApiKey == null || polygonApiKey.isEmpty()) {
-			String missingPolygonApiKey = resolveMessage("missingPolygonApiKey");
-			logger.error(missingPolygonApiKey);
-			throw new UnsupportedConfiguration(missingPolygonApiKey);
+		if ("null".equals(polygonApiKey)) {
+			logger.error(resolveMessage("missingPolygonApiKey"));
+			System.exit(1);
 		}
 		logger.info(resolveMessage("polygonApiKeyValidation"));
 	}

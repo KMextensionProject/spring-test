@@ -28,7 +28,6 @@ import sk.golddigger.core.Order;
 import sk.golddigger.core.RequestDateTime;
 import sk.golddigger.enums.Currency;
 import sk.golddigger.enums.HttpMethod;
-import sk.golddigger.exceptions.UnsupportedConfiguration;
 import sk.golddigger.utils.EncoderUtils;
 import sk.golddigger.utils.URLResolver;
 
@@ -37,13 +36,13 @@ public class CoinbaseRequest extends DefaultHttpRequest implements ExchangeReque
 
 	private static final Logger logger = Logger.getLogger(CoinbaseRequest.class);
 
-	@Value("${COINBASE-API-KEY}")
+	@Value("${COINBASE-API-KEY:null}")
 	private String apiKey;
 
-	@Value("${COINBASE-API-SECRET}")
+	@Value("${COINBASE-API-SECRET:null}")
 	private String apiSecret;
 
-	@Value("${COINBASE-API-PASSPHRASE}")
+	@Value("${COINBASE-API-PASSPHRASE:null}")
 	private String apiPassphrase;
 
 	@Autowired
@@ -154,8 +153,10 @@ public class CoinbaseRequest extends DefaultHttpRequest implements ExchangeReque
 
 	@PostConstruct
 	private void validateCoinbaseAPIEnv() {
-		if (apiKey == null || apiSecret == null || apiPassphrase == null) {
-			throw new UnsupportedConfiguration("missingCoinbaseKeys");
+		String NULL = "null";
+		if (NULL.equals(apiKey)|| NULL.equals(apiSecret) || NULL.equals(apiPassphrase)) {
+			logger.error(resolveMessage("missingCoinbaseKeys"));
+			System.exit(1);
 		}
 		logger.info(resolveMessage("coinbaseKeysValidation"));
 	}

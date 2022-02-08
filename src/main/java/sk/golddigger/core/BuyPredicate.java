@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import sk.golddigger.core.RequestDateTime.DateUnit;
-import sk.golddigger.exceptions.UnsupportedConfiguration;
 
 @Component
 public class BuyPredicate extends MarketPredicate {
@@ -38,7 +37,7 @@ public class BuyPredicate extends MarketPredicate {
 	private void validateBuyPredicateSetting() {
 		if ((week + month + year) == 0) {
 			logger.error(resolveMessage("unspecifiedPredicates"));
-			throw new UnsupportedConfiguration("Unspecified predicates.");
+			System.exit(1);
 		}
 	}
 

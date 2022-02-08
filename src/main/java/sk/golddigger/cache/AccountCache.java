@@ -1,4 +1,5 @@
 package sk.golddigger.cache;
+import static sk.golddigger.utils.MessageResolver.resolveMessage;
 
 import java.util.List;
 import java.util.Map;
@@ -12,8 +13,6 @@ import org.springframework.stereotype.Component;
 
 import sk.golddigger.core.ExchangeRequest;
 import sk.golddigger.enums.Currency;
-import sk.golddigger.exceptions.MissingAccount;
-import sk.golddigger.utils.MessageResolver;
 
 /**
  * This class represents a basic map based cache for storing all available account
@@ -47,9 +46,8 @@ public class AccountCache {
 			.findAny();
 
 		if (!accountId.isPresent()) {
-			String logMessage = MessageResolver.resolveMessage("accountNotFound", currency);
-			logger.error(logMessage);
-			throw new MissingAccount(logMessage);
+			logger.error(resolveMessage("accountNotFound", currency));
+			System.exit(1);
 		}
 
 		return accountId.get();

@@ -19,7 +19,6 @@ import sk.golddigger.core.MarketPredicate;
 import sk.golddigger.core.Order;
 import sk.golddigger.core.Order.OrderType;
 import sk.golddigger.core.Order.Side;
-import sk.golddigger.exceptions.UnsupportedConfiguration;
 import sk.golddigger.messaging.Message;
 import sk.golddigger.messaging.Recipient;
 import sk.golddigger.notification.Notification;
@@ -120,17 +119,15 @@ public class ScheduledJob {
 		if ((initDelay.equals("null") || initDelay.isEmpty()) 
 				|| (fixedRate.equals("null") || fixedRate.isEmpty())) {
 
-			String schedulerTimeAbsence = resolveMessage("schedulerTimeAbsence");
-			logger.error(schedulerTimeAbsence);
-			throw new UnsupportedConfiguration(schedulerTimeAbsence);
+			logger.error(resolveMessage("schedulerTimeAbsence"));
+			System.exit(1);
 		}
 	}
 
 	private void validateTimingContent() {
 		if (!(StringUtils.isNumeric(initDelay) && StringUtils.isNumeric(fixedRate))) {
-			String schedulerTimeError = resolveMessage("schedulerTimeError");
-			logger.error(schedulerTimeError);
-			throw new UnsupportedConfiguration(schedulerTimeError);
+			logger.error(resolveMessage("schedulerTimeError"));
+			System.exit(1);
 		}
 	}
 }
