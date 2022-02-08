@@ -68,20 +68,13 @@ public class ScheduledJob {
 			if (account.getBalance() > 1) {
 				market.updateState();
 
-				boolean isSuitableForBuyOrder = buyPredicate.testMarket(market);
-				if (isSuitableForBuyOrder) {
+				if (buyPredicate.testMarket(market)) {
 
-					logger.info("Is market suitable for buy order: " + isSuitableForBuyOrder);
-					String productId = createProductId();
-
-					Order buyOrder = new Order.OrderCreator()
-							.setType(OrderType.MARKET)
-							.setProductId(productId)
-							.setFunds(1_000.00)
-							.setSide(Side.BUY)
-							.createOrder();
-
+					logger.info("Current market state is suitable for buy order.");
 					logger.info("Placing buy order..");
+
+					String productId = createProductId();
+					Order buyOrder = createBuyOrder(productId);
 					account.placeOrder(buyOrder);
 
 					account.updateBestOrderBuyRate(market.getCurrentPrice());
@@ -104,6 +97,15 @@ public class ScheduledJob {
 
 	private String createProductId() {
 		return account.getTradingCurrency().getAcronym() + "-" + account.getAccountCurrency().getAcronym();
+	}
+
+	private Order createBuyOrder(String productId) {
+		return new Order.OrderCreator()
+			.setType(OrderType.MARKET)
+			.setProductId(productId)
+			.setFunds(1_000.00)
+			.setSide(Side.BUY)
+			.createOrder();
 	}
 
 	@PostConstruct
