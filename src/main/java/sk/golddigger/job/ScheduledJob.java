@@ -65,34 +65,31 @@ public class ScheduledJob {
 		if (SchedulerSwitch.isSwitchedOn()) {
 			account.updateState();
 
+			// because exchange accounts always have some fraction present
 			if (account.getBalance() > 1) {
 				market.updateState();
 
-				if (buyPredicate.testMarket(market)) {
-
-					logger.info("Current market state is suitable for buy order.");
-					logger.info("Placing buy order..");
-
-					String productId = createProductId();
-					Order buyOrder = createBuyOrder(productId);
-					account.placeOrder(buyOrder);
-
+				if (isConvenientToBuy()) {
+					placeBuyOrder();
 					account.updateBestOrderBuyRate(market.getCurrentPrice());
-
-					String tradingAccountId = accountCache.getAccountIdByCurrency(account.getTradingCurrency());
-					double tradingBalance = exchangeRequest.getAccountBalance(tradingAccountId);
-					logger.info("New state on trading account: " + tradingBalance);
-
 					account.updateState();
-					logger.info("Main account balance: " + account.getBalance());
-					logger.info("The best filled buy order rate: " + account.getBestOrderBuyRate()
-						+ account.getAccountCurrency().getAcronym());
 
-					Message message = new Message("Buy order placed !", "example message");
-					notification.send(message, recipient);
+					sendNotification();
 				}
 			}
 		}
+	}
+
+	private boolean isConvenientToBuy() {
+		return buyPredicate.testMarket(market);
+	}
+
+	private String placeBuyOrder() {
+		logger.info("Market meets configured conditions. Placing buy order...");
+		String productId = createProductId();
+		Order buyOrder = createBuyOrder(productId);
+
+		return account.placeOrder(buyOrder);
 	}
 
 	private String createProductId() {
@@ -103,9 +100,39 @@ public class ScheduledJob {
 		return new Order.OrderCreator()
 			.setType(OrderType.MARKET)
 			.setProductId(productId)
-			.setFunds(1_000.00)
+			.setFunds(account.getBalance())
 			.setSide(Side.BUY)
 			.createOrder();
+	}
+
+	private void sendNotification() {
+		String tradingAccountId = accountCache.getAccountIdByCurrency(account.getTradingCurrency());
+		double tradingBalance = exchangeRequest.getAccountBalance(tradingAccountId);
+
+		String newTradingAccountState = "New state on trading account: " + tradingBalance + getTradingCurrencyAcronym();
+		String newMainAccountState = "Main account balance: " + account.getBalance() + getAccountCurrencyAcronym();
+		String bestBuyOrderRate = "The best filled buy order rate: " + account.getBestOrderBuyRate() + getAccountCurrencyAcronym();
+
+		logger.info(newTradingAccountState);
+		logger.info(newMainAccountState);
+		logger.info(bestBuyOrderRate);
+
+		String messageBody = newTradingAccountState 
+				+ System.lineSeparator() 
+				+ newMainAccountState 
+				+ System.lineSeparator() 
+				+ bestBuyOrderRate;
+
+		Message message = new Message("New buy order has been placed", messageBody);
+		notification.send(message, recipient);
+	}
+
+	private String getAccountCurrencyAcronym() {
+		return account.getAccountCurrency().getAcronym();
+	}
+
+	private String getTradingCurrencyAcronym() {
+		return account.getTradingCurrency().getAcronym();
 	}
 
 	@PostConstruct
@@ -115,11 +142,12 @@ public class ScheduledJob {
 		logger.info(resolveMessage("scheduledTaskInit", initDelay, fixedRate));
 
 		buyPredicate.addPredicate(m -> m.getCurrentPrice() < account.getBestOrderBuyRate());
+		logger.info("Added buy predicate for the best order buy rate.");
 	}
 
 	private void validateTimingPresence() {
-		if ((initDelay.equals("null") || initDelay.isEmpty()) 
-				|| (fixedRate.equals("null") || fixedRate.isEmpty())) {
+		if (("null".equals(initDelay) || initDelay.isEmpty()) 
+				|| ("null".equals(fixedRate) || fixedRate.isEmpty())) {
 
 			logger.error(resolveMessage("schedulerTimeAbsence"));
 			System.exit(1);
