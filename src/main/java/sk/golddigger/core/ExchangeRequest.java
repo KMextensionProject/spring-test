@@ -13,6 +13,8 @@ public interface ExchangeRequest {
 
 	public List<Map<String, Object>> getAllOrderFills();
 
+	public Map<String, Object> getOrderById(String orderId);
+
 	public double getAccountBalance(String accountId);
 
 	public String postOrder(Order order);
