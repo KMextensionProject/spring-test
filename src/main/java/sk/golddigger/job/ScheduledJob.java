@@ -65,8 +65,10 @@ public class ScheduledJob {
 		if (SchedulerSwitch.isSwitchedOn()) {
 			account.updateState();
 
+			double accountBalance = account.getBalance();
+
 			// because exchange accounts always have some fraction present
-			if (account.getBalance() > 1) {
+			if (accountBalance > 1) {
 				market.updateState();
 
 				if (isConvenientToBuy()) {
@@ -74,7 +76,7 @@ public class ScheduledJob {
 					account.updateBestOrderBuyRate(market.getCurrentPrice());
 					account.updateState();
 
-					sendNotification();
+					sendNotification(accountBalance);
 				}
 			}
 		}
@@ -105,26 +107,30 @@ public class ScheduledJob {
 			.createOrder();
 	}
 
-	private void sendNotification() {
+	private void sendNotification(double depositAmount) {
+		String messageBody = constructNotificationMessageBody(depositAmount);
+		Message message = new Message("New buy order has been placed", messageBody);
+		notification.send(message, recipient);
+	}
+
+	private String constructNotificationMessageBody(double depositAmount) {
 		String tradingAccountId = accountCache.getAccountIdByCurrency(account.getTradingCurrency());
 		double tradingBalance = exchangeRequest.getAccountBalance(tradingAccountId);
 
-		String newTradingAccountState = "New state on trading account: " + tradingBalance + getTradingCurrencyAcronym();
-		String newMainAccountState = "Main account balance: " + account.getBalance() + getAccountCurrencyAcronym();
-		String bestBuyOrderRate = "The best filled buy order rate: " + account.getBestOrderBuyRate() + getAccountCurrencyAcronym();
+		StringBuilder messageBody = new StringBuilder();
+		messageBody.append("Order amount: " + getAccountCurrencyAcronym());
+		messageBody.append(System.lineSeparator());
+		messageBody.append("Current trading account balance: " + tradingBalance + getTradingCurrencyAcronym());
+		messageBody.append(System.lineSeparator());
+		messageBody.append("Current main account balance: " + account.getBalance() + getAccountCurrencyAcronym());
+		messageBody.append(System.lineSeparator());
+		messageBody.append("The best filled buy order rate: " + account.getBestOrderBuyRate() + getAccountCurrencyAcronym());
 
-		logger.info(newTradingAccountState);
-		logger.info(newMainAccountState);
-		logger.info(bestBuyOrderRate);
+		if (logger.isDebugEnabled()) {
+			logger.debug(messageBody);
+		}
 
-		String messageBody = newTradingAccountState 
-				+ System.lineSeparator() 
-				+ newMainAccountState 
-				+ System.lineSeparator() 
-				+ bestBuyOrderRate;
-
-		Message message = new Message("New buy order has been placed", messageBody);
-		notification.send(message, recipient);
+		return messageBody.toString();
 	}
 
 	private String getAccountCurrencyAcronym() {
