@@ -2,7 +2,9 @@ package sk.golddigger.job;
 
 import static sk.golddigger.utils.MessageResolver.resolveMessage;
 
-import java.util.UUID;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 import javax.annotation.PostConstruct;
 
@@ -74,11 +76,12 @@ public class ScheduledJob {
 				market.updateState();
 
 				if (isConvenientToBuy()) {
-					placeBuyOrder();
-					account.updateBestOrderBuyRate(market.getCurrentPrice());
+					String orderId = placeBuyOrder();
+					double orderRate = getOrderRateById(orderId);
+					account.updateBestOrderBuyRate(orderRate);
 					account.updateState();
 
-					sendNotification(accountBalance);
+					sendNotification(accountBalance, orderRate);
 				}
 			}
 		}
@@ -93,7 +96,7 @@ public class ScheduledJob {
 		String productId = createProductId();
 		createBuyOrder(productId);
 
-		return UUID.randomUUID().toString();//account.placeOrder(buyOrder);
+		return "ce4e148b-38d0-4ce4-8564-454cdd9d6bce";//account.placeOrder(buyOrder);
 	}
 
 	private String createProductId() {
@@ -109,20 +112,36 @@ public class ScheduledJob {
 			.createOrder();
 	}
 
-	private void sendNotification(double depositAmount) {
-		String messageBody = constructNotificationMessageBody(depositAmount);
+	private double getOrderRateById(String orderId) {
+		List<Map<String, Object>> fills = exchangeRequest.getAllOrderFills();
+
+		Optional<Map<String, Object>> fill = fills.stream()
+				.filter(e -> e.get("order_id").equals(orderId))
+				.findFirst();
+
+		if (fill.isPresent()) {
+			return Double.valueOf(String.valueOf(fill.get().get("price")));
+		}
+
+		return 0.00;
+	}
+
+	private void sendNotification(double depositAmount, double depositRate) {
+		String messageBody = constructNotificationMessageBody(depositAmount, depositRate);
 		Message message = new Message("New buy order has been placed", messageBody);
 		notification.send(message, recipient);
 	}
 
-	private String constructNotificationMessageBody(double depositAmount) {
+	private String constructNotificationMessageBody(double depositAmount, double depositRate) {
 		String tradingAccountId = accountCache.getAccountIdByCurrency(account.getTradingCurrency());
 		double tradingBalance = exchangeRequest.getAccountBalance(tradingAccountId);
 
 		StringBuilder messageBody = new StringBuilder();
 		messageBody.append("Order amount: " + depositAmount + getAccountCurrencyAcronym());
 		messageBody.append(System.lineSeparator());
-		messageBody.append("Current trading account balance: " + tradingBalance + getTradingCurrencyAcronym());
+		messageBody.append("Order rate: " + depositRate + getAccountCurrencyAcronym() + "/" + getTradingCurrencyAcronym());
+		messageBody.append(System.lineSeparator());
+		messageBody.append("Current trading account balance: " + 0.0000 + getTradingCurrencyAcronym());
 		messageBody.append(System.lineSeparator());
 		messageBody.append("Current main account balance: " + account.getBalance() + getAccountCurrencyAcronym());
 		messageBody.append(System.lineSeparator());
