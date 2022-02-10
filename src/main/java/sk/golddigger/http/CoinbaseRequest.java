@@ -2,6 +2,7 @@ package sk.golddigger.http;
 
 import static sk.golddigger.enums.Resources.COINBASE_ACCOUNTS_URL;
 import static sk.golddigger.enums.Resources.COINBASE_ACCOUNT_BY_ID_URL;
+import static sk.golddigger.enums.Resources.COINBASE_ORDER_BY_ID_URL;
 import static sk.golddigger.enums.Resources.COINBASE_ORDER_FILLS;
 import static sk.golddigger.enums.Resources.COINBASE_PLACE_ORDER_URL;
 import static sk.golddigger.utils.MessageResolver.resolveMessage;
@@ -86,6 +87,17 @@ public class CoinbaseRequest extends DefaultHttpRequest implements ExchangeReque
 		logPayload(responseBody);
 
 		return gson.fromJson(responseBody, List.class);
+	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public Map<String, Object> getOrderById(String orderId) {
+		String url = urlResolver.resolveParams(COINBASE_ORDER_BY_ID_URL, orderId);
+		List<Header> headers = computeRequestHeaders(url, HttpMethod.GET, null);
+		String responseBody = getJson(url, headers);
+		logPayload(responseBody);
+
+		return gson.fromJson(responseBody, Map.class);
 	}
 
 	@Override
