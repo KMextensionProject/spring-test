@@ -120,7 +120,7 @@ public class ScheduledJob {
 		double tradingBalance = exchangeRequest.getAccountBalance(tradingAccountId);
 
 		StringBuilder messageBody = new StringBuilder();
-		messageBody.append("Order amount: " + getAccountCurrencyAcronym());
+		messageBody.append("Order amount: " + depositAmount + getAccountCurrencyAcronym());
 		messageBody.append(System.lineSeparator());
 		messageBody.append("Current trading account balance: " + tradingBalance + getTradingCurrencyAcronym());
 		messageBody.append(System.lineSeparator());
