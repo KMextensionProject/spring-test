@@ -2,6 +2,8 @@ package sk.golddigger.job;
 
 import static sk.golddigger.utils.MessageResolver.resolveMessage;
 
+import java.util.UUID;
+
 import javax.annotation.PostConstruct;
 
 import org.apache.commons.lang3.StringUtils;
@@ -65,7 +67,7 @@ public class ScheduledJob {
 		if (SchedulerSwitch.isSwitchedOn()) {
 			account.updateState();
 
-			double accountBalance = account.getBalance();
+			double accountBalance = 1000;
 
 			// because exchange accounts always have some fraction present
 			if (accountBalance > 1) {
@@ -89,9 +91,9 @@ public class ScheduledJob {
 	private String placeBuyOrder() {
 		logger.info("Market meets configured conditions. Placing buy order...");
 		String productId = createProductId();
-		Order buyOrder = createBuyOrder(productId);
+		createBuyOrder(productId);
 
-		return account.placeOrder(buyOrder);
+		return UUID.randomUUID().toString();//account.placeOrder(buyOrder);
 	}
 
 	private String createProductId() {
