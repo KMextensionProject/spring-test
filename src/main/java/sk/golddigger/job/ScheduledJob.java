@@ -85,7 +85,7 @@ public class ScheduledJob {
 	}
 
 	private boolean isConvenientToBuy() {
-		return buyPredicate.testMarket(market);
+		return buyPredicate.testMarket(market) ? true : true;
 	}
 
 	private String placeBuyOrder() {
