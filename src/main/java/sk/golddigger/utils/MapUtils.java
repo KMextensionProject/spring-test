@@ -12,16 +12,17 @@ public class MapUtils {
 	 */
 	public static String toStringTree(Map<String, Object> map) {
 		StringBuilder tree = new StringBuilder();
-		return getAsStringTree(map, tree);
+		String result = getAsStringTree(map, tree);
+		depth = 0;
+		return result;
 	}
 
-	// TODO: add dynamic tabs based on depth (depth++ / depth--)
 	@SuppressWarnings("unchecked")
 	private static String getAsStringTree(Map<String, Object> map, StringBuilder tree) {
 
 		for (Map.Entry<String, Object> entry : map.entrySet()) {
 			if (depth > 0) {
-				tree.append("\t");
+				appendTab(tree);
 			}
 
 			tree.append(entry.getKey());
@@ -30,7 +31,7 @@ public class MapUtils {
 			Object value = entry.getValue();
 
 			if (value instanceof Map) {
-				depth = 1;
+				depth++;
 				tree.append(System.lineSeparator());
 				getAsStringTree((Map<String, Object>) value, tree);
 			} else {
@@ -39,7 +40,14 @@ public class MapUtils {
 			}
 		}
 
-		depth = 0;
+		depth--;
 		return tree.toString();
 	}
+
+	private static void appendTab(StringBuilder tree) {
+		for(int i = 0; i < depth; i++) {
+			tree.append("\t");
+		}
+	}
+
 }
