@@ -32,4 +32,11 @@ public class Recipient {
 	public String getPhoneNumber() {
 		return this.phoneNumber;
 	}
+
+	public boolean isDefined() {
+		boolean emailPresent = (email != null && !email.equals("null"));
+		boolean phonePresent = (phoneNumber != null && !phoneNumber.equals("null"));
+
+		return emailPresent || phonePresent;
+	}
 }

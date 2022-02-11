@@ -67,6 +67,7 @@ public class ScheduledJob {
 	public void scheduledAction() {
 
 		if (SchedulerSwitch.isSwitchedOn()) {
+
 			account.updateState();
 			double accountBalance = account.getBalance();
 
@@ -79,7 +80,7 @@ public class ScheduledJob {
 					double orderRate = getOrderRateById(orderId);
 					account.updateBestOrderBuyRate(orderRate);
 					account.updateState();
-
+	
 					sendNotification(accountBalance, orderRate);
 				}
 			}
@@ -127,6 +128,10 @@ public class ScheduledJob {
 	}
 
 	private void sendNotification(double depositAmount, double orderRate) {
+		if (!recipient.isDefined()) {
+			logger.warn(resolveMessage("undefinedNotificationRecipient"));
+			return;
+		}
 		String messageBody = constructNotificationMessageBody(depositAmount, orderRate);
 		Message message = new Message("Gold Digger - New buy order has been placed", messageBody);
 		notification.send(message, recipient);
