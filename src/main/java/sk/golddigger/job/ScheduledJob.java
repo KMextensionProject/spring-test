@@ -113,9 +113,10 @@ public class ScheduledJob {
 
 	private double getOrderRateById(String orderId) {
 		List<Map<String, Object>> orderFills = exchangeRequest.getAllOrderFills();
+
 		Optional<Map<String, Object>> orderFill = orderFills.stream()
-				.filter(e -> e.get("order_id").equals(orderId))
-				.findFirst();
+			.filter(e -> e.get("order_id").equals(orderId))
+			.findFirst();
 
 		if (orderFill.isPresent()) {
 			String orderRate = String.valueOf(orderFill.get().get("price"));
@@ -127,7 +128,7 @@ public class ScheduledJob {
 
 	private void sendNotification(double depositAmount, double orderRate) {
 		String messageBody = constructNotificationMessageBody(depositAmount, orderRate);
-		Message message = new Message("New buy order has been placed", messageBody);
+		Message message = new Message("Gold Digger - New buy order has been placed", messageBody);
 		notification.send(message, recipient);
 	}
 
