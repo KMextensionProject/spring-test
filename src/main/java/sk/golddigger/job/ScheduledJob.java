@@ -178,9 +178,7 @@ public class ScheduledJob {
 	}
 
 	private void validateTimingPresence() {
-		if (("null".equals(initDelay) || initDelay.isEmpty()) 
-				|| ("null".equals(fixedRate) || fixedRate.isEmpty())) {
-
+		if (("null".equals(initDelay)) || ("null".equals(fixedRate))) {
 			logger.error(resolveMessage("schedulerTimeAbsence"));
 			System.exit(1);
 		}
