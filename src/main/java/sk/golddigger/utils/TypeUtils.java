@@ -1,8 +1,14 @@
 package sk.golddigger.utils;
 
+import static sk.golddigger.utils.MessageResolver.resolveMessage;
+
 import java.util.function.Predicate;
 
 public class TypeUtils {
+
+	private TypeUtils() {
+		throw new IllegalStateException(resolveMessage("factoryClassInstantiationError", TypeUtils.class));
+	}
 
 	/**
 	 * This method evaluates value against predicate and if it succeeds
