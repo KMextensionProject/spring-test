@@ -1,5 +1,8 @@
 package sk.golddigger.controllers;
 
+import static sk.golddigger.enums.ContentType.APPLICATION_JSON;
+import static sk.golddigger.enums.ContentType.TEXT_PLAIN;
+
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,13 +19,13 @@ public class ApplicationController {
 	@Autowired
 	private ApplicationService applicationService;
 
-	@GetMapping(path = "/ping", produces = "text/plain")
+	@GetMapping(path = "/ping", produces = TEXT_PLAIN)
 	@ResponseBody
 	public String ping() {
 		return "Status OK";
 	}
 
-	@GetMapping(path = "/endpoints", produces = "application/json")
+	@GetMapping(path = "/endpoints", produces = APPLICATION_JSON)
 	@ResponseBody
 	public Set<String> getAvailableEndpoints() {
 		return applicationService.getAvailableEndpoints();

@@ -1,4 +1,5 @@
 package sk.golddigger.controllers;
+import static sk.golddigger.enums.ContentType.TEXT_PLAIN;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -15,7 +16,7 @@ public class SchedulerSwitchController {
 	@Autowired
 	private SchedulerSwitchService schedulerSwitchService;
 
-	@PostMapping(path = "/scheduler/switch", produces = "text/plain")
+	@PostMapping(path = "/scheduler/switch", produces = TEXT_PLAIN)
 	@ResponseBody
 	public String toggleSwitch(HttpServletRequest request) {
 		return schedulerSwitchService.toggleSwitch(request);
