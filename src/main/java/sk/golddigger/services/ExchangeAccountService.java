@@ -23,6 +23,7 @@ import sk.golddigger.core.ExchangeAccount;
 import sk.golddigger.core.ExchangeRequest;
 import sk.golddigger.core.RequestDateTime;
 import sk.golddigger.enums.Currency;
+import sk.golddigger.utils.TypeUtils;
 import sk.golddigger.utils.XlsxUtils;
 
 @Service
@@ -53,12 +54,14 @@ public class ExchangeAccountService {
 	private Map<String, Object> getDefaultAccountInfo() {
 		Currency accountCurrency = exchangeAccount.getAccountCurrency();
 
+		Object bestBuyOrderRate = TypeUtils.getValueByCondition(e -> e > 0, exchangeAccount.getBestOrderBuyRate(), "No order has been placed in this year.");
+
 		Map<String, Object> defaultAccountInfo = new LinkedHashMap<>();
 		defaultAccountInfo.put("account_id", exchangeAccount.getAccountId());
 		defaultAccountInfo.put("currency", accountCurrency.getName());
 		defaultAccountInfo.put("currency_acronym", accountCurrency.getAcronym());
 		defaultAccountInfo.put("balance", exchangeAccount.getBalance());
-		defaultAccountInfo.put("best_buy_rate", exchangeAccount.getBestOrderBuyRate());
+		defaultAccountInfo.put("best_buy_order_rate", bestBuyOrderRate);
 
 		return defaultAccountInfo;
 	}

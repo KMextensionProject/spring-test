@@ -26,6 +26,7 @@ import sk.golddigger.core.Order.Side;
 import sk.golddigger.messaging.Message;
 import sk.golddigger.messaging.Recipient;
 import sk.golddigger.notification.Notification;
+import sk.golddigger.utils.TypeUtils;
 
 @Component
 public class ScheduledJob {
@@ -80,7 +81,7 @@ public class ScheduledJob {
 					double orderRate = getOrderRateById(orderId);
 					account.updateBestOrderBuyRate(orderRate);
 					account.updateState();
-	
+
 					sendNotification(accountBalance, orderRate);
 				}
 			}
@@ -141,6 +142,11 @@ public class ScheduledJob {
 		String tradingAccountId = accountCache.getAccountIdByCurrency(account.getTradingCurrency());
 		double tradingBalance = exchangeRequest.getAccountBalance(tradingAccountId);
 
+		Object bestBuyOrderRate = TypeUtils.getValueByCondition(e -> e > 0, account.getBestOrderBuyRate(), "No order has been placed in this year.");
+		if(bestBuyOrderRate instanceof Number) {
+			bestBuyOrderRate += getAccountCurrencyAcronym();
+		}
+
 		StringBuilder messageBody = new StringBuilder();
 		messageBody.append("Order amount: " + getAccountCurrencyAcronym());
 		messageBody.append(System.lineSeparator());
@@ -150,7 +156,7 @@ public class ScheduledJob {
 		messageBody.append(System.lineSeparator());
 		messageBody.append("Current main account balance: " + account.getBalance() + getAccountCurrencyAcronym());
 		messageBody.append(System.lineSeparator());
-		messageBody.append("The best filled buy order rate: " + account.getBestOrderBuyRate() + getAccountCurrencyAcronym());
+		messageBody.append("The best filled buy order rate: " + bestBuyOrderRate);
 
 		if (logger.isDebugEnabled()) {
 			logger.debug(messageBody);
