@@ -52,7 +52,7 @@ public final class CryptoMarketRequest extends DefaultHttpRequest implements Mar
 	@Autowired
 	private Gson gson;
 
-	@Value("${POLYGON-API-KEY:null}")
+	@Value("${POLYGON_API_KEY:null}")
 	private String polygonApiKey;
 
 	/**

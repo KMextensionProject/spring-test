@@ -37,13 +37,13 @@ public class CoinbaseRequest extends DefaultHttpRequest implements ExchangeReque
 
 	private static final Logger logger = Logger.getLogger(CoinbaseRequest.class);
 
-	@Value("${COINBASE-API-KEY:null}")
+	@Value("${COINBASE_API_KEY:null}")
 	private String apiKey;
 
-	@Value("${COINBASE-API-SECRET:null}")
+	@Value("${COINBASE_API_SECRET:null}")
 	private String apiSecret;
 
-	@Value("${COINBASE-API-PASSPHRASE:null}")
+	@Value("${COINBASE_API_PASSPHRASE:null}")
 	private String apiPassphrase;
 
 	@Autowired
