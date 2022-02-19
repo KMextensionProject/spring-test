@@ -50,4 +50,9 @@ public class MapUtils {
 		}
 	}
 
+	public void renameKey(Map<String, Object> map, String oldKey, String newKey) {
+		Object value = map.remove(oldKey);
+		map.put(newKey, value);
+	}
+
 }
