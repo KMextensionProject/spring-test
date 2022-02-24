@@ -11,6 +11,7 @@ import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
+import org.apache.http.StatusLine;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -105,7 +106,21 @@ public abstract class DefaultHttpRequest {
 	}
 
 	private void logResponse(HttpResponse response) {
-		logger.info("Response: " + response);
+		StringBuilder responseString = new StringBuilder("Response: ");
+
+		StatusLine statusLine = response.getStatusLine();
+		if (statusLine.getStatusCode() < 300) {
+			responseString.append(statusLine.getProtocolVersion());
+			responseString.append(" ");
+			responseString.append(statusLine.getStatusCode());
+			responseString.append(" ");
+			responseString.append(statusLine.getReasonPhrase());
+
+			logger.info(responseString);
+		} else {
+			responseString.append(response);
+			logger.info(responseString);
+		}
 	}
 
 	private void handleReqsponseError(HttpResponse response) {
