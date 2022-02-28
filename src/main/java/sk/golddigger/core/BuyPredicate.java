@@ -63,10 +63,6 @@ public class BuyPredicate extends MarketPredicate {
 		return this.predicate.test(market);
 	}
 
-	private int getPercentageDifference(double current, double opening) {
-		return (int) (((current - opening) / opening) * 100);
-	}
-
 	@Override
 	public List<DateUnit> getPredicatedDateUnits() {
 		return this.registeredDateUnits;

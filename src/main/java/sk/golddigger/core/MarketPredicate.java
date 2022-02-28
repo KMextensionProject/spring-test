@@ -3,6 +3,8 @@ package sk.golddigger.core;
 import java.util.List;
 import java.util.function.Predicate;
 
+import org.apache.log4j.Logger;
+
 import sk.golddigger.core.RequestDateTime.DateUnit;
 
 /**
@@ -13,6 +15,8 @@ import sk.golddigger.core.RequestDateTime.DateUnit;
  * predicate.
  */
 public abstract class MarketPredicate {
+
+	private static final Logger logger = Logger.getLogger(MarketPredicate.class);
 
 	protected int week;
 	protected int month;
@@ -33,6 +37,14 @@ public abstract class MarketPredicate {
 
 	public boolean containsAdditionalPredicates() {
 		return this.hasAdditionalPredicates;
+	}
+
+	protected int getPercentageDifference(double current, double other) {
+		int difference = (int) (((current - other) / other) * 100);
+		if (logger.isDebugEnabled()) {
+			logger.debug("Predicate rate difference: " + difference + "%");
+		}
+		return difference;
 	}
 
 	public abstract void addPredicate(Predicate<Market> predicate);
