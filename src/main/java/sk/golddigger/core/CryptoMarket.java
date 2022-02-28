@@ -56,7 +56,6 @@ public class CryptoMarket extends Market {
 
 			Map<PriceType, Double> yearPrice = cryptoMarketRequest.getPricesByDate(requestTime.getFirstDayAdjusted(DateUnit.YEAR));
 			this.firstDayOfYearOpeningPrice = yearPrice.get(OPENING);
-			this.firstDayOfYearOpeningPrice = yearPrice.get(CLOSING);
 
 			lastUpdated = today;
 		}
