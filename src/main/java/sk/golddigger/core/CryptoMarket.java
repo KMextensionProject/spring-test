@@ -38,6 +38,7 @@ public class CryptoMarket extends Market {
 	private void updateAllTimeHigh() {
 		if (this.currentPrice > this.allTimeHigh) {
 			this.allTimeHigh = cryptoMarketRequest.getAllTimeHigh();
+			this.lastUpdatedAllTimeHigh = requestTime.getLocalDateUTC();
 		}
 	}
 

@@ -11,6 +11,7 @@ public abstract class Market implements Updatable {
 	protected double firstDayOfMonthClosingPrice;
 	protected double firstDayOfYearOpeningPrice;
 	protected double allTimeHigh;
+	protected LocalDate lastUpdatedAllTimeHigh;
 	protected LocalDate lastUpdated;
 
 	public double getCurrentPrice() {
@@ -39,6 +40,10 @@ public abstract class Market implements Updatable {
 
 	public double getAllTimeHigh() {
 		return allTimeHigh;
+	}
+
+	public LocalDate getLastUpdatedAllTimeHigh() {
+		return this.lastUpdatedAllTimeHigh;
 	}
 
 	public LocalDate getLastUpdated() {

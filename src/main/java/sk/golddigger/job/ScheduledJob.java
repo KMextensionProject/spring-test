@@ -2,6 +2,7 @@ package sk.golddigger.job;
 
 import static sk.golddigger.utils.MessageResolver.resolveMessage;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -23,6 +24,7 @@ import sk.golddigger.core.MarketPredicate;
 import sk.golddigger.core.Order;
 import sk.golddigger.core.Order.OrderType;
 import sk.golddigger.core.Order.Side;
+import sk.golddigger.core.RequestDateTime;
 import sk.golddigger.messaging.Message;
 import sk.golddigger.messaging.Recipient;
 import sk.golddigger.notification.Notification;
@@ -64,17 +66,24 @@ public class ScheduledJob {
 	@Autowired
 	private Recipient recipient;
 
+	@Autowired
+	private RequestDateTime requestDateTime;
+
+	private LocalDate lastAthNotificationDate;
+
 	@Scheduled(initialDelayString = "${scheduler.initial_task_delay}", fixedRateString = "${scheduler.fixed_task_rate}")
 	public void scheduledAction() {
 
-		if (SchedulerSwitch.isSwitchedOn()) {
+		account.updateState();
+		market.updateState();
 
-			account.updateState();
+		checkAndSendAthNotification();
+
+		if (SchedulerSwitch.isSwitchedOn()) {
 			double accountBalance = account.getBalance();
 
-			// because exchange accounts always have some fraction present
+			// exchange accounts always have some fraction present
 			if (accountBalance > 1) {
-				market.updateState();
 
 				if (isConvenientToBuy()) {
 					String orderId = placeBuyOrder();
@@ -82,9 +91,38 @@ public class ScheduledJob {
 					account.updateBestOrderBuyRate(orderRate);
 					account.updateState();
 
-					sendNotification(accountBalance, orderRate);
+					sendOrderNotification(accountBalance, orderRate);
 				}
 			}
+		}
+	}
+
+	// It's enough to be notified once a day in case of ATH breakthrough.
+	private void checkAndSendAthNotification() {
+		LocalDate today = requestDateTime.getLocalDateUTC();
+		if (!today.equals(lastAthNotificationDate)) {
+			if (today.equals(market.getLastUpdatedAllTimeHigh())) {
+				sendAllTimeHighNotification();
+				lastAthNotificationDate = today;
+			}
+		}
+	}
+
+	private void sendAllTimeHighNotification() {
+		if (!isRecipientDefined()) {
+			return;
+		}
+		StringBuilder athMessageBody = new StringBuilder();
+		athMessageBody.append("New all time high has just been reached at ");
+		athMessageBody.append(market.getAllTimeHigh() + " ");
+		athMessageBody.append(getAccountCurrencyAcronym() + "/");
+		athMessageBody.append(getTradingCurrencyAcronym());
+
+		Message athMessage = new Message("Gold Digger - New ATH has been reached", athMessageBody.toString());
+		notification.send(athMessage, recipient);
+
+		if (logger.isDebugEnabled()) {
+			logger.debug(athMessageBody);
 		}
 	}
 
@@ -128,17 +166,16 @@ public class ScheduledJob {
 		return 0.00;
 	}
 
-	private void sendNotification(double depositAmount, double orderRate) {
-		if (!recipient.isDefined()) {
-			logger.warn(resolveMessage("undefinedNotificationRecipient"));
+	private void sendOrderNotification(double depositAmount, double orderRate) {
+		if (!isRecipientDefined()) {
 			return;
 		}
-		String messageBody = constructNotificationMessageBody(depositAmount, orderRate);
+		String messageBody = constructOrderNotificationMessageBody(depositAmount, orderRate);
 		Message message = new Message("Gold Digger - New buy order has been placed", messageBody);
 		notification.send(message, recipient);
 	}
 
-	private String constructNotificationMessageBody(double depositAmount, double orderRate) {
+	private String constructOrderNotificationMessageBody(double depositAmount, double orderRate) {
 		String tradingAccountId = accountCache.getAccountIdByCurrency(account.getTradingCurrency());
 		double tradingBalance = exchangeRequest.getAccountBalance(tradingAccountId);
 
@@ -165,6 +202,14 @@ public class ScheduledJob {
 		return messageBody.toString();
 	}
 
+	private boolean isRecipientDefined() {
+		boolean recipientPresent = recipient.isDefined();
+		if (!recipientPresent) {
+			logger.warn(resolveMessage("undefinedNotificationRecipient"));
+		}
+		return recipientPresent;
+	}
+
 	private String getAccountCurrencyAcronym() {
 		return account.getAccountCurrency().getAcronym();
 	}
@@ -181,6 +226,8 @@ public class ScheduledJob {
 
 		buyPredicate.addPredicate(m -> m.getCurrentPrice() < account.getBestOrderBuyRate());
 		logger.info("Added buy predicate for the best order buy rate.");
+
+		this.lastAthNotificationDate = requestDateTime.getLocalDateUTC();
 	}
 
 	private void validateTimingPresence() {
