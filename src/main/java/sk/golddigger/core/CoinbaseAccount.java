@@ -16,6 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import sk.golddigger.cache.AccountCache;
+import sk.golddigger.exceptions.ApplicationFailure;
+import sk.golddigger.exceptions.ClientSideFailure;
 import sk.golddigger.http.CoinbaseRequest;
 
 @Component
@@ -41,12 +43,17 @@ public class CoinbaseAccount extends ExchangeAccount {
 
 	@PostConstruct
 	private void initAccountState() {
-		accountId = accountCache.getAccountIdByCurrency(accountCurrency);
-		bestOrderBuyRate = computeThisYearBestOrderBuyRate();
+		try {
+			accountId = accountCache.getAccountIdByCurrency(accountCurrency);
+			bestOrderBuyRate = computeThisYearBestOrderBuyRate();
 
-		if (logger.isDebugEnabled()) {
-			logger.debug(resolveMessage("initialBestBuyRate", bestOrderBuyRate, 
-					accountCurrency.getAcronym(), tradingCurrency.getAcronym()));
+			if (logger.isDebugEnabled()) {
+				logger.debug(resolveMessage("initialBestBuyRate", bestOrderBuyRate, accountCurrency.getAcronym(),
+						tradingCurrency.getAcronym()));
+			}
+		} catch (ApplicationFailure | ClientSideFailure failure) {
+			logger.error(resolveMessage("accountInitError", failure.getMessage()));
+			System.exit(1);
 		}
 	}
 
