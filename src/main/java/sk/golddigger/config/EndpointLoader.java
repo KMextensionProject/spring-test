@@ -115,6 +115,6 @@ public final class EndpointLoader {
 		}
 
 		String home = homeEndpoint.get();
-		logger.info("**********  " + home + "  **********");
+		logger.info("\n\n***********************  " + home + "  ***********************\n");
 	}
 }
