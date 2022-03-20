@@ -8,11 +8,13 @@ import org.springframework.mail.MailAuthenticationException;
 import org.springframework.mail.MailException;
 import org.springframework.stereotype.Component;
 
+import sk.golddigger.annotations.OnPropertyContent;
 import sk.golddigger.messaging.Email;
 import sk.golddigger.messaging.EmailSender;
 import sk.golddigger.messaging.Message;
 import sk.golddigger.messaging.Recipient;
 
+@OnPropertyContent(propertyName = "NOTIFICATION_RECIPIENT", lookupValue = "@")
 @Component
 public class EmailNotification implements Notification {
 
@@ -20,6 +22,10 @@ public class EmailNotification implements Notification {
 
 	@Autowired
 	private EmailSender emailSender;
+
+	public EmailNotification() {
+		logger.info(resolveMessage("notificationInitialized", EmailNotification.class.getSimpleName()));
+	}
 
 	@Override
 	public void send(Message message, Recipient recipient) {
