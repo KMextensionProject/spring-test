@@ -39,4 +39,9 @@ public class Recipient {
 
 		return emailPresent || phonePresent;
 	}
+
+	@Override
+	public String toString() {
+		return "name: " + this.name + ", email: " + this.email + ", phone: " + this.phoneNumber;
+	}
 }
