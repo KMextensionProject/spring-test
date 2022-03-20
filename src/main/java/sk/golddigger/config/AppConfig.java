@@ -13,7 +13,6 @@ import org.springframework.cache.support.SimpleCacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
@@ -95,8 +94,14 @@ public class AppConfig {
 	}
 
 	@Bean
-	@Primary
-	public Recipient getRecipientWithEmail(@Value("${NOTIFICATION_RECIPIENT:null}") String recipient) {
-		return new Recipient().withEmail(recipient.trim());
+	public Recipient getRecipient(@Value("${NOTIFICATION_RECIPIENT:null}") String recipient) {
+		Recipient notificationRecipient = new Recipient();
+		if (recipient.contains("@")) {
+			return notificationRecipient.withEmail(recipient.trim());
+		} else if (recipient.contains("+")) {
+			return notificationRecipient.withPhoneNumber(recipient);
+		} else {
+			return notificationRecipient;
+		}
 	}
 }
