@@ -1,7 +1,7 @@
 package sk.golddigger.core;
 
-import static sk.golddigger.enums.PriceType.CLOSING;
-import static sk.golddigger.enums.PriceType.OPENING;
+import static sk.golddigger.enums.MarketPriceType.CLOSING;
+import static sk.golddigger.enums.MarketPriceType.OPENING;
 import static sk.golddigger.utils.MessageResolver.resolveMessage;
 
 import java.time.LocalDate;
@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import sk.golddigger.core.RequestDateTime.DateUnit;
-import sk.golddigger.enums.PriceType;
+import sk.golddigger.enums.MarketPriceType;
 import sk.golddigger.http.CryptoMarketRequest;
 
 @Component
@@ -47,15 +47,15 @@ public class CryptoMarket extends Market {
 
 		if (!today.equals(lastUpdated)) {
 
-			Map<PriceType, Double> weekPrice = cryptoMarketRequest.getPricesByDate(requestTime.getFirstDayAdjusted(DateUnit.WEEK));
+			Map<MarketPriceType, Double> weekPrice = cryptoMarketRequest.getPricesByDate(requestTime.getFirstDayAdjusted(DateUnit.WEEK));
 			this.firstDayOfWeekOpeningPrice = weekPrice.get(OPENING);
 			this.firstDayOfWeekClosingPrice = weekPrice.get(CLOSING);
 
-			Map<PriceType, Double> monthPrice = cryptoMarketRequest.getPricesByDate(requestTime.getFirstDayAdjusted(DateUnit.MONTH));
+			Map<MarketPriceType, Double> monthPrice = cryptoMarketRequest.getPricesByDate(requestTime.getFirstDayAdjusted(DateUnit.MONTH));
 			this.firstDayOfMonthOpeningPrice = monthPrice.get(OPENING);
 			this.firstDayOfMonthClosingPrice = monthPrice.get(CLOSING);
 
-			Map<PriceType, Double> yearPrice = cryptoMarketRequest.getPricesByDate(requestTime.getFirstDayAdjusted(DateUnit.YEAR));
+			Map<MarketPriceType, Double> yearPrice = cryptoMarketRequest.getPricesByDate(requestTime.getFirstDayAdjusted(DateUnit.YEAR));
 			this.firstDayOfYearOpeningPrice = yearPrice.get(OPENING);
 
 			lastUpdated = today;
