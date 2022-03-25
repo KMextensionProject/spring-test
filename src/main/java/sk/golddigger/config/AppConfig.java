@@ -78,6 +78,7 @@ public class AppConfig {
 	@Bean
 	public Gson getPrettyPrintingGson() {
 		return new GsonBuilder()
+				// because the Coinbase exchange API uses this style (Binance uses cammelCase)
 				.setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
 				.setPrettyPrinting()
 				.create();
