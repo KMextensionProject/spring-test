@@ -1,5 +1,8 @@
 package sk.golddigger.core;
 
+import static sk.golddigger.core.RequestDateTime.DateUnit.MONTH;
+import static sk.golddigger.core.RequestDateTime.DateUnit.WEEK;
+import static sk.golddigger.core.RequestDateTime.DateUnit.YEAR;
 import static sk.golddigger.utils.MessageResolver.resolveMessage;
 
 import java.util.ArrayList;
@@ -45,15 +48,15 @@ public class BuyPredicate extends MarketPredicate {
 		final String predicateMessageCode = "predicate";
 		registeredDateUnits = new ArrayList<>(3);
 		if (week != 0) {
-			registeredDateUnits.add(DateUnit.WEEK);
+			registeredDateUnits.add(WEEK);
 			logger.info(resolveMessage(predicateMessageCode, "week", week));
 		}
 		if (month != 0) {
-			registeredDateUnits.add(DateUnit.MONTH);
+			registeredDateUnits.add(MONTH);
 			logger.info(resolveMessage(predicateMessageCode, "month", month));
 		}
 		if (year != 0) {
-			registeredDateUnits.add(DateUnit.YEAR);
+			registeredDateUnits.add(YEAR);
 			logger.info(resolveMessage(predicateMessageCode, "year", year));
 		}
 	}
