@@ -182,6 +182,12 @@
 			<version>5.3.3.RELEASE</version>
 		</dependency>
 
+		<dependency>
+			<groupId>com.twilio.sdk</groupId>
+			<artifactId>twilio</artifactId>
+			<version>7.20.0</version>
+		</dependency>
+
 	</dependencies>
 	<build>
 		<finalName>gold-digger</finalName>
