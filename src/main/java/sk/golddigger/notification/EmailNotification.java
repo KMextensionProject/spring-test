@@ -2,6 +2,8 @@ package sk.golddigger.notification;
 
 import static sk.golddigger.utils.MessageResolver.resolveMessage;
 
+import javax.annotation.PostConstruct;
+
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailAuthenticationException;
@@ -24,10 +26,6 @@ public class EmailNotification implements Notification {
 	@Autowired
 	private EmailSender emailSender;
 
-	public EmailNotification() {
-		logger.info(resolveMessage("notificationInitialized", EmailNotification.class.getSimpleName()));
-	}
-
 	@Override
 	public void send(Message message, Recipient recipient) {
 		String subject = message.getSubject();
@@ -49,5 +47,10 @@ public class EmailNotification implements Notification {
 		} catch (MailException mailException) {
 			logger.error(resolveMessage("emailSendFailure", mailException.getMessage()));
 		}
+	}
+
+	@PostConstruct
+	public void logInit() {
+		logger.info(resolveMessage("notificationInitialized", EmailNotification.class.getSimpleName()));
 	}
 }
