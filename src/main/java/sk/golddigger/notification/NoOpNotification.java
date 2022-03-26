@@ -2,6 +2,8 @@ package sk.golddigger.notification;
 
 import static sk.golddigger.utils.MessageResolver.resolveMessage;
 
+import javax.annotation.PostConstruct;
+
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Component;
 
@@ -16,12 +18,13 @@ public class NoOpNotification implements Notification {
 
 	private static final Logger logger = Logger.getLogger(NoOpNotification.class);
 
-	public NoOpNotification() {
-		logger.info(resolveMessage("notificationInitialized", NoOpNotification.class.getSimpleName()));
-	}
-
 	@Override
 	public void send(Message message, Recipient recipient) {
 		// designed not to perform any operation
+	}
+
+	@PostConstruct
+	public void logInit() {
+		logger.info(resolveMessage("notificationInitialized", NoOpNotification.class.getSimpleName()));
 	}
 }
