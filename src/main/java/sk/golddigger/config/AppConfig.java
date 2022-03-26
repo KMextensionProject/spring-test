@@ -37,7 +37,7 @@ import sk.golddigger.messaging.Recipient;
 @Configuration
 @EnableCaching
 @EnableWebMvc
-@PropertySource({"classpath:account_defaults.properties", "classpath:email.properties"})
+@PropertySource({"classpath:account_defaults.properties", "classpath:messaging.properties"})
 @ComponentScan(basePackages = "sk")
 public class AppConfig {
 
