@@ -54,7 +54,7 @@ public class HttpClientConfig {
 	private void logConnectionPool() {
 		logger.info(resolveMessage("httpConnectionPool",
 				MAX_LOCALHOST_CONNECTIONS,
-				MAX_TOTAL_CONNECTIONS,
-				MAX_ROUTE_CONNECTIONS));
+				MAX_ROUTE_CONNECTIONS,
+				MAX_TOTAL_CONNECTIONS));
 	}
 }
