@@ -27,7 +27,6 @@ public class SMSNotification implements Notification {
 	public void send(Message message, Recipient recipient) {
 		boolean notificationSent = smsSender.send(message, recipient);
 
-		// TODO: add this to messages.properties
 		if (notificationSent) {
 			logger.info(resolveMessage("smsNotificationSuccessful", recipient.getPhoneNumber()));
 		} else {
