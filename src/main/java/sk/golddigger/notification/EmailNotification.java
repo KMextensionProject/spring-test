@@ -6,8 +6,6 @@ import javax.annotation.PostConstruct;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.MailAuthenticationException;
-import org.springframework.mail.MailException;
 import org.springframework.stereotype.Component;
 
 import sk.golddigger.annotations.OnPropertyContent;
@@ -32,21 +30,13 @@ public class EmailNotification implements Notification {
 		String body = message.getBody();
 		String recipientEmail = recipient.getEmail();
 
-		// TODO: send() returns boolean, so I could handle exceptions within that method and thus make this clearer
-		try {
-			Email email = new Email(recipientEmail, subject, body);
-			boolean notificationSent = emailSender.send(email);
+		Email email = new Email(recipientEmail, subject, body);
+		boolean notificationSent = emailSender.send(email);
 
-			if (notificationSent) {
-				logger.info(resolveMessage("emailNotificationSuccessful", recipientEmail));
-			} else {
-				logger.warn(resolveMessage("emailNotificationUnsuccessful", recipientEmail));
-			}
-
-		} catch (MailAuthenticationException mailAuthException) {
-			logger.error(resolveMessage("emailAuthenticaionFailure", mailAuthException.getMessage()));
-		} catch (MailException mailException) {
-			logger.error(resolveMessage("emailSendFailure", mailException.getMessage()));
+		if (notificationSent) {
+			logger.info(resolveMessage("emailNotificationSuccessful", recipientEmail));
+		} else {
+			logger.warn(resolveMessage("emailNotificationUnsuccessful", recipientEmail));
 		}
 	}
 

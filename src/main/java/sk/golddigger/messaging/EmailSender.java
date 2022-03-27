@@ -30,8 +30,14 @@ public class EmailSender {
 
 	public boolean send(Email email) throws MailAuthenticationException, MailException {
 		if (javaMailSender != null) {
-			javaMailSender.send(email);
-			return true;
+			try {
+				javaMailSender.send(email);
+				return true;
+			} catch (MailAuthenticationException mailAuthException) {
+				logger.error(resolveMessage("emailAuthenticaionFailure", mailAuthException.getMessage()));
+			} catch (MailException mailException) {
+				logger.error(resolveMessage("emailSendFailure", mailException.getMessage()));
+			}
 		}
 		return false;
 	}
