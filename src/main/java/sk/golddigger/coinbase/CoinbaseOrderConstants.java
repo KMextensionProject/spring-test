@@ -6,6 +6,10 @@ public class CoinbaseOrderConstants {
 
 	private static final String INSTANTIATION_MESSAGE_CODE = "factoryClassInstantiationError";
 
+	private CoinbaseOrderConstants() {
+		throw new IllegalStateException(resolveMessage(INSTANTIATION_MESSAGE_CODE, CoinbaseOrderConstants.class));
+	}
+
 	public static class TimeInForce {
 
 		private TimeInForce() {
