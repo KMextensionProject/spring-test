@@ -1,6 +1,6 @@
 package sk.golddigger.enums;
 
-public enum PriceType {
+public enum MarketPriceType {
 
 	OPENING("o"),
 	CLOSING("c"),
@@ -9,7 +9,7 @@ public enum PriceType {
 
 	private final String mark;
 
-	private PriceType(String mark) {
+	private MarketPriceType(String mark) {
 		this.mark = mark;
 	}
 

@@ -17,13 +17,13 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import sk.golddigger.cache.AccountCache;
+import sk.golddigger.coinbase.CoinbaseOrderConstants.OrderType;
+import sk.golddigger.coinbase.CoinbaseOrderConstants.Side;
 import sk.golddigger.core.ExchangeAccount;
 import sk.golddigger.core.ExchangeRequest;
 import sk.golddigger.core.Market;
 import sk.golddigger.core.MarketPredicate;
 import sk.golddigger.core.Order;
-import sk.golddigger.core.Order.OrderType;
-import sk.golddigger.core.Order.Side;
 import sk.golddigger.core.RequestDateTime;
 import sk.golddigger.messaging.Message;
 import sk.golddigger.messaging.Recipient;
@@ -83,16 +83,14 @@ public class ScheduledJob {
 			double accountBalance = account.getBalance();
 
 			// exchange accounts always have some fraction present
-			if (accountBalance > 1) {
+			if (accountBalance > 1 && isConvenientToBuy()) {
 
-				if (isConvenientToBuy()) {
-					String orderId = placeBuyOrder();
-					double orderRate = getOrderRateById(orderId);
-					account.updateBestOrderBuyRate(orderRate);
-					account.updateState();
+				String orderId = placeBuyOrder();
+				double orderRate = getOrderRateById(orderId);
+				account.updateBestOrderBuyRate(orderRate);
+				account.updateState();
 
-					sendOrderNotification(accountBalance, orderRate);
-				}
+				sendOrderNotification(accountBalance, orderRate);
 			}
 		}
 	}
@@ -100,11 +98,9 @@ public class ScheduledJob {
 	// It's enough to be notified once a day in case of ATH breakthrough.
 	private void checkAndSendAthNotification() {
 		LocalDate today = requestDateTime.getLocalDateUTC();
-		if (!today.equals(lastAthNotificationDate)) {
-			if (today.equals(market.getLastUpdatedAllTimeHigh())) {
-				sendAllTimeHighNotification();
-				lastAthNotificationDate = today;
-			}
+		if (!today.equals(lastAthNotificationDate) && today.equals(market.getLastUpdatedAllTimeHigh())) {
+			sendAllTimeHighNotification();
+			lastAthNotificationDate = today;
 		}
 	}
 
@@ -185,7 +181,7 @@ public class ScheduledJob {
 		}
 
 		StringBuilder messageBody = new StringBuilder();
-		messageBody.append("Order amount: " + getAccountCurrencyAcronym());
+		messageBody.append("Order amount: " + depositAmount + " " + getAccountCurrencyAcronym());
 		messageBody.append(System.lineSeparator());
 		messageBody.append("Order rate: " + orderRate + getAccountCurrencyAcronym());
 		messageBody.append(System.lineSeparator());

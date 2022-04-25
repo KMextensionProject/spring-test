@@ -21,7 +21,7 @@ import com.google.gson.Gson;
 
 import sk.golddigger.core.MarketRequest;
 import sk.golddigger.enums.Currency;
-import sk.golddigger.enums.PriceType;
+import sk.golddigger.enums.MarketPriceType;
 import sk.golddigger.utils.URLResolver;
 
 /**
@@ -100,7 +100,7 @@ public final class CryptoMarketRequest extends DefaultHttpRequest implements Mar
 	 */
 	@Override
 	@SuppressWarnings("unchecked")
-	public Map<PriceType, Double> getPricesByDate(LocalDate date) {
+	public Map<MarketPriceType, Double> getPricesByDate(LocalDate date) {
 		String tcAcronym = tradingCurrency.getAcronym();
 		String acAcronym = getPolygonSupportedCurrencyAcronym();
 
@@ -111,9 +111,9 @@ public final class CryptoMarketRequest extends DefaultHttpRequest implements Mar
 		Map<String, Object> topLevelObject = gson.fromJson(jsonBody, Map.class);
 		List<Map<String, Object>> data = (List<Map<String, Object>>) topLevelObject.get("results");
 
-		Map<PriceType, Double> result = new EnumMap<>(PriceType.class);
+		Map<MarketPriceType, Double> result = new EnumMap<>(MarketPriceType.class);
 
-		for (PriceType type : PriceType.values()) {
+		for (MarketPriceType type : MarketPriceType.values()) {
 			String price = String.valueOf(data.get(0).get(type.getMark()));
 			result.put(type, Double.valueOf(price));
 		}

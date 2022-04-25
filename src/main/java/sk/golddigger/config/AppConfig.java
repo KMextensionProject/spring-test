@@ -37,7 +37,7 @@ import sk.golddigger.messaging.Recipient;
 @Configuration
 @EnableCaching
 @EnableWebMvc
-@PropertySource({"classpath:account_defaults.properties", "classpath:email.properties"})
+@PropertySource({"classpath:account_defaults.properties", "classpath:messaging.properties"})
 @ComponentScan(basePackages = "sk")
 public class AppConfig {
 
@@ -78,6 +78,7 @@ public class AppConfig {
 	@Bean
 	public Gson getPrettyPrintingGson() {
 		return new GsonBuilder()
+				// because the Coinbase exchange API uses this style (Binance uses cammelCase)
 				.setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
 				.setPrettyPrinting()
 				.create();

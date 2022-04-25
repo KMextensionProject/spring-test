@@ -1,4 +1,4 @@
-package sk.golddigger.core;
+package sk.golddigger.coinbase;
 
 import static sk.golddigger.utils.MessageResolver.resolveMessage;
 
@@ -16,6 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import sk.golddigger.cache.AccountCache;
+import sk.golddigger.core.ExchangeAccount;
+import sk.golddigger.core.Order;
 import sk.golddigger.exceptions.ApplicationFailure;
 import sk.golddigger.exceptions.ClientSideFailure;
 import sk.golddigger.http.CoinbaseRequest;
