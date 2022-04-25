@@ -12,7 +12,7 @@ import com.twilio.type.PhoneNumber;
 
 @Lazy
 @Component
-public class TwilioSMSSender extends SMSSender {
+public class TwilioSMSSender implements SMSSender {
 
 	private static final Logger logger = Logger.getLogger(TwilioSMSSender.class);
 

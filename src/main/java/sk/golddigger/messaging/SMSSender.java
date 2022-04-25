@@ -1,6 +1,6 @@
 package sk.golddigger.messaging;
 
-public abstract class SMSSender {
+public interface SMSSender {
 
 	/**
 	 * Safely send SMS message.
