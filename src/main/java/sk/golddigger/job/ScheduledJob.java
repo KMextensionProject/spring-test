@@ -83,16 +83,14 @@ public class ScheduledJob {
 			double accountBalance = account.getBalance();
 
 			// exchange accounts always have some fraction present
-			if (accountBalance > 1) {
+			if (accountBalance > 1 && isConvenientToBuy()) {
 
-				if (isConvenientToBuy()) {
-					String orderId = placeBuyOrder();
-					double orderRate = getOrderRateById(orderId);
-					account.updateBestOrderBuyRate(orderRate);
-					account.updateState();
+				String orderId = placeBuyOrder();
+				double orderRate = getOrderRateById(orderId);
+				account.updateBestOrderBuyRate(orderRate);
+				account.updateState();
 
-					sendOrderNotification(accountBalance, orderRate);
-				}
+				sendOrderNotification(accountBalance, orderRate);
 			}
 		}
 	}
@@ -100,11 +98,9 @@ public class ScheduledJob {
 	// It's enough to be notified once a day in case of ATH breakthrough.
 	private void checkAndSendAthNotification() {
 		LocalDate today = requestDateTime.getLocalDateUTC();
-		if (!today.equals(lastAthNotificationDate)) {
-			if (today.equals(market.getLastUpdatedAllTimeHigh())) {
-				sendAllTimeHighNotification();
-				lastAthNotificationDate = today;
-			}
+		if (!today.equals(lastAthNotificationDate) && today.equals(market.getLastUpdatedAllTimeHigh())) {
+			sendAllTimeHighNotification();
+			lastAthNotificationDate = today;
 		}
 	}
 
@@ -185,7 +181,7 @@ public class ScheduledJob {
 		}
 
 		StringBuilder messageBody = new StringBuilder();
-		messageBody.append("Order amount: " + getAccountCurrencyAcronym());
+		messageBody.append("Order amount: " + depositAmount + " " + getAccountCurrencyAcronym());
 		messageBody.append(System.lineSeparator());
 		messageBody.append("Order rate: " + orderRate + getAccountCurrencyAcronym());
 		messageBody.append(System.lineSeparator());
