@@ -25,10 +25,8 @@ public class XlsxUtils {
 
 	public static void generateXlsx(String template, Map<String, Object> dataSource, String targetName, HttpServletResponse response) throws IOException, InvalidFormatException {
 		InputStream inputStream = XlsxUtils.class.getClassLoader().getResourceAsStream(template);
-
 		addResponseHeaders(response, targetName);
 		ServletOutputStream outputStream = response.getOutputStream();
-
 		ExcelTransformer transformer = new ExcelTransformer();
 		Workbook workbook = transformer.transform(inputStream, dataSource);
 		workbook.write(outputStream);
