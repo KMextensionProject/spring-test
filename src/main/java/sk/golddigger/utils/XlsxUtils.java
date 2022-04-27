@@ -4,6 +4,8 @@ import static sk.golddigger.utils.MessageResolver.resolveMessage;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.LocalDate;
+import java.time.ZonedDateTime;
 import java.util.Map;
 
 import javax.servlet.ServletOutputStream;
@@ -36,5 +38,12 @@ public class XlsxUtils {
 		response.addHeader("Content-type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
 		String contentDisposition = "attachment; filename=" + targetName;
 		response.addHeader("Content-disposition", contentDisposition);
+	}
+
+	public static void removeTimeFromDate(Map<String, Object> data, String... keys) {
+		for (String key : keys) {
+			LocalDate date = ZonedDateTime.parse(String.valueOf(data.get(key))).toLocalDate();
+			data.replace(key, date);
+		}
 	}
 }

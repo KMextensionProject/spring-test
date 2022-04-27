@@ -23,6 +23,7 @@ import sk.golddigger.core.ExchangeAccount;
 import sk.golddigger.core.ExchangeRequest;
 import sk.golddigger.core.RequestDateTime;
 import sk.golddigger.enums.Currency;
+import sk.golddigger.utils.MapUtils;
 import sk.golddigger.utils.TypeUtils;
 import sk.golddigger.utils.XlsxUtils;
 
@@ -100,6 +101,7 @@ public class ExchangeAccountService {
 		}
 	}
 
+	// TODO: make no year acceptable which will return the whole history
 	private List<Map<String, Object>> getOrdersFilledInYear(int year) {
 		return exchangeRequest.getAllOrderFills()
 				.stream()
@@ -114,30 +116,23 @@ public class ExchangeAccountService {
 
 	private Map<String, Object> adjustPropertiesForExcel(Map<String, Object> data) {
 		// remove time from date because of excel template formating
-		String createdKey = "created_at";
-		LocalDate createdValue = ZonedDateTime.parse(String.valueOf(data.get(createdKey))).toLocalDate();
-		data.replace(createdKey, createdValue);
+		XlsxUtils.removeTimeFromDate(data, "created_at");
 
 		// size is reserved keyword in JEXL
-		updateMapPropertyAsDouble(data, "size", "order_size");
+		MapUtils.renameKey(data, "size", "order_size");
+		updateMapPropertyAsDouble(data, "order_size");
 
 		// to properly round these by excel template, they must be of type Number
-		updateMapPropertyAsDouble(data, "price", null);
-		updateMapPropertyAsDouble(data, "fee", null);
-		updateMapPropertyAsDouble(data, "usd_volume", null);
+		updateMapPropertyAsDouble(data, "price");
+		updateMapPropertyAsDouble(data, "fee");
+		updateMapPropertyAsDouble(data, "usd_volume");
 
 		return data;
 	}
 
-	private void updateMapPropertyAsDouble(Map<String, Object> map, String propertyName, String newPropertyName) {
+	private void updateMapPropertyAsDouble(Map<String, Object> map, String propertyName) {
 		String stringValue = String.valueOf(map.get(propertyName));
 		Double value = Double.parseDouble(stringValue);
-
-		if (newPropertyName != null) {
-			map.remove(propertyName);
-			map.put(newPropertyName, value);
-		} else {
-			map.put(propertyName, value);
-		}
+		map.put(propertyName, value);
 	}
 }
