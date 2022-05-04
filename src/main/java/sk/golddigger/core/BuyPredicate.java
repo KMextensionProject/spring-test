@@ -101,7 +101,7 @@ public class BuyPredicate extends MarketPredicate {
 	 */
 	@Override
 	public void addPredicate(Predicate<Market> additionalPredicate) {
-		this.predicate.or(additionalPredicate);
+		this.predicate = this.predicate.or(additionalPredicate);
 
 		if (!this.hasAdditionalPredicates) {
 			this.hasAdditionalPredicates = true;

@@ -97,10 +97,14 @@ public final class CryptoMarketRequest extends DefaultHttpRequest implements Mar
 	 * by polygon API documentation, it will block until the values are present.
 	 * Logically all the data can not be present yet, and so the getCurrentPrice()
 	 * should be used instead.</p>
+	 * <p>This method is temporarily marked with <code>synchronized</code> keyword,
+	 * in case of concurrent calls by the scheduler first delay and user interaction
+	 * with UI in the start of the application. It may happen due to polygon API
+	 * limitations on requests.</p>
 	 */
 	@Override
 	@SuppressWarnings("unchecked")
-	public Map<MarketPriceType, Double> getPricesByDate(LocalDate date) {
+	public synchronized Map<MarketPriceType, Double> getPricesByDate(LocalDate date) {
 		String tcAcronym = tradingCurrency.getAcronym();
 		String acAcronym = getPolygonSupportedCurrencyAcronym();
 
