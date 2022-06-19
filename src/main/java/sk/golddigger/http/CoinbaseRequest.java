@@ -1,13 +1,18 @@
 package sk.golddigger.http;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static sk.golddigger.enums.HttpMethod.GET;
+import static sk.golddigger.enums.HttpMethod.POST;
 import static sk.golddigger.enums.Resources.COINBASE_ACCOUNTS_URL;
 import static sk.golddigger.enums.Resources.COINBASE_ACCOUNT_BY_ID_URL;
 import static sk.golddigger.enums.Resources.COINBASE_ORDER_BY_ID_URL;
 import static sk.golddigger.enums.Resources.COINBASE_ORDER_FILLS;
 import static sk.golddigger.enums.Resources.COINBASE_PLACE_ORDER_URL;
+import static sk.golddigger.utils.EncoderUtils.decodeBase64;
+import static sk.golddigger.utils.EncoderUtils.encodeBase64;
+import static sk.golddigger.utils.EncoderUtils.encodeHmacSha256;
 import static sk.golddigger.utils.MessageResolver.resolveMessage;
 
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -28,8 +33,6 @@ import sk.golddigger.core.ExchangeRequest;
 import sk.golddigger.core.Order;
 import sk.golddigger.core.RequestDateTime;
 import sk.golddigger.enums.Currency;
-import sk.golddigger.enums.HttpMethod;
-import sk.golddigger.utils.EncoderUtils;
 import sk.golddigger.utils.URLResolver;
 
 @Component
@@ -55,9 +58,6 @@ public class CoinbaseRequest extends DefaultHttpRequest implements ExchangeReque
 	private Currency tradingCurrency;
 
 	@Autowired
-	private EncoderUtils encoder;
-
-	@Autowired
 	private URLResolver urlResolver;
 
 	@Autowired
@@ -71,7 +71,7 @@ public class CoinbaseRequest extends DefaultHttpRequest implements ExchangeReque
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<Map<String, Object>> getAllAccounts() {
-		List<Header> headers = computeRequestHeaders(COINBASE_ACCOUNTS_URL, HttpMethod.GET, null);
+		List<Header> headers = computeRequestHeaders(COINBASE_ACCOUNTS_URL, GET, null);
 		String responseBody = getJson(COINBASE_ACCOUNTS_URL, headers);
 		logPayload(responseBody);
 
@@ -82,7 +82,7 @@ public class CoinbaseRequest extends DefaultHttpRequest implements ExchangeReque
 	@SuppressWarnings("unchecked")
 	public List<Map<String, Object>> getAllOrderFills() {
 		String url = urlResolver.resolveParams(COINBASE_ORDER_FILLS, tradingCurrency.getAcronym(), accountCurrency.getAcronym());
-		List<Header> headers = computeRequestHeaders(url, HttpMethod.GET, null);
+		List<Header> headers = computeRequestHeaders(url, GET, null);
 		String responseBody = getJson(url, headers);
 		logPayload(responseBody);
 
@@ -93,7 +93,7 @@ public class CoinbaseRequest extends DefaultHttpRequest implements ExchangeReque
 	@SuppressWarnings("unchecked")
 	public Map<String, Object> getOrderById(String orderId) {
 		String url = urlResolver.resolveParams(COINBASE_ORDER_BY_ID_URL, orderId);
-		List<Header> headers = computeRequestHeaders(url, HttpMethod.GET, null);
+		List<Header> headers = computeRequestHeaders(url, GET, null);
 		String responseBody = getJson(url, headers);
 		logPayload(responseBody);
 
@@ -104,7 +104,7 @@ public class CoinbaseRequest extends DefaultHttpRequest implements ExchangeReque
 	@SuppressWarnings("unchecked")
 	public double getAccountBalance(String accountId) {
 		String url = urlResolver.resolveParams(COINBASE_ACCOUNT_BY_ID_URL, accountId);
-		List<Header> headers = computeRequestHeaders(url, HttpMethod.GET, null);
+		List<Header> headers = computeRequestHeaders(url, GET, null);
 		String responseBody = getJson(url, headers);
 		Map<String, Object> result = gson.fromJson(responseBody, Map.class);
 		logPayload(responseBody);
@@ -118,7 +118,7 @@ public class CoinbaseRequest extends DefaultHttpRequest implements ExchangeReque
 		String requestBody = gson.toJson(order);
 		logPayload(requestBody);
 
-		List<Header> headers = computeRequestHeaders(COINBASE_PLACE_ORDER_URL, HttpMethod.POST, requestBody);
+		List<Header> headers = computeRequestHeaders(COINBASE_PLACE_ORDER_URL, POST, requestBody);
 		String responseBody = postJson(COINBASE_PLACE_ORDER_URL, headers, requestBody);
 		Map<String, Object> result = gson.fromJson(responseBody, Map.class);
 		logPayload(responseBody);
@@ -140,10 +140,10 @@ public class CoinbaseRequest extends DefaultHttpRequest implements ExchangeReque
 
 	private final String computeSignature(long timestamp, String httpMethod, String requestPath, String jsonBody) {
 		String preHash = timestamp + httpMethod + requestPath + (jsonBody != null ? jsonBody : "");
-		byte[] decodedSecretKey = encoder.decodeBase64(apiSecret.getBytes()); // NOSONAR (validation in @PostConstruct)
-		byte[] signature = encoder.encodeHmacSha256(decodedSecretKey, preHash.getBytes());
+		byte[] decodedSecretKey = decodeBase64(apiSecret.getBytes()); // NOSONAR (validation in @PostConstruct)
+		byte[] signature = encodeHmacSha256(decodedSecretKey, preHash.getBytes());
 
-		return new String(encoder.encodeBase64(signature), StandardCharsets.UTF_8);		
+		return new String(encodeBase64(signature), UTF_8);
 	}
 
 	private final List<Header> addRequestHeaders(long timestamp, String signature) {
