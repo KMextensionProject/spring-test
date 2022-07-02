@@ -8,7 +8,6 @@ import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
 import org.apache.log4j.Logger;
-import org.springframework.stereotype.Component;
 
 import sk.golddigger.exceptions.ApplicationFailure;
 
@@ -18,20 +17,19 @@ import sk.golddigger.exceptions.ApplicationFailure;
  * 
  * @author mkrajcovic
  */
-@Component
 public class EncoderUtils {
 
 	private static final Logger logger = Logger.getLogger(EncoderUtils.class);
 
-	public final byte[] decodeBase64(byte[] base64Message) {
+	public static final byte[] decodeBase64(byte[] base64Message) {
 		return Base64.getDecoder().decode(base64Message);
 	}
 
-	public final byte[] encodeBase64(byte[] messageToEncode) {
+	public static final byte[] encodeBase64(byte[] messageToEncode) {
 		return Base64.getEncoder().encode(messageToEncode);
 	}
 
-	public final byte[] encodeHmacSha256(byte[] secretKey, byte[] message) {
+	public static final byte[] encodeHmacSha256(byte[] secretKey, byte[] message) {
 		byte[] hmacSha256 = null;
 		try {
 			Mac mac = Mac.getInstance("HmacSHA256");

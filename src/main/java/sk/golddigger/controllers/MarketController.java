@@ -1,7 +1,8 @@
 package sk.golddigger.controllers;
 
-import static sk.golddigger.enums.ContentType.TEXT_PLAIN;
-import static sk.golddigger.utils.MapUtils.toStringTree;
+import static sk.golddigger.enums.ContentType.APPLICATION_JSON;
+
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -16,9 +17,9 @@ public class MarketController {
 	@Autowired
 	private MarketService marketService;
 
-	@GetMapping(path = "/market/complexOverview", produces = TEXT_PLAIN)
+	@GetMapping(path = "/market/complexOverview", produces = APPLICATION_JSON)
 	@ResponseBody
-	public String getMarketComplexOverview() {
-		return toStringTree(marketService.getMarketComplexOverview());
+	public Map<String, Object> getMarketComplexOverview() {
+		return marketService.getMarketComplexOverview();
 	}
 }
