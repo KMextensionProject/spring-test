@@ -10,6 +10,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -101,13 +102,13 @@ public class ExchangeAccountService {
 		}
 	}
 
-	// TODO: make no year acceptable which will return the whole history
-	private List<Map<String, Object>> getOrdersFilledInYear(int year) {
-		return exchangeRequest.getAllOrderFills()
-				.stream()
-				.filter(e -> filterByYear(e, year))
-				.map(this::adjustPropertiesForExcel)
-				.collect(Collectors.toList());
+	private List<Map<String, Object>> getOrdersFilledInYear(Integer year) {
+		Stream<Map<String, Object>> stream = exchangeRequest.getAllOrderFills().stream();
+		if (year != null) {
+			stream = stream.filter(e -> filterByYear(e, year));
+		}
+		return stream.map(this::adjustPropertiesForExcel)
+			.collect(Collectors.toList());
 	}
 
 	private boolean filterByYear(Map<String, Object> map, int year) {
