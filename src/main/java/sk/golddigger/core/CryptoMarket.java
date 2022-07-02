@@ -44,10 +44,17 @@ public class CryptoMarket extends Market {
 		}
 	}
 
-	private void updateOpeningAndClosingPrices() {
+	/**
+	 * <p>This method is temporarily marked with <code>synchronized</code> keyword,
+	 * in case of concurrent calls by the scheduler first delay and user interaction
+	 * with UI in the start of the application. It may happen due to polygon API
+	 * limitations on requests.</p>
+	 */
+	private synchronized void updateOpeningAndClosingPrices() {
 		LocalDate today = requestTime.getLocalDateUTC();
 
 		if (!today.equals(lastUpdated)) {
+			logger.info("Updating market opening and closing prices");
 
 			Map<MarketPriceType, Double> weekPrice = cryptoMarketRequest.getPricesByDate(requestTime.getFirstDayAdjusted(WEEK));
 			this.firstDayOfWeekOpeningPrice = weekPrice.get(OPENING);
