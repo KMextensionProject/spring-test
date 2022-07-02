@@ -1,8 +1,14 @@
 package sk.golddigger.utils;
 
+import static sk.golddigger.utils.MessageResolver.resolveMessage;
+
 import java.util.Map;
 
 public class MapUtils {
+
+	private MapUtils() {
+		throw new IllegalStateException(resolveMessage("factoryClassInstantiationError", MapUtils.class));
+	}
 
 	private static int depth;
 

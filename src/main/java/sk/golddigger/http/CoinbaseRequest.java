@@ -165,7 +165,7 @@ public class CoinbaseRequest extends DefaultHttpRequest implements ExchangeReque
 
 	@PostConstruct
 	private void validateCoinbaseAPIEnv() {
-		String NULL = "null";
+		final String NULL = "null";
 		if (NULL.equals(apiKey)|| NULL.equals(apiSecret) || NULL.equals(apiPassphrase)) {
 			logger.error(resolveMessage("missingCoinbaseKeys"));
 			System.exit(1);

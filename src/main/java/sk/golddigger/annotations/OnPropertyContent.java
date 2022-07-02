@@ -28,6 +28,9 @@ public @interface OnPropertyContent {
 		@Override
 		public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
 			Map<String, Object> attrs = metadata.getAnnotationAttributes(OnPropertyContent.class.getName());
+			if (attrs == null || attrs.isEmpty()) {
+				return false;
+			}
 			String propertyName = String.valueOf(attrs.get("propertyName"));
 			String lookupRegex = String.valueOf(attrs.get("lookupRegex"));
 			String propertyValue = String.valueOf(context.getEnvironment().getProperty(propertyName));
