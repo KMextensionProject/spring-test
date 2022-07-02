@@ -1,15 +1,16 @@
 package sk.golddigger.controllers;
 
 import static sk.golddigger.enums.ContentType.APPLICATION_JSON;
-import static sk.golddigger.enums.ContentType.TEXT_PLAIN;
 
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 import sk.golddigger.services.ApplicationService;
 
@@ -19,11 +20,9 @@ public class ApplicationController {
 	@Autowired
 	private ApplicationService applicationService;
 
-	@GetMapping(path = "/ping", produces = TEXT_PLAIN)
-	@ResponseBody
-	public String ping() {
-		return "Status OK";
-	}
+	@GetMapping(path = "/ping")
+	@ResponseStatus(HttpStatus.OK)
+	public void ping() { }
 
 	@GetMapping(path = "/endpoints", produces = APPLICATION_JSON)
 	@ResponseBody
