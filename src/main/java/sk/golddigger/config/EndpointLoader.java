@@ -91,9 +91,7 @@ public final class EndpointLoader {
 			return s.getLocalAddress().getHostAddress();
 		} catch (IOException ioe) {
 			String serverIpNotFoundMessage = resolveMessage("serverIpNotFound");
-			if (logger.isDebugEnabled()) {
-				logger.debug(serverIpNotFoundMessage);
-			}
+			logger.warn(serverIpNotFoundMessage);
 			throw new ApplicationFailure(serverIpNotFoundMessage);
 		}
 	}
