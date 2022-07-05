@@ -23,6 +23,7 @@
 		<springframework.version>5.3.3</springframework.version>
 		<jackson.version>2.12.0</jackson.version>
 		<poi.version>3.12</poi.version>
+		<junit.jupiter.version>5.8.2</junit.jupiter.version>
 	</properties>
 
 	<dependencies>
@@ -188,8 +189,32 @@
 			<version>7.20.0</version>
 		</dependency>
 
+		<!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-engine -->
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-engine</artifactId>
+			<version>${junit.jupiter.version}</version>
+			<scope>test</scope>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api -->
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-api</artifactId>
+			<version>${junit.jupiter.version}</version>
+			<scope>test</scope>
+		</dependency>
+
 	</dependencies>
+
 	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.22.0</version>
+			</plugin>
+		</plugins>
 		<finalName>gold-digger</finalName>
 	</build>
 </project>
