@@ -21,7 +21,7 @@ class RequestDateTimeTest {
 	private LocalDate today;
 
 	@BeforeAll
-	public void initRequestDateTime() {
+	private void initRequestDateTime() {
 		this.dateTime = new RequestDateTime();
 		this.today = LocalDate.now();
 	}
@@ -32,7 +32,7 @@ class RequestDateTimeTest {
 
 		@Test
 		@DisplayName("check on date parts for the first day of year")
-		public void yearTest() {
+		void yearTest() {
 			LocalDate firstDayOfYear = dateTime.getFirstDayOf(DateUnit.YEAR);
 			Assertions.assertAll(
 				() -> Assertions.assertEquals(1, firstDayOfYear.getDayOfYear()),
@@ -44,7 +44,7 @@ class RequestDateTimeTest {
 
 		@Test
 		@DisplayName("check on date parts for this month")
-		public void monthTest() {
+		void monthTest() {
 			LocalDate firstDayOfMonth = dateTime.getFirstDayOf(DateUnit.MONTH);
 			Assertions.assertAll(
 				() -> Assertions.assertEquals(1, firstDayOfMonth.getDayOfMonth()),
@@ -54,7 +54,7 @@ class RequestDateTimeTest {
 
 		@Test
 		@DisplayName("check on date parts for this week")
-		public void weekTest() { 
+		void weekTest() { 
 			LocalDate firstDayOfWeek = dateTime.getFirstDayOf(DateUnit.WEEK);
 			int firstDayOfThisWeekInYear = today.with(DayOfWeek.MONDAY).getDayOfYear();
 			Assertions.assertEquals(firstDayOfThisWeekInYear, firstDayOfWeek.getDayOfYear());
