@@ -1,8 +1,11 @@
 package sk.golddigger.utils;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import java.util.function.Predicate;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,21 +24,21 @@ class TypeUtilsTest {
 	@DisplayName("Getting the right type based on passing predicate")
 	void getValueByConditionReturnTypeTest() {
 		Object valueByCondition = TypeUtils.getValueByCondition(greaterThanFour, 5, false);
-		Assertions.assertInstanceOf(Integer.class, valueByCondition, "Should be an Integer");
+		assertInstanceOf(Integer.class, valueByCondition, "Should be an Integer");
 	}
 
 	@Test
 	@DisplayName("Getting the right return value based on not-passing predicate")
 	void getValueByConditionReturnValueTest() {
 		Object valueByCondition = TypeUtils.getValueByCondition(greaterThanFour, 4, false);
-		Assertions.assertEquals(false, valueByCondition, "Should be false");
+		assertEquals(false, valueByCondition, "Should be false");
 	}
 
 	@Test
 	@DisplayName("Passing nullable predicate as argument")
 	void passingNullablePredicate() {
 		Executable executable = () -> TypeUtils.getValueByCondition(null, 4, false);
-		Assertions.assertThrows(IllegalStateException.class, executable, "When passing null, it should be an ApplicationFailureException");
+		assertThrows(IllegalStateException.class, executable, "When passing null, it should be an ApplicationFailureException");
 	}
 
 	@Test
@@ -43,7 +46,7 @@ class TypeUtilsTest {
 	void passingNullsAsArgumentsToPredicate() {
 		Object expected = null;
 		Object actual = TypeUtils.getValueByCondition(greaterThanFour, 4, null);
-		Assertions.assertEquals(expected, actual);
+		assertEquals(expected, actual);
 	}
 
 }

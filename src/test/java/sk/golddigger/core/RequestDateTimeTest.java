@@ -1,10 +1,12 @@
 package sk.golddigger.core;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.Year;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -34,22 +36,19 @@ class RequestDateTimeTest {
 		@DisplayName("check on date parts for the first day of year")
 		void yearTest() {
 			LocalDate firstDayOfYear = dateTime.getFirstDayOf(DateUnit.YEAR);
-			Assertions.assertAll(
-				() -> Assertions.assertEquals(1, firstDayOfYear.getDayOfYear()),
-				() -> Assertions.assertEquals(1, firstDayOfYear.getMonthValue(), 
-						"Should modify entire date to make even month equal to the January."),
-				() -> Assertions.assertEquals(Year.now().getValue(), firstDayOfYear.getYear())
-			);
+			assertAll(
+				() -> assertEquals(1, firstDayOfYear.getDayOfYear()),
+				() -> assertEquals(1, firstDayOfYear.getMonthValue(), "Should modify entire date to make even month equal to the January."),
+				() -> assertEquals(Year.now().getValue(), firstDayOfYear.getYear()));
 		}
 
 		@Test
 		@DisplayName("check on date parts for this month")
 		void monthTest() {
 			LocalDate firstDayOfMonth = dateTime.getFirstDayOf(DateUnit.MONTH);
-			Assertions.assertAll(
-				() -> Assertions.assertEquals(1, firstDayOfMonth.getDayOfMonth()),
-				() -> Assertions.assertEquals(today.getMonthValue(), firstDayOfMonth.getMonthValue())
-			);
+			assertAll(
+				() -> assertEquals(1, firstDayOfMonth.getDayOfMonth()),
+				() -> assertEquals(today.getMonthValue(), firstDayOfMonth.getMonthValue()));
 		}
 
 		@Test
@@ -57,7 +56,7 @@ class RequestDateTimeTest {
 		void weekTest() { 
 			LocalDate firstDayOfWeek = dateTime.getFirstDayOf(DateUnit.WEEK);
 			int firstDayOfThisWeekInYear = today.with(DayOfWeek.MONDAY).getDayOfYear();
-			Assertions.assertEquals(firstDayOfThisWeekInYear, firstDayOfWeek.getDayOfYear());
+			assertEquals(firstDayOfThisWeekInYear, firstDayOfWeek.getDayOfYear());
 		}
 	}
 }
