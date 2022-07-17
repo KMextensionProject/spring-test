@@ -25,7 +25,7 @@ public class TelegramNotification implements Notification {
 
 	@Override
 	public void send(Message message, Recipient recipient) {
-		String msg = message.getSubject() + message.getBody();
+		String msg = "<b>" + message.getSubject() + "</b>" + System.lineSeparator() + message.getBody();
 		String otherAddress = recipient.getOtherAddress();
 		String botId = otherAddress.substring(0, otherAddress.lastIndexOf(":")); 
 		String chatId = otherAddress.substring(otherAddress.lastIndexOf(":") + 1);
