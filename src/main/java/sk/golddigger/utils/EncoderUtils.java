@@ -21,6 +21,10 @@ public class EncoderUtils {
 
 	private static final Logger logger = Logger.getLogger(EncoderUtils.class);
 
+	private EncoderUtils() {
+		throw new IllegalStateException(resolveMessage("factoryClassInstantiationError", EncoderUtils.class));
+	}
+
 	public static final byte[] decodeBase64(byte[] base64Message) {
 		return Base64.getDecoder().decode(base64Message);
 	}

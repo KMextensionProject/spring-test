@@ -22,7 +22,9 @@ public class ApplicationController {
 
 	@GetMapping(path = "/ping")
 	@ResponseStatus(HttpStatus.OK)
-	public void ping() { }
+	public void ping() { 
+		// this method is only for checking whether the application is alive
+	}
 
 	@GetMapping(path = "/endpoints", produces = APPLICATION_JSON)
 	@ResponseBody

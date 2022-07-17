@@ -177,19 +177,19 @@ public class ScheduledJob {
 
 		Object bestBuyOrderRate = TypeUtils.getValueByCondition(e -> e > 0, account.getBestOrderBuyRate(), "No order has been placed in this year.");
 		if(bestBuyOrderRate instanceof Number) {
-			bestBuyOrderRate += getAccountCurrencyAcronym();
+			bestBuyOrderRate += " " + getAccountCurrencyAcronym();
 		}
 
 		StringBuilder messageBody = new StringBuilder();
 		messageBody.append("Order amount: " + depositAmount + " " + getAccountCurrencyAcronym());
 		messageBody.append(System.lineSeparator());
-		messageBody.append("Order rate: " + orderRate + getAccountCurrencyAcronym());
+		messageBody.append("Order rate: " + orderRate + " " + getAccountCurrencyAcronym());
 		messageBody.append(System.lineSeparator());
-		messageBody.append("Current trading account balance: " + tradingBalance + getTradingCurrencyAcronym());
+		messageBody.append("Current trading account balance: " + tradingBalance + " " + getTradingCurrencyAcronym());
 		messageBody.append(System.lineSeparator());
-		messageBody.append("Current main account balance: " + account.getBalance() + getAccountCurrencyAcronym());
+		messageBody.append("Current main account balance: " + account.getBalance() + " " + getAccountCurrencyAcronym());
 		messageBody.append(System.lineSeparator());
-		messageBody.append("The best filled buy order rate: " + bestBuyOrderRate);
+		messageBody.append("The best filled buy order rate: " + bestBuyOrderRate + "/" + getTradingCurrencyAcronym());
 
 		if (logger.isDebugEnabled()) {
 			logger.debug(messageBody);

@@ -16,6 +16,9 @@ public class TypeUtils {
 	 * returned instead.
 	 */
 	public static <T> Object getValueByCondition(Predicate<T> condition, T trueValue, Object falseValue) {
+		if (condition == null) {
+			throw new IllegalStateException("Condition can not be null");
+		}
 		return condition.test(trueValue) ? trueValue : falseValue;
 	}
 

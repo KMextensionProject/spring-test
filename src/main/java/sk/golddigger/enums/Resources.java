@@ -26,6 +26,8 @@ public class Resources {
 	public static final String COINBASE_PLACE_ORDER_URL = "https://api.exchange.coinbase.com/orders";
 	public static final String COINBASE_ORDER_BY_ID_URL = "https://api.exchange.coinbase.com/orders/$";
 
+	public static final String TELEGRAM_SEND_MASSAGE_URL = "https://api.telegram.org/bot$/sendMessage?chat_id=$&text=$&parse_mode=html";
+	
 	public static final String MESSAGES_MAP = "messages.properties";
 
 	public static final String FILLED_ORDERS_TEMPLATE = "/reports/Filled_orders.xlsx";

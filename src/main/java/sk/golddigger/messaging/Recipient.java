@@ -5,6 +5,7 @@ public class Recipient {
 	private String name;
 	private String email;
 	private String phoneNumber;
+	private String other;
 
 	public Recipient withName(String name) {
 		this.name = name;
@@ -21,6 +22,11 @@ public class Recipient {
 		return this;
 	}
 
+	public Recipient withOtherAddress(String other) {
+		this.other = other;
+		return this;
+	}
+
 	public String getName() {
 		return this.name;
 	}
@@ -33,11 +39,16 @@ public class Recipient {
 		return this.phoneNumber;
 	}
 
+	public String getOtherAddress() {
+		return this.other;
+	}
+
 	public boolean isDefined() {
 		boolean emailPresent = (email != null && !email.equals("null"));
 		boolean phonePresent = (phoneNumber != null && !phoneNumber.equals("null"));
+		boolean otherAddressPresent = (other != null && !other.equals("null"));
 
-		return emailPresent || phonePresent;
+		return emailPresent || phonePresent || otherAddressPresent;
 	}
 
 	@Override

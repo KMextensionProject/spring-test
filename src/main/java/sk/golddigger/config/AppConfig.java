@@ -80,7 +80,7 @@ public class AppConfig {
 		return new GsonBuilder()
 				// because the Coinbase exchange API uses this style (Binance uses cammelCase)
 				.setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
-				.setPrettyPrinting()
+//				.setPrettyPrinting()
 				.create();
 	}
 
@@ -101,6 +101,8 @@ public class AppConfig {
 			return notificationRecipient.withEmail(recipient.trim());
 		} else if (recipient.contains("+")) {
 			return notificationRecipient.withPhoneNumber(recipient);
+		} else if (recipient.contains(":")) {
+			return notificationRecipient.withOtherAddress(recipient);
 		} else {
 			return notificationRecipient;
 		}
