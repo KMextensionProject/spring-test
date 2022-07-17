@@ -12,13 +12,8 @@ public class TelegramRequest extends DefaultHttpRequest {
 	@Autowired
 	private URLResolver urlResolver;
 
-	public boolean sendTelegramMessage(String botId, String chatId, String message) {
+	public void sendTelegramMessage(String botId, String chatId, String message) {
 		String url = urlResolver.resolveParams(Resources.TELEGRAM_SEND_MASSAGE_URL, botId, chatId, message);
-		String json = getJson(url, null);
-
-		if (json.contains("OK")) {
-			return true;
-		}
-		return false;
+		getJson(url, null);
 	}
 }
