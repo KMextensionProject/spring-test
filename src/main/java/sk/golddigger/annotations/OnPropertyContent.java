@@ -40,7 +40,7 @@ public @interface OnPropertyContent {
 			}
 
 			Matcher regexPattern = Pattern.compile(lookupRegex).matcher(propertyValue);
-			return regexPattern.matches();
+			return regexPattern.find();
 		}
 	}
 }

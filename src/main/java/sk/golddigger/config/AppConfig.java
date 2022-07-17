@@ -101,6 +101,8 @@ public class AppConfig {
 			return notificationRecipient.withEmail(recipient.trim());
 		} else if (recipient.contains("+")) {
 			return notificationRecipient.withPhoneNumber(recipient);
+		} else if (recipient.contains(":")) {
+			return notificationRecipient.withOtherAddress(recipient);
 		} else {
 			return notificationRecipient;
 		}
