@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import sk.golddigger.services.ExchangeAccountService;
@@ -26,8 +27,8 @@ public class ExchangeAccountController {
 	}
 
 	@GetMapping(path = "/account/orders/excel")
-	public void generateOrdersReportToExcel(HttpServletResponse response) {
-		exchangeService.generateOrdersReportToExcel(response);
+	public void generateOrdersReportToExcel(@RequestParam(name = "year", required = false) Integer year, HttpServletResponse response) {
+		exchangeService.generateOrdersReportToExcel(year, response);
 	}
 
 }
