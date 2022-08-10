@@ -26,7 +26,7 @@ import sk.golddigger.exceptions.ApplicationFailure;
 import sk.golddigger.exceptions.ClientSideFailure;
 /**
  * This is the top level HTTP request class providing fundamental and
- * conventional HTTP request methods not specific to any business model.
+ * conventional HTTP request methods.
  * 
  * @author mkrajcovic
  */

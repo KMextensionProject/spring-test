@@ -87,11 +87,11 @@ public class ExchangeAccountService {
 	 * Generates this year's filled orders report to excel document.
 	 * Including buy orders and sell orders.
 	 */
-	public void generateOrdersReportToExcel(HttpServletResponse response) {
+	public void generateOrdersReportToExcel(Integer year, HttpServletResponse response) {
 		LocalDate today = requestTime.getLocalDateUTC();
 		String fileName = "Filled_orders_" + today + ".xlsx";
 
-		List<Map<String, Object>> filledOrders = getOrdersFilledInYear(today.getYear());
+		List<Map<String, Object>> filledOrders = getOrdersFilledInYear(year);
 		Map<String, Object> dataSource = new HashMap<>();
 		dataSource.put("table", filledOrders);
 

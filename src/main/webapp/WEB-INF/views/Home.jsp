@@ -1,3 +1,5 @@
+<%@page import="java.time.LocalDate"%>
+<%@page import="java.time.Year"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <!DOCTYPE html>
@@ -30,10 +32,25 @@ button {
 	</form>
 	<br></br>
 
-	<form
+	<script>
+		function disableEmptyInputs(form) {
+			var controls = form.controls;
+			for (var i = 0, iLen = controls.length; i < iLen; i++) {
+				if (controls[i].value == '') 
+					controls[i].disabled = true
+				 //controls[i].disabled = controls[i].value == '';
+			}
+			form.reset();
+		}
+	</script>
+
+	<form onsubmit="disableEmptyInputs(this)"
+		id="report"
 		action=<%="http://" + ip + ":8080/gold-digger/account/orders/excel"%>
 		method="get">
-		<br>Generate a report containing all filled orders for this year: <br>
+		<br>Generate a report containing all filled orders for specified year: 
+		<input type="number" min=2000 id="report" name="year" size="4" value=<%=LocalDate.now().getYear()%>>
+		<br>
 		<button type="submit">GENERATE REPORT</button>
 	</form>
 	<br></br>
