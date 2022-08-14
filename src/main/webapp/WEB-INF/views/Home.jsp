@@ -49,7 +49,7 @@ button {
 		action=<%="http://" + ip + ":8080/gold-digger/account/orders/excel"%>
 		method="get">
 		<br>Generate a report containing all filled orders for specified year: 
-		<input type="number" min=2000 id="report" name="year" size="4" value=<%=LocalDate.now().getYear()%>>
+		<input type="number" min=2000 max=<%=LocalDate.now().getYear()%> id="report" name="year" size="4" value=<%=LocalDate.now().getYear()%>>
 		<br>
 		<button type="submit">GENERATE REPORT</button>
 	</form>
