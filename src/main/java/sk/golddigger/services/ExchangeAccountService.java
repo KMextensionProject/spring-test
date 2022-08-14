@@ -1,6 +1,7 @@
 package sk.golddigger.services;
 
 import static sk.golddigger.enums.Resources.FILLED_ORDERS_TEMPLATE;
+import static sk.golddigger.utils.MessageResolver.resolveMessage;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -17,13 +18,16 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpServerErrorException;
 
 import sk.golddigger.cache.AccountCache;
 import sk.golddigger.core.ExchangeAccount;
 import sk.golddigger.core.ExchangeRequest;
 import sk.golddigger.core.RequestDateTime;
 import sk.golddigger.enums.Currency;
+import sk.golddigger.exceptions.ClientSideFailure;
 import sk.golddigger.utils.MapUtils;
 import sk.golddigger.utils.TypeUtils;
 import sk.golddigger.utils.XlsxUtils;
@@ -89,8 +93,9 @@ public class ExchangeAccountService {
 	 */
 	public void generateOrdersReportToExcel(Integer year, HttpServletResponse response) {
 		LocalDate today = requestTime.getLocalDateUTC();
-		String fileName = "Filled_orders_" + today + ".xlsx";
+		validateYearRange(year, 2000, today.getYear(), response);
 
+		String fileName = "Filled_orders_" + today + ".xlsx";
 		List<Map<String, Object>> filledOrders = getOrdersFilledInYear(year);
 		Map<String, Object> dataSource = new HashMap<>();
 		dataSource.put("table", filledOrders);
@@ -99,6 +104,16 @@ public class ExchangeAccountService {
 			XlsxUtils.generateXlsx(FILLED_ORDERS_TEMPLATE, dataSource, fileName, response);
 		} catch (IOException | InvalidFormatException e) {
 			logger.error("Error: ", e);
+		}
+	}
+
+	private void validateYearRange(Integer year, int from, int to, HttpServletResponse response) {
+		if (year == null) {
+			return;
+		} else if (year < from || year > to) {
+			String message = resolveMessage("yearValidation", from, to);
+			logger.warn(message);
+			throw new ClientSideFailure(message);
 		}
 	}
 
