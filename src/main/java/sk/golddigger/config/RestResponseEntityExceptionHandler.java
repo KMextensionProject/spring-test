@@ -25,6 +25,6 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
 
 	@PostConstruct
 	private void logInit() {
-		logger.info(RestResponseEntityExceptionHandler.class + " has been loaded");
+		logger.info("Global REST exception handler has been loaded");
 	}
 }
