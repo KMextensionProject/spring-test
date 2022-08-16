@@ -1,4 +1,4 @@
-package sk.golddigger.config;
+package sk.golddigger.validation;
 
 import java.io.File;
 import java.io.IOException;
