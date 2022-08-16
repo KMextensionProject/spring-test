@@ -6,7 +6,7 @@ import static sk.golddigger.enums.HttpMethod.POST;
 import static sk.golddigger.enums.Resources.COINBASE_ACCOUNTS_URL;
 import static sk.golddigger.enums.Resources.COINBASE_ACCOUNT_BY_ID_URL;
 import static sk.golddigger.enums.Resources.COINBASE_ORDER_BY_ID_URL;
-import static sk.golddigger.enums.Resources.COINBASE_ORDER_FILLS;
+import static sk.golddigger.enums.Resources.COINBASE_ORDER_FILLS_URL;
 import static sk.golddigger.enums.Resources.COINBASE_PLACE_ORDER_URL;
 import static sk.golddigger.utils.EncoderUtils.decodeBase64;
 import static sk.golddigger.utils.EncoderUtils.encodeBase64;
@@ -66,13 +66,17 @@ public class CoinbaseRequest extends DefaultHttpRequest implements ExchangeReque
 	@Autowired
 	private Gson gson;
 
+	@Value("${coinbase.host}")
+	private String host;
+
 	private List<Header> defaultHeaders;
 
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<Map<String, Object>> getAllAccounts() {
-		List<Header> headers = computeRequestHeaders(COINBASE_ACCOUNTS_URL, GET, null);
-		String responseBody = getJson(COINBASE_ACCOUNTS_URL, headers);
+		String url = host.concat(COINBASE_ACCOUNTS_URL);
+		List<Header> headers = computeRequestHeaders(url, GET, null);
+		String responseBody = getJson(url, headers);
 		logPayload(responseBody);
 
 		return gson.fromJson(responseBody, List.class);
@@ -81,7 +85,7 @@ public class CoinbaseRequest extends DefaultHttpRequest implements ExchangeReque
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<Map<String, Object>> getAllOrderFills() {
-		String url = urlResolver.resolveParams(COINBASE_ORDER_FILLS, tradingCurrency.getAcronym(), accountCurrency.getAcronym());
+		String url = urlResolver.resolveParams(host.concat(COINBASE_ORDER_FILLS_URL), tradingCurrency.getAcronym(), accountCurrency.getAcronym());
 		List<Header> headers = computeRequestHeaders(url, GET, null);
 		String responseBody = getJson(url, headers);
 		logPayload(responseBody);
@@ -92,7 +96,7 @@ public class CoinbaseRequest extends DefaultHttpRequest implements ExchangeReque
 	@Override
 	@SuppressWarnings("unchecked")
 	public Map<String, Object> getOrderById(String orderId) {
-		String url = urlResolver.resolveParams(COINBASE_ORDER_BY_ID_URL, orderId);
+		String url = urlResolver.resolveParams(host.concat(COINBASE_ORDER_BY_ID_URL), orderId);
 		List<Header> headers = computeRequestHeaders(url, GET, null);
 		String responseBody = getJson(url, headers);
 		logPayload(responseBody);
@@ -103,7 +107,7 @@ public class CoinbaseRequest extends DefaultHttpRequest implements ExchangeReque
 	@Override
 	@SuppressWarnings("unchecked")
 	public double getAccountBalance(String accountId) {
-		String url = urlResolver.resolveParams(COINBASE_ACCOUNT_BY_ID_URL, accountId);
+		String url = urlResolver.resolveParams(host.concat(COINBASE_ACCOUNT_BY_ID_URL), accountId);
 		List<Header> headers = computeRequestHeaders(url, GET, null);
 		String responseBody = getJson(url, headers);
 		Map<String, Object> result = gson.fromJson(responseBody, Map.class);
@@ -118,8 +122,9 @@ public class CoinbaseRequest extends DefaultHttpRequest implements ExchangeReque
 		String requestBody = gson.toJson(order);
 		logPayload(requestBody);
 
-		List<Header> headers = computeRequestHeaders(COINBASE_PLACE_ORDER_URL, POST, requestBody);
-		String responseBody = postJson(COINBASE_PLACE_ORDER_URL, headers, requestBody);
+		String url = host.concat(COINBASE_PLACE_ORDER_URL);
+		List<Header> headers = computeRequestHeaders(url, POST, requestBody);
+		String responseBody = postJson(url, headers, requestBody);
 		Map<String, Object> result = gson.fromJson(responseBody, Map.class);
 		logPayload(responseBody);
 
@@ -164,6 +169,11 @@ public class CoinbaseRequest extends DefaultHttpRequest implements ExchangeReque
 	}
 
 	@PostConstruct
+	private void init() {
+		validateCoinbaseAPIEnv();
+		logger.info("Active Coinbase host = " + host);
+	}
+
 	private void validateCoinbaseAPIEnv() {
 		final String NULL = "null";
 		if (NULL.equals(apiKey)|| NULL.equals(apiSecret) || NULL.equals(apiPassphrase)) {

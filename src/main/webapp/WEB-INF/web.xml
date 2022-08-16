@@ -3,5 +3,13 @@
  "http://java.sun.com/dtd/web-app_2_3.dtd" >
 
 <web-app>
-  <display-name>Archetype Created Web Application</display-name>
+
+	<display-name>Archetype Created Web Application</display-name>
+
+	<!-- overwrite this to redirect all coinbase calls to the mock service -->
+	<context-param>
+		<param-name>coinbase.host</param-name>
+		<param-value>https://api.exchange.coinbase.com</param-value>
+	</context-param>
+
 </web-app>

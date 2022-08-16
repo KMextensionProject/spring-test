@@ -2,7 +2,7 @@ package sk.golddigger.http;
 import static sk.golddigger.utils.MessageResolver.resolveMessage;
 
 import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +24,7 @@ public class TelegramRequest extends DefaultHttpRequest {
 	private URLResolver urlResolver;
 
 	public void sendTelegramMessage(String botId, String chatId, String message) {
-		String url = urlResolver.resolveParams(Resources.TELEGRAM_SEND_MASSAGE_URL, botId, chatId, URLEncoder.encode(message, StandardCharsets.UTF_8));
+		String url = urlResolver.resolveParams(Resources.TELEGRAM_SEND_MASSAGE_URL, botId, chatId, URLEncoder.encode(message, UTF_8));
 		String response = getJson(url, null);
 
 		String groupName = JsonPath.compile(CHAT_TITLE_JSON_PATH).read(response);
