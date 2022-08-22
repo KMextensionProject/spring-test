@@ -18,9 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpServerErrorException;
 
 import sk.golddigger.cache.AccountCache;
 import sk.golddigger.core.ExchangeAccount;
@@ -93,7 +91,7 @@ public class ExchangeAccountService {
 	 */
 	public void generateOrdersReportToExcel(Integer year, HttpServletResponse response) {
 		LocalDate today = requestTime.getLocalDateUTC();
-		validateYearRange(year, 2000, today.getYear(), response);
+		validateYearRange(year, 2000, today.getYear());
 
 		String fileName = "Filled_orders_" + today + ".xlsx";
 		List<Map<String, Object>> filledOrders = getOrdersFilledInYear(year);
@@ -107,10 +105,8 @@ public class ExchangeAccountService {
 		}
 	}
 
-	private void validateYearRange(Integer year, int from, int to, HttpServletResponse response) {
-		if (year == null) {
-			return;
-		} else if (year < from || year > to) {
+	private void validateYearRange(Integer year, int from, int to) {
+		if (year != null && (year < from || year > to)) {
 			String message = resolveMessage("yearValidation", from, to);
 			logger.warn(message);
 			throw new ClientSideFailure(message);

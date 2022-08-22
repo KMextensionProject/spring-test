@@ -1,8 +1,5 @@
 package sk.golddigger.config;
 
-import javax.annotation.PostConstruct;
-
-import org.apache.log4j.Logger;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,15 +13,9 @@ import sk.golddigger.exceptions.ClientSideFailure;
 @ControllerAdvice
 public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
 
-	private static final Logger logger = Logger.getLogger(RestResponseEntityExceptionHandler.class);
-
 	@ExceptionHandler({ ClientSideFailure.class })
 	public ResponseEntity<Object> handleAccessDeniedException(Exception ex, WebRequest request) {
-		return new ResponseEntity<Object>(ex.getMessage(), new HttpHeaders(), HttpStatus.BAD_REQUEST);
+		return new ResponseEntity<>(ex.getMessage(), new HttpHeaders(), HttpStatus.BAD_REQUEST);
 	}
 
-	@PostConstruct
-	private void logInit() {
-		logger.info("Global REST exception handler has been loaded");
-	}
 }
