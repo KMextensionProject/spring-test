@@ -3,14 +3,21 @@ package sk.golddigger.config;
 import static sk.golddigger.utils.MessageResolver.resolveMessage;
 
 import java.io.IOException;
+import java.lang.management.ManagementFactory;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Set;
 
 import javax.annotation.PostConstruct;
+import javax.management.MBeanServer;
+import javax.management.MalformedObjectNameException;
+import javax.management.ObjectName;
+import javax.management.Query;
 import javax.servlet.ServletContext;
 
 import org.apache.log4j.Logger;
@@ -31,11 +38,11 @@ public final class EndpointLoader {
 	private static final Logger logger = Logger.getLogger(EndpointLoader.class);
 
 	private static final String ENDPOINT_PROTOCOL = "http://";
-	private static final String ENDPOINT_PORT = ":8080";
 	private static final String ENDPOINT_APP_NAME = "/gold-digger";
 
 	private Set<String> endpoints;
 	private String ipAddress;
+	private String endpointPort;
 
 	@Autowired
 	private ServletContext servletContext;
@@ -45,7 +52,7 @@ public final class EndpointLoader {
 	}
 
 	@EventListener
-	private void handleContextRefresh(ContextRefreshedEvent event) {
+	private void handleContextRefresh(ContextRefreshedEvent event) throws UnknownHostException, MalformedObjectNameException {
 		if (endpoints.isEmpty()) {
 			ApplicationContext context = event.getApplicationContext();
 			RequestMappingHandlerMapping requestMapping = context.getBean("requestMappingHandlerMapping", RequestMappingHandlerMapping.class);
@@ -63,7 +70,7 @@ public final class EndpointLoader {
 	private String constructEndpoint(Set<String> directPaths) {		
 		StringBuilder endpoint = new StringBuilder(ENDPOINT_PROTOCOL);
 		endpoint.append(ipAddress);
-		endpoint.append(ENDPOINT_PORT);
+		endpoint.append(endpointPort);
 		endpoint.append(ENDPOINT_APP_NAME);
 		endpoint.append(directPaths.toString().substring(1));
 		endpoint.deleteCharAt(endpoint.length() - 1);
@@ -80,9 +87,12 @@ public final class EndpointLoader {
 	}
 
 	@PostConstruct
-	private void initializeIpAddress() {
+	private void initializeServerAddress() {
+		// for JSP
 		ipAddress = lookupServerIpAddress();
-		servletContext.setAttribute("ip", ipAddress); // for JSP
+		endpointPort = lookupServerPort();
+		servletContext.setAttribute("ip", ipAddress);
+		servletContext.setAttribute("port", endpointPort);
 	}
 
 	private String lookupServerIpAddress() {
@@ -93,6 +103,19 @@ public final class EndpointLoader {
 			String serverIpNotFoundMessage = resolveMessage("serverIpNotFound");
 			logger.warn(serverIpNotFoundMessage);
 			throw new ApplicationFailure(serverIpNotFoundMessage);
+		}
+	}
+
+	private String lookupServerPort() {
+		MBeanServer beanServer = ManagementFactory.getPlatformMBeanServer();
+		try {
+			Set<ObjectName> objectNames = beanServer.queryNames(new ObjectName("*:type=Connector,*"),
+				Query.match(Query.attr("protocol"),
+				Query.value("HTTP/1.1")));
+
+			return ":".concat(objectNames.iterator().next().getKeyProperty("port"));
+		} catch (MalformedObjectNameException | NoSuchElementException e) {
+			throw new ApplicationFailure("Could not lookup the server port");
 		}
 	}
 
