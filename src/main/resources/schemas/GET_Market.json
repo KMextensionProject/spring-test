@@ -1,0 +1,64 @@
+{
+	"$schema": "http://json-schema.org/draft-04/schema#",
+	"type": "object",
+	"properties": {
+		"market_currency": {
+			"type": "string"
+		},
+		"conversion_currency": {
+			"type": "string"
+		},
+		"current_price": {
+			"type": "number"
+		},
+		"ath": {
+			"type": "number"
+		},
+		"week_opening_price": {
+			"type": "number"
+		},
+		"month_opening_price": {
+			"type": "number"
+		},
+		"year_opening_price": {
+			"type": "number"
+		},
+		"market_predicate_setting": {
+			"type": "object",
+			"properties": {
+				"week": {
+					"type": "integer"
+				},
+				"month": {
+					"type": "integer"
+				},
+				"additional_settings": {
+					"type": "boolean"
+				}
+			},
+			"required": [
+				"week",
+				"month",
+				"additional_settings"
+			]
+		},
+		"market_predicate_result": {
+			"type": "boolean"
+		},
+		"last_updated": {
+			"type": "string"
+		}
+	},
+	"required": [
+		"market_currency",
+		"conversion_currency",
+		"current_price",
+		"ath",
+		"week_opening_price",
+		"month_opening_price",
+		"year_opening_price",
+		"market_predicate_setting",
+		"market_predicate_result",
+		"last_updated"
+	]
+}
