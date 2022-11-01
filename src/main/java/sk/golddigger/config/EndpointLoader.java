@@ -7,6 +7,7 @@ import java.lang.management.ManagementFactory;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -30,6 +31,7 @@ import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
+import sk.golddigger.annotations.SchemaLocation;
 import sk.golddigger.exceptions.ApplicationFailure;
 
 @Component
@@ -58,12 +60,31 @@ public final class EndpointLoader {
 			RequestMappingHandlerMapping requestMapping = context.getBean("requestMappingHandlerMapping", RequestMappingHandlerMapping.class);
 			Map<RequestMappingInfo, HandlerMethod> handlerMethods = requestMapping.getHandlerMethods();
 
+			// validate if all controllers have schema locations on them
+			validateControllerSchemaLocationPresence(handlerMethods.values());
+
 			if (ipAddress != null) {
 				handlerMethods.forEach((key, value) -> endpoints.add(constructEndpoint(key.getDirectPaths())));
 				logger.info(resolveMessage("endpointsCount", handlerMethods.size()));
 			}
 
 			logHomePageURL();
+		}
+	}
+
+	private void validateControllerSchemaLocationPresence(Collection<HandlerMethod> handlerMethods) {		
+		boolean errorous = false;
+		for (HandlerMethod controller : handlerMethods) {
+			if (!controller.hasMethodAnnotation(SchemaLocation.class)) {
+				logger.error(controller.getShortLogMessage());
+				if (!errorous) {
+					errorous = true;
+				}
+			}
+		}
+		if (errorous) {
+			// there is no point keeping application alive
+			System.exit(500);
 		}
 	}
 
