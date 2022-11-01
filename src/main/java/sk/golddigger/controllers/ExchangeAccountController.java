@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import sk.golddigger.annotations.SchemaLocation;
 import sk.golddigger.services.ExchangeAccountService;
 
 @Controller
@@ -21,12 +22,14 @@ public class ExchangeAccountController {
 	private ExchangeAccountService exchangeService;
 
 	@GetMapping(path = "/account/complexOverview", produces = APPLICATION_JSON)
+	@SchemaLocation(outputPath = "")
 	@ResponseBody
 	public Map<String, Object> getAccountComplexOverview() {
 		return exchangeService.getAccountComplexOverview();
 	}
 
 	@GetMapping(path = "/account/orders/excel")
+	@SchemaLocation(noSchema = true)
 	public void generateOrdersReportToExcel(@RequestParam(name = "year", required = false) Integer year, HttpServletResponse response) {
 		exchangeService.generateOrdersReportToExcel(year, response);
 	}
