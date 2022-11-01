@@ -11,8 +11,10 @@ public class ReusableServletInputStream extends ServletInputStream {
 	private ServletInputStream servletInputStream = new ServletInputStream() {
 		boolean isFinished = false;
 		boolean isReady = true;
-		ReadListener readListener = null;
+		@SuppressWarnings("unused")
+		ReadListener readListener;
 
+		@Override
 		public int read() throws IOException {
 			int i = inputStream.read();
 			isFinished = i == -1;
@@ -40,22 +42,27 @@ public class ReusableServletInputStream extends ServletInputStream {
 		this.inputStream = is;
 	}
 
+	@Override
 	public int available() throws IOException {
 		return inputStream.available();
 	}
 
+	@Override
 	public void close() throws IOException {
 		inputStream.close();
 	}
 
+	@Override
 	public void mark(int readLimit) {
 		inputStream.mark(readLimit);
 	}
 
+	@Override
 	public boolean markSupported() {
 		return inputStream.markSupported();
 	}
 
+	@Override
 	public int read(byte[] b, int off, int len) throws IOException {
 		return inputStream.read(b, off, len);
 	}
@@ -64,9 +71,7 @@ public class ReusableServletInputStream extends ServletInputStream {
 		if (len <= 0) {
 			return 0;
 		}
-
 		int count = 0, c;
-
 		while ((c = read()) != -1) {
 			b[off++] = (byte) c;
 			count++;
@@ -74,14 +79,15 @@ public class ReusableServletInputStream extends ServletInputStream {
 				break;
 			}
 		}
-
 		return count > 0 ? count : -1;
 	}
 
+	@Override
 	public void reset() throws IOException {
 		inputStream.reset();
 	}
 
+	@Override
 	public long skip(long n) throws IOException {
 		return inputStream.skip(n);
 	}
@@ -96,10 +102,12 @@ public class ReusableServletInputStream extends ServletInputStream {
 		servletInputStream.setReadListener(readListener);
 	}
 
+	@Override
 	public boolean isReady() {
 		return servletInputStream.isReady();
 	}
 
+	@Override
 	public boolean isFinished() {
 		return servletInputStream.isFinished();
 	}

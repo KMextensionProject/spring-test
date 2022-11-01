@@ -1,15 +1,16 @@
 package sk.golddigger.http;
 
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
+import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
-import java.io.IOException;
-import java.io.ByteArrayInputStream;
-import org.apache.commons.io.IOUtils;
-import java.io.InputStreamReader;
-import java.io.BufferedReader;
-import javax.servlet.ServletInputStream;
 
-// change this name, because i am not resetting this stream, but i am reusing it 
+import org.apache.poi.util.IOUtils;
+
 public class StreamReusableHttpServletRequest extends HttpServletRequestWrapper {
 
 	private byte[] rawData = {};
@@ -37,6 +38,7 @@ public class StreamReusableHttpServletRequest extends HttpServletRequestWrapper 
 		return servletStream;
 	}
 
+	@Override
 	public BufferedReader getReader() throws IOException {
 		initRawData();
 		String encoding = getCharacterEncoding();
