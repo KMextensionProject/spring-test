@@ -234,8 +234,8 @@ import java.util.regex.Pattern;
  * 
  * <p>
  * Since version 1.3, mJson supports JSON Schema, draft 4. A schema is represented by the internal
- * class {@link mjson.Json.Schema}. To perform a validation, you have a instantiate a <code>Json.Schema</code>
- * using the factory method {@link mjson.Json.Schema} and then call its <code>validate</code> method
+ * class {@link Json.Json.Schema}. To perform a validation, you have a instantiate a <code>Json.Schema</code>
+ * using the factory method {@link Json.Json.Schema} and then call its <code>validate</code> method
  * on a JSON instance:
  * </p>
  *  
@@ -1320,7 +1320,7 @@ public class Json implements java.io.Serializable, Iterable<Json>
 	
 	/**
 	 * <p>
-	 * Exposes some internal methods that are useful for {@link org.sharegov.mjson.Json.Factory} implementations
+	 * Exposes some internal methods that are useful for {@link org.Json.mjson.Json.Factory} implementations
 	 * or other extension/layers of the library.
 	 * </p>
 	 * 
