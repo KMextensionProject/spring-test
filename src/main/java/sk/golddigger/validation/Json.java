@@ -17,6 +17,9 @@ package sk.golddigger.validation;
  * Note: this file incorporates source code from 3d party entities. Such code 
  * is copyrighted by those entities as indicated below.
  */
+// 
+//VYJEBAT Z TOHTO 
+// 
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -39,6 +42,8 @@ import java.util.Objects;
 import java.util.Set;
 //import java.util.function.Function;
 import java.util.regex.Pattern;
+
+// VYJEBAT Z TOHTO CO NEPOUZIVAM PRI VALIDACII ... A PREMENOVAT / OBALIT DRAFT-4 POMENOVANIM.. a to bude ten validator.. ?
 
 /**
  * 

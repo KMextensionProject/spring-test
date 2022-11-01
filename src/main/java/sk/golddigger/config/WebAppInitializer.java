@@ -18,6 +18,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
 import sk.golddigger.interceptors.LoggingInterceptor;
+import sk.golddigger.interceptors.PayloadValidationInterceptor;
 
 @Component
 public class WebAppInitializer implements WebMvcConfigurer {
@@ -26,6 +27,9 @@ public class WebAppInitializer implements WebMvcConfigurer {
 
 	@Autowired
 	private LoggingInterceptor loggingInterceptor;
+
+	@Autowired
+	private PayloadValidationInterceptor payloadValidationInterceptor;
 
 	@Override
 	public void configureViewResolvers(ViewResolverRegistry registry) {
@@ -37,6 +41,9 @@ public class WebAppInitializer implements WebMvcConfigurer {
 	public void addInterceptors(InterceptorRegistry registry) {
 		registry.addInterceptor(loggingInterceptor);
 		logger.info("Interceptor for logging HTTP requests has been registered");
+
+		registry.addInterceptor(payloadValidationInterceptor);
+		logger.info("Interceptor for validating request payloads has been registered");
 	}
 
 	@Override
