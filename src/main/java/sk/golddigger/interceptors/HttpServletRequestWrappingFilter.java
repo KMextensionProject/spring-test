@@ -1,4 +1,4 @@
-package sk.golddigger.filters;
+package sk.golddigger.interceptors;
 
 import java.io.IOException;
 
