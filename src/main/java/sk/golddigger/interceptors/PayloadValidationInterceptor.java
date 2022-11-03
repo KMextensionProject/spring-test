@@ -5,6 +5,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -19,8 +20,11 @@ import org.springframework.web.servlet.ModelAndView;
 
 import sk.golddigger.annotations.SchemaLocation;
 import sk.golddigger.exceptions.ApplicationFailure;
+import sk.golddigger.exceptions.ClientSideFailure;
 import sk.golddigger.http.StreamReusableHttpServletRequest;
 import sk.golddigger.validation.PayloadValidator;
+import sk.golddigger.validation.PayloadValidator.ValidationError;
+import sk.golddigger.validation.PayloadValidator.ValidationResult;
 
 @Component
 public class PayloadValidationInterceptor implements HandlerInterceptor {
@@ -45,7 +49,10 @@ public class PayloadValidationInterceptor implements HandlerInterceptor {
 			String inputSchema = String.join("", Files.readAllLines(inputSchemaLocation, StandardCharsets.UTF_8));
 			String payload = new String(((StreamReusableHttpServletRequest)request).getRawData());
 
-			payloadValidator.validate(payload, inputSchema);
+			ValidationResult validationResult = payloadValidator.validate(payload, inputSchema);
+			if (!validationResult.isValid()) {
+				throw new ClientSideFailure("Validation errors: " + validationResult.getErrorMessages());
+			}
 		}
 		return true;
 	}
