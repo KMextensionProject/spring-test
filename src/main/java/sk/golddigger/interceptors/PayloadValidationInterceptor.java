@@ -5,7 +5,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -23,7 +22,6 @@ import sk.golddigger.exceptions.ApplicationFailure;
 import sk.golddigger.exceptions.ClientSideFailure;
 import sk.golddigger.http.StreamReusableHttpServletRequest;
 import sk.golddigger.validation.PayloadValidator;
-import sk.golddigger.validation.PayloadValidator.ValidationError;
 import sk.golddigger.validation.PayloadValidator.ValidationResult;
 
 @Component

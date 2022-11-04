@@ -6,6 +6,8 @@ import java.util.Map;
 
 import org.springframework.stereotype.Component;
 
+import sk.golddigger.exceptions.ApplicationFailure;
+
 // should have draf4 in its name?
 @Component
 public class PayloadValidator {
@@ -17,30 +19,8 @@ public class PayloadValidator {
 		return new ValidationResult(validationResult);
 	}
 
-//	public static void main(String[] args) {
-//		Json.Schema schema = Json
-//				.schema(Json.read("{\n" + "	\"$schema\": \"http://json-schema.org/draft-04/schema#\",\n"
-//						+ "	\"type\": \"object\",\n" + "	\"properties\": {\n" + "		\"name\": {\n"
-//						+ "			\"type\": \"string\"\n" + "		},\n" + "		\"priority\": {\n"
-//						+ "			\"type\": \"integer\"\n" + "		},\n" + "		\"active\": {\n"
-//						+ "			\"type\": \"boolean\"\n" + "		}\n" + "	},\n" + "	\"required\": [\n"
-//						+ "		\"name\",\n" + "		\"priority\",\n" + "		\"active\"\n" + "	]\n" + "}"));
-//		Json json = schema.validate(Json.read("{\n" + "	\"name\": \"validation test\",\n" + "	\"priority\": true,\n"
-//				+ "	\"active\": 1\n" + "}"));
-////		System.out.println(json);
-//
-//		boolean isValid = (boolean) json.asMap().get("ok");
-//		if (isValid) {
-//			System.out.println("document is valid");
-//			// return empty list of validation errors
-//		} else {
-//			System.out.println("document is invalid");
-//			// return list of errors as single string messages
-//			new ValidationResult(json.asMap());
-//		}
-//	}
-
 	public static class ValidationResult {
+
 		private boolean isValid;
 		private List<String> errors;
 
@@ -49,15 +29,27 @@ public class PayloadValidator {
 		}
 
 		public ValidationResult(Map<String, Object> validationResult) {
-			Object ok = validationResult.get("ok");
-			if (ok instanceof Boolean) {
+			validateValidationSourcePresence(validationResult);
+			initializeResultProperties(validationResult);
+		}
+
+		private void initializeResultProperties(Map<String, Object> validationResultSource) {
+			Object ok = validationResultSource.get("ok");
+			if (ok instanceof Boolean) { // covers null reference
 				this.isValid = (boolean) ok;
 			}
-			List<String> validationResults = (List<String>) validationResult.get("error");
-			if (validationResults != null) {
-				this.errors = validationResults;
+			@SuppressWarnings("unchecked")
+			List<String> validationErrors = (List<String>) validationResultSource.get("error");
+			if (validationErrors != null) {
+				this.errors = validationErrors;
 			} else {
 				this.errors = new ArrayList<>(0);
+			}
+		}
+
+		private void validateValidationSourcePresence(Map<String, Object> validationResultSource) {
+			if (validationResultSource == null) {
+				throw new ApplicationFailure("validation result cannot be null");
 			}
 		}
 
