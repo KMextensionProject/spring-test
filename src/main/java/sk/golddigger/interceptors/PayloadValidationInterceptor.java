@@ -9,7 +9,6 @@ import java.nio.file.Paths;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
@@ -21,14 +20,12 @@ import sk.golddigger.annotations.SchemaLocation;
 import sk.golddigger.exceptions.ApplicationFailure;
 import sk.golddigger.exceptions.ClientSideFailure;
 import sk.golddigger.http.StreamReusableHttpServletRequest;
+import sk.golddigger.http.StreamReusableHttpServletResponse;
 import sk.golddigger.validation.PayloadValidator;
 import sk.golddigger.validation.PayloadValidator.ValidationResult;
 
 @Component
 public class PayloadValidationInterceptor implements HandlerInterceptor {
-
-	@Autowired
-	private PayloadValidator payloadValidator;
 
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws IOException {
@@ -47,7 +44,7 @@ public class PayloadValidationInterceptor implements HandlerInterceptor {
 			String inputSchema = String.join("", Files.readAllLines(inputSchemaLocation, StandardCharsets.UTF_8));
 			String payload = new String(((StreamReusableHttpServletRequest)request).getRawData());
 
-			ValidationResult validationResult = payloadValidator.validate(payload, inputSchema);
+			ValidationResult validationResult = PayloadValidator.validate(payload, inputSchema);
 			if (!validationResult.isValid()) {
 				throw new ClientSideFailure("Validation errors: " + validationResult.getErrorMessages());
 			}
@@ -56,8 +53,23 @@ public class PayloadValidationInterceptor implements HandlerInterceptor {
 	}
 
 	@Override
-	public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) {
-		
+	public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws IOException {
+		if (handler instanceof HandlerMethod) {
+			SchemaLocation schema = ((HandlerMethod) handler).getMethodAnnotation(SchemaLocation.class);
+			if (schema.noSchema()) {
+				return;
+			}
+			Resource resource = new DefaultResourceLoader().getResource("classpath:" + schema.outputPath());
+			Path outputSchemaLocation = Paths.get(resource.getURI());
+			validateSchemaLocationExistence(outputSchemaLocation, "Missing output schema for " + request.getRequestURL());
+
+			String outputSchemaSchema = String.join("", Files.readAllLines(outputSchemaLocation, StandardCharsets.UTF_8));
+			String payload = new String(((StreamReusableHttpServletResponse) response).getRawData());
+			ValidationResult validationResult = PayloadValidator.validate(payload, outputSchemaSchema);
+			if (!validationResult.isValid()) {
+				throw new ApplicationFailure("Validation errors: ", validationResult.getErrorMessages());
+			}
+		}
 	}
 
 	private void validateSchemaLocationExistence(Path schemaLocation, String errorMessage) {
@@ -65,33 +77,4 @@ public class PayloadValidationInterceptor implements HandlerInterceptor {
 			throw new ApplicationFailure(errorMessage);
 		}
 	}
-
-//	public static void main(String[] args) {
-//		Json.Schema schema = Json.schema(Json.read("{\n"
-//				+ "	\"$schema\": \"http://json-schema.org/draft-04/schema#\",\n"
-//				+ "	\"type\": \"object\",\n"
-//				+ "	\"properties\": {\n"
-//				+ "		\"name\": {\n"
-//				+ "			\"type\": \"string\"\n"
-//				+ "		},\n"
-//				+ "		\"priority\": {\n"
-//				+ "			\"type\": \"integer\"\n"
-//				+ "		},\n"
-//				+ "		\"active\": {\n"
-//				+ "			\"type\": \"boolean\"\n"
-//				+ "		}\n"
-//				+ "	},\n"
-//				+ "	\"required\": [\n"
-//				+ "		\"name\",\n"
-//				+ "		\"priority\",\n"
-//				+ "		\"active\"\n"
-//				+ "	]\n"
-//				+ "}"));
-//		Json json = schema.validate(Json.read("{\n"
-//				+ "	\"name\": \"validation test\",\n"
-//				+ "	\"priority\": 1,\n"
-//				+ "	\"active\": true\n"
-//				+ "}"));
-//		System.out.println(json);
-//	}
 }

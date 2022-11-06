@@ -8,14 +8,14 @@ import org.springframework.stereotype.Component;
 
 import sk.golddigger.exceptions.ApplicationFailure;
 
-// should have draf4 in its name?
 @Component
 public class PayloadValidator {
 
-	public ValidationResult validate(String jsonDraft4Schema, String jsonPayload) {
+	public static ValidationResult validate(String jsonDraft4Schema, String jsonPayload) {
 		Json schema = Json.read(jsonDraft4Schema);
 		Json payload = Json.read(jsonPayload);
 		Json validationResult = Json.schema(schema).validate(payload);
+
 		return new ValidationResult(validationResult);
 	}
 
@@ -29,7 +29,7 @@ public class PayloadValidator {
 		}
 
 		public ValidationResult(Map<String, Object> validationResult) {
-			validateValidationSourcePresence(validationResult);
+			validateResultPresence(validationResult);
 			initializeResultProperties(validationResult);
 		}
 
@@ -47,7 +47,7 @@ public class PayloadValidator {
 			}
 		}
 
-		private void validateValidationSourcePresence(Map<String, Object> validationResultSource) {
+		private void validateResultPresence(Map<String, Object> validationResultSource) {
 			if (validationResultSource == null) {
 				throw new ApplicationFailure("validation result cannot be null");
 			}
