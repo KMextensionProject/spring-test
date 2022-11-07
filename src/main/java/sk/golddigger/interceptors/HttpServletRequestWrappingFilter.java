@@ -9,6 +9,9 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.web.util.ContentCachingResponseWrapper;
 
 import sk.golddigger.http.StreamReusableHttpServletRequest;
 
@@ -21,8 +24,8 @@ public class HttpServletRequestWrappingFilter implements Filter {
 
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-
-		// TODO: do the same with the HttpServletResponse object
-		chain.doFilter(new StreamReusableHttpServletRequest((HttpServletRequest)request), response);		
+		chain.doFilter(
+			new StreamReusableHttpServletRequest((HttpServletRequest)request), 
+			new ContentCachingResponseWrapper((HttpServletResponse) response));		
 	}
 }
