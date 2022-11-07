@@ -20,7 +20,6 @@ import sk.golddigger.annotations.SchemaLocation;
 import sk.golddigger.exceptions.ApplicationFailure;
 import sk.golddigger.exceptions.ClientSideFailure;
 import sk.golddigger.http.StreamReusableHttpServletRequest;
-import sk.golddigger.http.StreamReusableHttpServletResponse;
 import sk.golddigger.validation.PayloadValidator;
 import sk.golddigger.validation.PayloadValidator.ValidationResult;
 
@@ -54,22 +53,6 @@ public class PayloadValidationInterceptor implements HandlerInterceptor {
 
 	@Override
 	public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws IOException {
-		if (handler instanceof HandlerMethod) {
-			SchemaLocation schema = ((HandlerMethod) handler).getMethodAnnotation(SchemaLocation.class);
-			if (schema.noSchema()) {
-				return;
-			}
-			Resource resource = new DefaultResourceLoader().getResource("classpath:" + schema.outputPath());
-			Path outputSchemaLocation = Paths.get(resource.getURI());
-			validateSchemaLocationExistence(outputSchemaLocation, "Missing output schema for " + request.getRequestURL());
-
-			String outputSchemaSchema = String.join("", Files.readAllLines(outputSchemaLocation, StandardCharsets.UTF_8));
-			String payload = new String(((StreamReusableHttpServletResponse) response).getRawData());
-			ValidationResult validationResult = PayloadValidator.validate(payload, outputSchemaSchema);
-			if (!validationResult.isValid()) {
-				throw new ApplicationFailure("Validation errors: ", validationResult.getErrorMessages());
-			}
-		}
 	}
 
 	private void validateSchemaLocationExistence(Path schemaLocation, String errorMessage) {
