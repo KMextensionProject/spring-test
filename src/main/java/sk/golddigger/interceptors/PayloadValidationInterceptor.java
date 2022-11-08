@@ -30,6 +30,7 @@ import sk.golddigger.validation.PayloadValidator.ValidationResult;
 @Component
 public class PayloadValidationInterceptor implements HandlerInterceptor {
 
+	// TODO: perform validation only for JSON objects...check content-type!
 	// TODO: get rid of duplication
 	// TODO: unite these literal messages into message codes
 	// TODO: separate the logic into smaller chunks/methods
@@ -51,7 +52,7 @@ public class PayloadValidationInterceptor implements HandlerInterceptor {
 			String inputSchema = String.join("", Files.readAllLines(inputSchemaLocation, StandardCharsets.UTF_8));
 			String payload = new String(((StreamReusableHttpServletRequest)request).getRawData());
 
-			ValidationResult validationResult = PayloadValidator.validate(payload, inputSchema);
+			ValidationResult validationResult = PayloadValidator.validate(inputSchema, payload);
 			if (!validationResult.isValid()) {
 				// log the error messages
 				throw new ClientSideFailure("Validation errors: " + validationResult.getErrorMessages());
@@ -73,10 +74,10 @@ public class PayloadValidationInterceptor implements HandlerInterceptor {
 
 			String outputSchema = String.join("", Files.readAllLines(outputSchemaLocation, StandardCharsets.UTF_8));
 			ContentCachingResponseWrapper responseWrapper = (ContentCachingResponseWrapper) response;
-			responseWrapper.copyBodyToResponse();
 			String payload = new String(responseWrapper.getContentAsByteArray(), StandardCharsets.UTF_8);
+			responseWrapper.copyBodyToResponse();
 
-			ValidationResult validationResult = PayloadValidator.validate(payload, outputSchema);
+			ValidationResult validationResult = PayloadValidator.validate(outputSchema, payload);
 			if (!validationResult.isValid()) {
 				// log the error messages
 				throw new ApplicationFailure("Validation errors: " + validationResult.getErrorMessages());
