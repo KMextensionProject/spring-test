@@ -19,7 +19,7 @@ public class MarketController {
 	private MarketService marketService;
 
 	@GetMapping(path = "/market/complexOverview", produces = APPLICATION_JSON)
-	@SchemaLocation(outputPath = "schemas/GET_Market.json")
+	@SchemaLocation(outputPath = "schemas/out/get/getMarketComplexOverview.json")
 	@ResponseBody
 	public Map<String, Object> getMarketComplexOverview() {
 		return marketService.getMarketComplexOverview();
