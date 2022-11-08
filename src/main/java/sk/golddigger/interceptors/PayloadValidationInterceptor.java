@@ -64,8 +64,10 @@ public class PayloadValidationInterceptor implements HandlerInterceptor {
 	@Override
 	public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws IOException {
 		if (handler instanceof HandlerMethod) {
+			ContentCachingResponseWrapper responseWrapper = (ContentCachingResponseWrapper) response;
 			SchemaLocation schema = ((HandlerMethod) handler).getMethodAnnotation(SchemaLocation.class);
 			if (schema.noSchema() || schema.outputPath().isEmpty()) {
+				responseWrapper.copyBodyToResponse(); // I want to know why is this needed by hand
 				return;
 			}
 			Resource resource = new DefaultResourceLoader().getResource("classpath:" + schema.outputPath());
@@ -73,7 +75,6 @@ public class PayloadValidationInterceptor implements HandlerInterceptor {
 			validateSchemaExistence(outputSchemaLocation, "Missing output schema for " + request.getRequestURL());
 
 			String outputSchema = String.join("", Files.readAllLines(outputSchemaLocation, StandardCharsets.UTF_8));
-			ContentCachingResponseWrapper responseWrapper = (ContentCachingResponseWrapper) response;
 			String payload = new String(responseWrapper.getContentAsByteArray(), StandardCharsets.UTF_8);
 			responseWrapper.copyBodyToResponse();
 
