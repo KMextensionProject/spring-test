@@ -26,9 +26,10 @@ public class LoggingInterceptor implements HandlerInterceptor {
 
 	@Override
 	public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) {
-		String url = request.getAttribute(TRANSACTION_ID_REQUEST_ATTRIBUTE) + request.getRequestURL().toString();
+		String transactionId = String.valueOf(request.getAttribute(TRANSACTION_ID_REQUEST_ATTRIBUTE));
+		String url = request.getRequestURL().toString();
 		long time = System.currentTimeMillis() - requestStartTime;
-		logger.info(resolveMessage("requestTimeLog", url, time));
+		logger.info(resolveMessage("requestTimeLog", transactionId, url, time));
 	}
 
 }
