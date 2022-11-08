@@ -1,5 +1,5 @@
 package sk.golddigger.controllers;
-import static sk.golddigger.enums.ContentType.TEXT_PLAIN;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import sk.golddigger.annotations.SchemaLocation;
+import sk.golddigger.enums.ContentType;
 import sk.golddigger.services.SchedulerSwitchService;
 
 @Controller
@@ -17,11 +18,10 @@ public class SchedulerSwitchController {
 	@Autowired
 	private SchedulerSwitchService schedulerSwitchService;
 
-	// TODO: adjust output content-type for application/json
-	@PostMapping(path = "/scheduler/switch", produces = TEXT_PLAIN)
-	@SchemaLocation(noSchema = true) // for now
+	@PostMapping(path = "/scheduler/switch", produces = ContentType.APPLICATION_JSON)
+	@SchemaLocation(outputPath = "schemas/out/post/toggleSwitch.json")
 	@ResponseBody
-	public String toggleSwitch(HttpServletRequest request) {
+	public Map<String, Object> toggleSwitch(HttpServletRequest request) {
 		return schedulerSwitchService.toggleSwitch(request);
 	}
 
