@@ -60,7 +60,7 @@ public final class EndpointLoader {
 			RequestMappingHandlerMapping requestMapping = context.getBean("requestMappingHandlerMapping", RequestMappingHandlerMapping.class);
 			Map<RequestMappingInfo, HandlerMethod> handlerMethods = requestMapping.getHandlerMethods();
 
-			// validate if all controllers have schema locations on them
+			// validate if all controllers have schema locations with defined parameters on them
 			validateControllerSchemaLocationPresence(handlerMethods.values());
 
 			if (ipAddress != null) {
@@ -73,16 +73,20 @@ public final class EndpointLoader {
 	}
 
 	private void validateControllerSchemaLocationPresence(Collection<HandlerMethod> handlerMethods) {		
-		boolean errorous = false;
+		int errors = 0;
 		for (HandlerMethod controller : handlerMethods) {
-			if (!controller.hasMethodAnnotation(SchemaLocation.class)) {
-				logger.error(controller.getShortLogMessage());
-				if (!errorous) {
-					errorous = true;
-				}
+			SchemaLocation schemaLocation = controller.getMethodAnnotation(SchemaLocation.class);
+			if (schemaLocation == null) {
+				logger.error("@SchemaLocation is missing on " + controller.getShortLogMessage());
+				errors++;
+			} else if (!schemaLocation.noSchema() 
+					&& schemaLocation.inputPath().isEmpty() 
+					&& schemaLocation.outputPath().isEmpty()) {
+				logger.error("@SchemaLocation must have at least one parameter defined for " + controller.getShortLogMessage());
+				errors++;
 			}
 		}
-		if (errorous) {
+		if (errors > 0) {
 			// there is no point keeping application alive
 			System.exit(500);
 		}
