@@ -1,5 +1,6 @@
 package sk.golddigger.interceptors;
 
+import static sk.golddigger.interceptors.TransactionInjectingFilter.TRANSACTION_ID_REQUEST_ATTRIBUTE;
 import static sk.golddigger.utils.MessageResolver.resolveMessage;
 
 import javax.servlet.http.HttpServletRequest;
@@ -25,7 +26,7 @@ public class LoggingInterceptor implements HandlerInterceptor {
 
 	@Override
 	public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) {
-		String url = request.getRequestURL().toString();
+		String url = request.getAttribute(TRANSACTION_ID_REQUEST_ATTRIBUTE) + request.getRequestURL().toString();
 		long time = System.currentTimeMillis() - requestStartTime;
 		logger.info(resolveMessage("requestTimeLog", url, time));
 	}
