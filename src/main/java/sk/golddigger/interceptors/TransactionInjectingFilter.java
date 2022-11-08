@@ -20,6 +20,8 @@ public class TransactionInjectingFilter implements Filter {
 
 	public static final String TRANSACTION_ID_REQUEST_ATTRIBUTE = "TransactionId";
 
+	// TODO: add TransactionId into a logger definition and then put it into MDC object so the logger can take it from there?
+
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 		String tid = UUIDHelper.generateRandomUUIDnoDashes();
