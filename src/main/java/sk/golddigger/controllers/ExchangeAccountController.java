@@ -22,7 +22,7 @@ public class ExchangeAccountController {
 	private ExchangeAccountService exchangeService;
 
 	@GetMapping(path = "/account/complexOverview", produces = APPLICATION_JSON)
-	@SchemaLocation(outputPath = "")
+	@SchemaLocation(outputPath = "schemas/GET_ExchangeAccount.json")
 	@ResponseBody
 	public Map<String, Object> getAccountComplexOverview() {
 		return exchangeService.getAccountComplexOverview();
