@@ -1,7 +1,7 @@
 package sk.golddigger.interceptors;
 
-import static java.nio.file.Files.exists;
-import static java.nio.file.Files.isReadable;
+import static sk.golddigger.validation.PayloadValidator.validate;
+import static sk.golddigger.validation.PayloadValidator.validateSchemaExistence;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -12,6 +12,7 @@ import java.nio.file.Paths;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.log4j.Logger;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
@@ -24,16 +25,17 @@ import sk.golddigger.annotations.SchemaLocation;
 import sk.golddigger.exceptions.ApplicationFailure;
 import sk.golddigger.exceptions.ClientSideFailure;
 import sk.golddigger.http.StreamReusableHttpServletRequest;
-import sk.golddigger.validation.PayloadValidator;
 import sk.golddigger.validation.PayloadValidator.ValidationResult;
 
 @Component
 public class PayloadValidationInterceptor implements HandlerInterceptor {
 
-	// TODO: perform validation only for JSON objects...check content-type!
+	// TODO: perform validation only for JSON objects...check content-type! -- or will there only be a json structure?
 	// TODO: get rid of duplication
 	// TODO: unite these literal messages into message codes
 	// TODO: separate the logic into smaller chunks/methods
+
+	private static final Logger logger = Logger.getLogger(PayloadValidationInterceptor.class);
 
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws IOException {
@@ -41,7 +43,7 @@ public class PayloadValidationInterceptor implements HandlerInterceptor {
 			SchemaLocation schema = ((HandlerMethod) handler).getMethodAnnotation(SchemaLocation.class);
 
 			// when there is explicitly declared that the schema is not required
-			if (schema.noSchema() || schema.inputPath().isEmpty()) { // TODO: add validation whether either of them is defined and do it in endpoint loader
+			if (schema.noSchema() || schema.inputPath().isEmpty()) {
 				return true;
 			}
 
@@ -52,11 +54,7 @@ public class PayloadValidationInterceptor implements HandlerInterceptor {
 			String inputSchema = String.join("", Files.readAllLines(inputSchemaLocation, StandardCharsets.UTF_8));
 			String payload = new String(((StreamReusableHttpServletRequest)request).getRawData());
 
-			ValidationResult validationResult = PayloadValidator.validate(inputSchema, payload);
-			if (!validationResult.isValid()) {
-				// log the error messages
-				throw new ClientSideFailure("Validation errors: " + validationResult.getErrorMessages());
-			}
+			processValidationResult(validate(inputSchema, payload));
 		}
 		return true;
 	}
@@ -78,17 +76,14 @@ public class PayloadValidationInterceptor implements HandlerInterceptor {
 			String payload = new String(responseWrapper.getContentAsByteArray(), StandardCharsets.UTF_8);
 			responseWrapper.copyBodyToResponse();
 
-			ValidationResult validationResult = PayloadValidator.validate(outputSchema, payload);
-			if (!validationResult.isValid()) {
-				// log the error messages
-				throw new ApplicationFailure("Validation errors: " + validationResult.getErrorMessages());
-			}
+			processValidationResult(validate(outputSchema, payload));
 		}
 	}
 
-	private void validateSchemaExistence(Path schemaLocation, String errorMessage) {
-		if (!(exists(schemaLocation) || isReadable(schemaLocation))) {
-			throw new ApplicationFailure(errorMessage);
+	private void processValidationResult(ValidationResult validationResult) {
+		if (!validationResult.isValid()) {
+			logger.error(validationResult.getErrorMessages());
+			throw new ApplicationFailure("Validation errors: " + validationResult.getErrorMessages());
 		}
 	}
 }

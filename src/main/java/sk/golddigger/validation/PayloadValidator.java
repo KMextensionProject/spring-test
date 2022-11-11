@@ -1,5 +1,9 @@
 package sk.golddigger.validation;
 
+import static java.nio.file.Files.exists;
+import static java.nio.file.Files.isReadable;
+
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -17,6 +21,12 @@ public class PayloadValidator {
 		Json validationResult = Json.schema(schema).validate(payload);
 
 		return new ValidationResult(validationResult);
+	}
+
+	public static void validateSchemaExistence(Path schemaLocation, String errorMessage) {
+		if (!(exists(schemaLocation) || isReadable(schemaLocation))) {
+			throw new ApplicationFailure(errorMessage);
+		}
 	}
 
 	public static class ValidationResult {
