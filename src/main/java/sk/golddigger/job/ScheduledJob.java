@@ -17,14 +17,14 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import sk.golddigger.cache.AccountCache;
-import sk.golddigger.coinbase.CoinbaseOrderConstants.OrderType;
-import sk.golddigger.coinbase.CoinbaseOrderConstants.Side;
 import sk.golddigger.core.ExchangeAccount;
 import sk.golddigger.core.ExchangeRequest;
 import sk.golddigger.core.Market;
 import sk.golddigger.core.MarketPredicate;
 import sk.golddigger.core.Order;
 import sk.golddigger.core.RequestDateTime;
+import sk.golddigger.exchange.coinbase.CoinbaseOrderConstants.OrderType;
+import sk.golddigger.exchange.coinbase.CoinbaseOrderConstants.Side;
 import sk.golddigger.messaging.Message;
 import sk.golddigger.messaging.Recipient;
 import sk.golddigger.notification.Notification;
