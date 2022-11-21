@@ -1,4 +1,4 @@
-package sk.golddigger.coinbase;
+package sk.golddigger.exchange.coinbase;
 
 import static sk.golddigger.utils.MessageResolver.resolveMessage;
 
