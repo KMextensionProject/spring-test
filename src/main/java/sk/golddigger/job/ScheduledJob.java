@@ -159,7 +159,13 @@ public class ScheduledJob {
 			return Double.parseDouble(orderRate);
 		}
 
-		return 0.00;
+		// this prevents the incorrect update of the best buy order rate
+		// if the order is not yet filled at the time we are asking for it
+
+		// this also fixes the incorrect evaluation result for displaying
+		// the message saying that "No order has been placed in this year"
+		// even though the client has some fills for this year..
+		return Double.MAX_VALUE;
 	}
 
 	private void sendOrderNotification(double depositAmount, double orderRate) {
